@@ -7,5 +7,12 @@ use Illuminate\Database\Eloquent\Model;
 
 class Categoria extends Model
 {
-    use HasFactory;
+    protected $fillable = [
+        'nome', 'icone', 'user_id'
+    ];
+
+    public function user(){
+        return $this->belongsTo(User::class);
+    }
+    
 }
