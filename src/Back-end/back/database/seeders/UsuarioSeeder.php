@@ -13,7 +13,14 @@ class UsuarioSeeder extends Seeder
      */
     public function run(): void
     {
-        $dados=['nome'=>"Thomaz", 'email'=>"thomaz.bueno@unesp.br",'cpf'=>"212",'celular'=>"9999",'data_nascimento'=>'12/12/12','password'=>bcrypt("123")];
+            $dados=[
+                'nome'=>"Thomazz",
+                'email'=>"teste.bueno@unesp.br",
+                'cpf'=>"212111111111",
+                'celular'=>"99299",
+                'data_nascimento'=>'2012-12-12', // Formato YYYY-MM-DD
+                'password'=>bcrypt("123")
+            ];
         User::create($dados);
     }
 }

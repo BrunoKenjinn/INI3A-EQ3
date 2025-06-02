@@ -13,16 +13,27 @@ class CategoriaSeeder extends Seeder
      */
     public function run(): void
     {
-        $dados = [
-            ['nome' => 'Alimentação',   'icone' => 'MaterialCommunityIcons/silverware-fork-knife', 'user_id' => null],
-            ['nome' => 'Transporte',    'icone' => 'MaterialCommunityIcons/bus-outline', 'user_id' => null],
-            ['nome' => 'Saúde',         'icone' => 'MaterialCommunityIcons/hospital-box-outline', 'user_id' => null],
-            ['nome' => 'Despesas',      'icone' => 'MaterialCommunityIcons/receipt-text-outline', 'user_id' => null],
-            ['nome' => 'Moradia',       'icone' => 'MaterialCommunityIcons/home-outline', 'user_id' => null],
-            ['nome' => 'Educação',      'icone' => 'MaterialCommunityIcons/school-outline', 'user_id' => null],
-            ['nome' => 'Lazer',         'icone' => 'MaterialCommunityIcons/gamepad-variant-outline', 'user_id' => null],
-            ['nome' => 'Investimentos', 'icone' => 'MaterialCommunityIcons/chart-line', 'user_id' => null],
+        $categoriasModelo = [
+            ['nome' => 'Alimentação',   'icone' => 'cutlery'],
+            ['nome' => 'Transporte',    'icone' => 'bus'],
+            ['nome' => 'Saúde',         'icone' => 'heart'],
+            ['nome' => 'Despesas',      'icone' => 'file-text'],
+            ['nome' => 'Moradia',       'icone' => 'home'],
+            ['nome' => 'Educação',      'icone' => 'graduation-cap'],
+            ['nome' => 'Lazer',         'icone' => 'smile-o'],
+            ['nome' => 'Investimentos', 'icone' => 'line-chart'],
         ];
-        Categoria::updateOrCreate($dados);
+
+        foreach ($categoriasModelo as $categoria) {
+            Categoria::updateOrCreate(
+                [
+                    'nome' => $categoria['nome'],
+                    'user_id' => null 
+                ],
+                [
+                    'icone' => $categoria['icone'] 
+                ]
+            );
+        }
     }
 }
