@@ -1,7 +1,7 @@
 import { View, Text, Image, StyleSheet, Pressable, TextInput} from "react-native";
 import Logo from '../assets/LogoAmarela.png';
 
-export function TelaCadastro({navigation}) {
+export default function TelaCadastro({navigation}) {
 
     return <>
         <View style={styles.container}>

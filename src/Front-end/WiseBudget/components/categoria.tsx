@@ -22,6 +22,7 @@ const styles = StyleSheet.create({
     },
 
     text: {
-        color: '#f1c40f'
+        color: '#f1c40f',
+        fontFamily: 'Poppins-Regular'
     }
 });

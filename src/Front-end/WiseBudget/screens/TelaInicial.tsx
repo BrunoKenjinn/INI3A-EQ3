@@ -1,7 +1,7 @@
 import { View, Text, Image, StyleSheet, Pressable} from "react-native";
 import Logo from '../assets/Logo.png';
 
-export function TelaInicial({navigation}) {
+export default function TelaInicial({navigation}) {
     return <>
         <View style={styles.container}>
             <Image source={Logo}/>
