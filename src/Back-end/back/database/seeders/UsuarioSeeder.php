@@ -14,8 +14,9 @@ class UsuarioSeeder extends Seeder
     public function run(): void
     {
             $dados=[
-                'nome'=>"Thomazz",
-                'email'=>"teste.bueno@unesp.br",
+                'nome'=>"Thomaz",
+                'login'=>"oBueninho",
+                'email'=>"thomaz.bueno@unesp.br",
                 'cpf'=>"212111111111",
                 'celular'=>"99299",
                 'data_nascimento'=>'2012-12-12', // Formato YYYY-MM-DD
