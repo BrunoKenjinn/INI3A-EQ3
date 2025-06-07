@@ -13,12 +13,11 @@ class CategoriaController extends Controller
 
     public function index(Request $request)
     {
-        $user = \App\Models\User::find(4);
+        $user = $request->user();
 
         $categorias = Categoria::where('user_id', $user->id)->get();
 
-
-        if ($categorias->isEmpty() && $user->categorias()->count() === 0) { 
+        if ($categorias->isEmpty() && $user->categorias()->count() === 0) {
             $this->copiarCategoriasModeloParaUsuario($user);
             $categorias = Categoria::where('user_id', $user->id)->get();
         }
@@ -29,18 +28,19 @@ class CategoriaController extends Controller
 
     public function salvar(Request $request)
     {
-        $user = \App\Models\User::find(4);
+        $user = $request->user();
 
         $validatedData = $request->validate([
             'nome' => [
                 'required',
                 'string',
                 'max:255',
+
                 Rule::unique('categorias')->where(function ($query) use ($user) {
                     return $query->where('user_id', $user->id);
                 }),
             ],
-            'icone' => 'required|string|max:255', 
+            'icone' => 'required|string|max:255',
         ]);
 
         $categoria = new Categoria();
@@ -55,11 +55,15 @@ class CategoriaController extends Controller
 
     public function atualizar(Request $request, Categoria $categoria)
     {
-        $user = \App\Models\User::find(4);
+        $user = $request->user();
+
+        if ($categoria->user_id !== $user->id) {
+            return response()->json(['message' => 'Não autorizado.'], 403);
+        }
 
         $validatedData = $request->validate([
             'nome' => [
-                'sometimes', 
+                'sometimes',
                 'required',
                 'string',
                 'max:255',
@@ -78,16 +82,15 @@ class CategoriaController extends Controller
 
     public function excluir(Request $request, Categoria $categoria)
     {
-        $user = \App\Models\User::find(4);
-
+        $user = $request->user();
 
         if ($categoria->user_id !== $user->id) {
-            return response()->json(['message' => 'Não autorizado a excluir este recurso.'], 403);
+            return response()->json(['message' => 'Não autorizado.'], 403);
         }
 
         $categoria->delete();
 
-        return response()->json(null, 204); 
+        return response()->json(null, 204);
     }
 
 
