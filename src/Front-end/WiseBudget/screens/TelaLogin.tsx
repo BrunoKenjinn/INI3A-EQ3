@@ -24,6 +24,7 @@ export default function TelaLogin() {
                         selectionColor="#393939"
                     />
                 </View>
+
                 <View style={styles.inputArea}>
                     <Text style={styles.textInput}>
                         Senha
@@ -48,6 +49,17 @@ export default function TelaLogin() {
                         <Text style={styles.textLink}>Esqueceu a senha?</Text>
                     </TouchableOpacity>
                 </View>
+
+            </View>
+
+            <View style={styles.buttons}>
+                <TouchableOpacity style={styles.button}>
+                        <Text style={styles.buttonText}>Log In</Text>
+                </TouchableOpacity>
+                <Text style={styles.textButtonTop}>Nao Tem Conta Ainda?</Text>
+                <TouchableOpacity style={styles.button}>
+                        <Text style={styles.buttonText}>Cadastre-se</Text>
+                </TouchableOpacity>
             </View>
         </SafeAreaView>
     </>
@@ -92,7 +104,8 @@ const styles = StyleSheet.create({
         padding: 10,
         backgroundColor: '#393939',
         fontFamily: 'Poppins-Regular',
-        fontSize: 18
+        fontSize: 18,
+        color: '#ffffff'
     },
     inputPasswordContainer: {
         flexDirection: 'row',
@@ -108,12 +121,38 @@ const styles = StyleSheet.create({
         padding: 10,
         backgroundColor: '#393939',
         fontFamily: 'Poppins-Regular',
-        fontSize: 18
+        fontSize: 18,
+        color: '#ffffff'
     },
     textLink: {
-        color: '#ffffff',
+        color: '#EAE3C9',
         textAlign: "right",
         fontFamily: 'Poppins-Regular',
         marginTop: 5
+    },
+    buttons: {
+        width: '100%',
+        display: 'flex',
+        alignItems: 'center',
+        marginTop: 70
+    },
+    button: {
+        backgroundColor:'#f1c40f',
+        padding: 8,
+        width: '50%',
+        display: 'flex',
+        alignItems: 'center',
+        borderRadius: 20
+    },
+    buttonText: {
+        fontFamily: 'Poppins-Bold',
+        fontSize: 23,
+        color: '#2c2c2c'
+    },
+    textButtonTop: {
+        color: '#ffffff',
+        fontFamily: 'Poppins-Regular',
+        marginTop: 10,
+        marginBottom: 5
     }
 });
