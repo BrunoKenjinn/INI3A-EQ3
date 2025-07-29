@@ -3,6 +3,8 @@ import { useState } from 'react';
 import { SafeAreaView, Text, View, StyleSheet, TextInput, TouchableOpacity, Alert } from 'react-native';
 import { Header } from '../components/header';
 import axios from 'axios';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
 
 export default function TelaEditarCategoria({ navigation , route} ) {;
     const { categoria } = route.params;
@@ -13,10 +15,15 @@ export default function TelaEditarCategoria({ navigation , route} ) {;
 
     const handleUpdate = async () => {
         try {
+            const token = await AsyncStorage.getItem('auth_token');
             const response = await axios.put(`http://localhost:8000/api/categorias/${categoria.id}`, {
             nome: title,
             icone: selectedValue
-            });
+            }, {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        });
 
             Alert.alert('Sucesso', 'Categoria atualizada com sucesso!');
             navigation.navigate('TelaCategorias');
@@ -31,7 +38,12 @@ export default function TelaEditarCategoria({ navigation , route} ) {;
 
     const handleDelete = async () => {
         try {
-            await axios.delete(`http://localhost:8000/api/categorias/${categoria.id}`);
+            const token = await AsyncStorage.getItem('auth_token');
+
+            await axios.delete(`http://localhost:8000/api/categorias/${categoria.id}`, {
+                headers: {
+                Authorization: `Bearer ${token}`
+            }});
             Alert.alert('Sucesso', 'Categoria excluída com sucesso!');
             navigation.navigate('TelaCategorias');
         } catch (error) {

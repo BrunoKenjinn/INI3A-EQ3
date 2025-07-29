@@ -3,6 +3,8 @@ import { useState } from 'react';
 import { SafeAreaView, Text, View, StyleSheet, TextInput, Button, TouchableOpacity } from 'react-native';
 import { Header } from '../components/header';
 import axios from 'axios';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
 
 export default function TelaAdicionarCategoria({navigation}) {
 
@@ -11,11 +13,14 @@ export default function TelaAdicionarCategoria({navigation}) {
 
     const handleSave = async () => {
         try {
+            const token = await AsyncStorage.getItem('auth_token');
+
             const response = await axios.post('http://localhost:8000/api/categorias', {
                 nome: title,
                 icone: selectedValue
             }, {
                 headers: {
+                    Authorization: `Bearer ${token}`,
                     Accept: 'application/json'
                 }
             });
