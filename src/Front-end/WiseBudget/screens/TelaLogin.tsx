@@ -2,6 +2,7 @@ import { Image, SafeAreaView, StyleSheet, Text, TextInput, TouchableOpacity, Vie
 import LogoAmarela from '../assets/LogoAmarela.png'; 
 import { useState } from "react";
 import FontAwesome from '@expo/vector-icons/FontAwesome';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 
 export default function TelaLogin({ navigation }) {
@@ -20,8 +21,12 @@ export default function TelaLogin({ navigation }) {
             identifier: identifier,
             password: password,
         })
-        .then(response => {
+        .then(async response => {
             const { user, access_token } = response.data;
+
+            await AsyncStorage.setItem('auth_token', access_token);
+            await AsyncStorage.setItem('user', JSON.stringify(user));
+
             
             console.log('Token:', access_token);
             console.log('Dados do Usuário:', user);

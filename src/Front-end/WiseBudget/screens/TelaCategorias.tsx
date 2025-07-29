@@ -3,24 +3,38 @@ import { Header } from "../components/header";
 import { Balanço } from "../components/balanco";
 import { Categoria } from "../components/categoria";
 import axios from 'axios';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useFocusEffect } from "@react-navigation/native";
 
 
 
 
 export default function TelaCategorias({ navigation }) {
-    useEffect(() => {
-        axios.get('http://localhost:8000/api/categorias')
-            .then(response => {
-                setCategorias(response.data);
-            })
-            .catch(error => {
-                console.error('Erro ao buscar categorias:', error.response?.data || error.message);
-            });
-    }, []);
-
     const [categorias, setCategorias] = useState([]);
     const categoriasComAdicionar = [...categorias, { id: 'adicionar', nome: 'Adicionar', icone: 'plus' }];
+    useFocusEffect(
+        useCallback(() => {
+            const carregarCategorias = async () => {
+                try {
+                    const token = await AsyncStorage.getItem('auth_token');
+                    const response = await axios.get('http://localhost:8000/api/categorias', {
+                        headers: {
+                            Authorization: `Bearer ${token}`
+                        }
+                    });
+
+                    setCategorias(response.data);
+                } catch (error) {
+                    console.error('Erro ao buscar categorias:', error.response?.data || error.message);
+                }
+            };
+
+            carregarCategorias();
+
+            return () => { };
+        }, [])
+    );
 
     return <>
         <SafeAreaView style={styles.container}>
