@@ -1,11 +1,42 @@
-import { Image, SafeAreaView, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
-import LogoAmarela from '../assets/LogoAmarela.png'
+import { Image, SafeAreaView, StyleSheet, Text, TextInput, TouchableOpacity, View, Alert } from "react-native";
+import LogoAmarela from '../assets/LogoAmarela.png'; // Certifique-se que o caminho está correto
 import { useState } from "react";
 import FontAwesome from '@expo/vector-icons/FontAwesome';
+import axios from 'axios';
 
-export default function TelaLogin() {
+export default function TelaLogin({ navigation }) {
 
     const [mostrarSenha, setMostrarSenha] = useState(false);
+    const [identifier, setIdentifier] = useState('');
+    const [password, setPassword] = useState('');
+
+    const handleLogin = () => {
+        if (!identifier || !password) {
+            Alert.alert('Atenção', 'Por favor, preencha o CPF/Email e a senha.');
+            return;
+        }
+
+        axios.post('http://localhost:8000/api/login', {
+            identifier: identifier,
+            password: password,
+        })
+        .then(response => {
+            const { user, access_token } = response.data;
+            
+            console.log('Token:', access_token);
+            console.log('Dados do Usuário:', user);
+        })
+        .catch(error => {
+            // Erro no login
+            if (error.response) {
+                console.error('Dados do erro:', error.response.data);
+            } else if (error.request) {
+                console.error('Erro de requisição:', error.request);
+            } else {
+                console.error('Erro:', error.message);
+            }
+        });
+    };
 
     return <>
         <SafeAreaView style={styles.container}>
@@ -22,6 +53,9 @@ export default function TelaLogin() {
                         style={styles.input}
                         placeholderTextColor="#6E6E6E"
                         selectionColor="#393939"
+                        value={identifier}
+                        onChangeText={setIdentifier}
+                        autoCapitalize="none"
                     />
                 </View>
 
@@ -35,7 +69,9 @@ export default function TelaLogin() {
                             secureTextEntry={!mostrarSenha}
                             style={styles.inputPassword}
                             placeholderTextColor="#6E6E6E"
-                            selectionColor="#393939"                          
+                            selectionColor="#393939"
+                            value={password}
+                            onChangeText={setPassword}
                         />
                         <TouchableOpacity onPress={() => setMostrarSenha(!mostrarSenha)}>
                             <FontAwesome
@@ -53,12 +89,12 @@ export default function TelaLogin() {
             </View>
 
             <View style={styles.buttons}>
-                <TouchableOpacity style={styles.button}>
-                        <Text style={styles.buttonText}>Log In</Text>
+                <TouchableOpacity style={styles.button} onPress={handleLogin}>
+                    <Text style={styles.buttonText}>Log In</Text>
                 </TouchableOpacity>
                 <Text style={styles.textButtonTop}>Nao Tem Conta Ainda?</Text>
                 <TouchableOpacity style={styles.button}>
-                        <Text style={styles.buttonText}>Cadastre-se</Text>
+                    <Text style={styles.buttonText}>Cadastre-se</Text>
                 </TouchableOpacity>
             </View>
         </SafeAreaView>
@@ -79,7 +115,7 @@ const styles = StyleSheet.create({
     title: {
         fontSize: 30,
         color: '#f1c40f',
-        fontFamily: 'Poppins-Bold',
+        fontWeight: 'bold',
         marginTop: 10
     },
     form: {
@@ -95,7 +131,6 @@ const styles = StyleSheet.create({
     textInput: {
         color: '#ffffff',
         fontSize: 15,
-        fontFamily: 'Poppins-Regular',
         marginBottom: 5
     },
     input: {
@@ -103,14 +138,13 @@ const styles = StyleSheet.create({
         borderRadius: 20,
         padding: 10,
         backgroundColor: '#393939',
-        fontFamily: 'Poppins-Regular',
         fontSize: 18,
         color: '#ffffff'
     },
     inputPasswordContainer: {
         flexDirection: 'row',
         alignItems: 'center',
-        backgroundColor: '#393939', 
+        backgroundColor: '#393939',
         borderRadius: 20,
         paddingRight: 15,
     },
@@ -120,14 +154,12 @@ const styles = StyleSheet.create({
         borderRadius: 20,
         padding: 10,
         backgroundColor: '#393939',
-        fontFamily: 'Poppins-Regular',
         fontSize: 18,
         color: '#ffffff'
     },
     textLink: {
         color: '#EAE3C9',
         textAlign: "right",
-        fontFamily: 'Poppins-Regular',
         marginTop: 5
     },
     buttons: {
@@ -137,7 +169,7 @@ const styles = StyleSheet.create({
         marginTop: 70
     },
     button: {
-        backgroundColor:'#f1c40f',
+        backgroundColor: '#f1c40f',
         padding: 8,
         width: '50%',
         display: 'flex',
@@ -145,13 +177,12 @@ const styles = StyleSheet.create({
         borderRadius: 20
     },
     buttonText: {
-        fontFamily: 'Poppins-Bold',
+        fontWeight: 'bold',
         fontSize: 23,
         color: '#2c2c2c'
     },
     textButtonTop: {
         color: '#ffffff',
-        fontFamily: 'Poppins-Regular',
         marginTop: 10,
         marginBottom: 5
     }
