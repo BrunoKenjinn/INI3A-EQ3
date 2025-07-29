@@ -1,5 +1,5 @@
 import { Image, SafeAreaView, StyleSheet, Text, TextInput, TouchableOpacity, View, Alert } from "react-native";
-import LogoAmarela from '../assets/LogoAmarela.png'; // Certifique-se que o caminho está correto
+import LogoAmarela from '../assets/LogoAmarela.png'; 
 import { useState } from "react";
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import axios from 'axios';
@@ -27,7 +27,6 @@ export default function TelaLogin({ navigation }) {
             console.log('Dados do Usuário:', user);
         })
         .catch(error => {
-            // Erro no login
             if (error.response) {
                 console.error('Dados do erro:', error.response.data);
             } else if (error.request) {
@@ -93,8 +92,8 @@ export default function TelaLogin({ navigation }) {
                     <Text style={styles.buttonText}>Log In</Text>
                 </TouchableOpacity>
                 <Text style={styles.textButtonTop}>Nao Tem Conta Ainda?</Text>
-                <TouchableOpacity style={styles.button}>
-                    <Text style={styles.buttonText}>Cadastre-se</Text>
+                <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('TelaCadastro')}>
+                        <Text style={styles.buttonText}>Cadastre-se</Text>
                 </TouchableOpacity>
             </View>
         </SafeAreaView>
@@ -183,7 +182,8 @@ const styles = StyleSheet.create({
     },
     textButtonTop: {
         color: '#ffffff',
-        marginTop: 10,
+        fontFamily: 'Poppins-Regular',
+        marginTop: 30,
         marginBottom: 5
     }
 });

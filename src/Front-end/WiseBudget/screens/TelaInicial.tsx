@@ -6,7 +6,7 @@ export default function TelaInicial({navigation}) {
         <View style={styles.container}>
             <Image source={Logo}/>
             <View style={styles.buttons}>
-                <Pressable style={styles.button}>
+                <Pressable style={styles.button} onPress={() => navigation.navigate('TelaLogin')}>
                     <Text style={styles.textButton}>Log In</Text>
                 </Pressable>
                 <Pressable style={styles.button} onPress={() => navigation.navigate('TelaCadastro')}>
