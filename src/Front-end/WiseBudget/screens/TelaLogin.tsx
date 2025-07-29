@@ -3,7 +3,7 @@ import LogoAmarela from '../assets/LogoAmarela.png'
 import { useState } from "react";
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 
-export default function TelaLogin() {
+export default function TelaLogin({ navigation }) {
 
     const [mostrarSenha, setMostrarSenha] = useState(false);
 
@@ -57,7 +57,7 @@ export default function TelaLogin() {
                         <Text style={styles.buttonText}>Log In</Text>
                 </TouchableOpacity>
                 <Text style={styles.textButtonTop}>Nao Tem Conta Ainda?</Text>
-                <TouchableOpacity style={styles.button}>
+                <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('TelaCadastro')}>
                         <Text style={styles.buttonText}>Cadastre-se</Text>
                 </TouchableOpacity>
             </View>
@@ -152,7 +152,7 @@ const styles = StyleSheet.create({
     textButtonTop: {
         color: '#ffffff',
         fontFamily: 'Poppins-Regular',
-        marginTop: 10,
+        marginTop: 30,
         marginBottom: 5
     }
 });

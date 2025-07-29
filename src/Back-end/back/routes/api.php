@@ -4,6 +4,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\CategoriaController;
 use App\Http\Controllers\LoginController;
+use App\Http\Controllers\UsuarioController;
 
 /*
 |--------------------------------------------------------------------------
@@ -23,9 +24,17 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
+Route::post('/register', [UsuarioController::class, 'registrar'])->name('usuario.registrar');
+
 Route::post('/login', [LoginController::class, 'entrar']);
 
 Route::middleware('auth:sanctum')->group(function () {
+    //usuario
+    Route::get('/usuario', [UsuarioController::class, 'index'])->name('usuario.index');
+    Route::put('/usuario', [UsuarioController::class, 'atualizar'])->name('usuario.atualizar');
+    Route::delete('/usuario', [UsuarioController::class, 'excluir'])->name('usuario.excluir');
+
+    //categorias
     Route::get('/categorias', [CategoriaController::class, 'index'])->name('categorias.index');
     Route::post('/categorias', [CategoriaController::class, 'salvar'])->name('categorias.salvar');
     Route::put('/categorias/{categoria}', [CategoriaController::class, 'atualizar'])->name('categorias.atualizar'); 
