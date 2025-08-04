@@ -1,7 +1,9 @@
-import { StyleSheet, SafeAreaView, View } from "react-native";
+import { StyleSheet, SafeAreaView, View, Text } from "react-native";
 import { Header } from "../components/header";
 import FontAwesome5 from '@expo/vector-icons/FontAwesome5';
 import CustomBottomTab from "../components/CustomBottomTab";
+import { Balanço } from "../components/balanco";
+import {} from 'react-native-svg'
 
 export default function TelaHome() {
   return (
@@ -18,7 +20,16 @@ export default function TelaHome() {
           rightIconSize={24}
           rightIconComponent={FontAwesome5}
         />
-        {/* Conteúdo principal aqui */}
+        <Balanço credito="234" debito="123"/>
+
+        <View style={{width: '100%'}}>
+          <Text style={{color: 'white', fontFamily: 'Poppins-Regular'}}>
+            Gráfico de Setores
+          </Text>
+          <View style={{width: '100%', backgroundColor: '#393939', height: 10}}>
+        
+          </View>
+        </View>
       </View>
 
       <View style={styles.tabContainer}>
