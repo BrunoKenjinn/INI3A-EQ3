@@ -24,6 +24,8 @@ export default function TelaLogin({ navigation }) {
         .then(async response => {
             const { user, access_token } = response.data;
 
+            navigation.navigate("TelaHome");
+
             await AsyncStorage.setItem('auth_token', access_token);
             await AsyncStorage.setItem('user', JSON.stringify(user));
 

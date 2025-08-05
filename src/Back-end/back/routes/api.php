@@ -33,11 +33,20 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/usuario', [UsuarioController::class, 'index'])->name('usuario.index');
     Route::put('/usuario', [UsuarioController::class, 'atualizar'])->name('usuario.atualizar');
     Route::delete('/usuario', [UsuarioController::class, 'excluir'])->name('usuario.excluir');
+    
+    //home
+    Route::get('/atalhos', [CategoriaController::class, 'index'])->name('atalhos.index');
+    Route::post('/atalhos', [CategoriaController::class, 'salvar'])->name('atalhos.salvar');
+    Route::put('/atalhos/{atalho}', [CategoriaController::class, 'atualizar'])->name('atalhos.atualizar'); 
+    Route::delete('/atalhos/{atalho}', [CategoriaController::class, 'excluir'])->name('atalhos.excluir');
 
     //categorias
     Route::get('/categorias', [CategoriaController::class, 'index'])->name('categorias.index');
     Route::post('/categorias', [CategoriaController::class, 'salvar'])->name('categorias.salvar');
     Route::put('/categorias/{categoria}', [CategoriaController::class, 'atualizar'])->name('categorias.atualizar'); 
     Route::delete('/categorias/{categoria}', [CategoriaController::class, 'excluir'])->name('categorias.excluir');
+
     Route::post('/logout', [LoginController::class, 'sair']);
+
+    
 });
