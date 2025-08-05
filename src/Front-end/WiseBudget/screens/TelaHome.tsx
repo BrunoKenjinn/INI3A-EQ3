@@ -5,8 +5,12 @@ import FontAwesome from '@expo/vector-icons/FontAwesome';
 import CustomBottomTab from "../components/CustomBottomTab";
 import { Balanço } from "../components/balanco";
 import { PieChart } from 'react-native-chart-kit'
-import { ComponentType } from 'react';
+import { ComponentType, useCallback, useState } from 'react';
 import { IconProps } from '@expo/vector-icons/build/createIconSet';
+import { Atalho } from "../components/atalho";
+import { useFocusEffect } from "@react-navigation/native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import axios from "axios";
 
 type IconComponentType = ComponentType<IconProps<keyof typeof FontAwesome.glyphMap>>;
 
@@ -17,6 +21,59 @@ interface AtalhoItemProps {
 }
 
 export default function TelaHome() {
+  const [atalhos, setAtalhos] = useState([]);
+  const atalhosComAdicionar = [...atalhos, { id: 'adicionar', nome: 'Adicionar', icone: 'plus' }];
+
+  useFocusEffect(
+    useCallback(() => {
+        const carregarAtalhos = async () => {
+            try {
+                const token = await AsyncStorage.getItem('auth_token');
+                const response = await axios.get('http://localhost:8000/api/atalhos', {
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    }
+                });
+
+                setAtalhos(response.data);
+            } catch (error) {
+                console.error('Erro ao buscar atalhos:', error.response?.data || error.message);
+            }
+        };
+
+        carregarAtalhos();
+
+        return () => { };
+    }, [])
+);
+
+  const atalhosData = [
+  {
+    id: '1',
+    title: 'Relatório',
+    iconName: 'signal',
+    iconComponent: FontAwesome,
+  },
+  {
+    id: '2',
+    title: 'Pesquisa',
+    iconName: 'search',
+    iconComponent: FontAwesome,
+  },
+  {
+    id: '3',
+    title: '',
+    iconName: 'plus-circle',
+    iconComponent: FontAwesome,
+  },
+];
+  
+  const AtalhoItem = ({ title, iconName, iconComponent: Icon } : AtalhoItemProps) => (
+    <TouchableOpacity style={styles.atalhoItem}>
+      <Icon name={iconName} size={32} color="#f1c40f" />
+      <Text style={styles.atalhoText}>{title}</Text>
+    </TouchableOpacity>
+  );
 
   const data = [
     {
@@ -45,34 +102,6 @@ export default function TelaHome() {
     barPercentage: 0.5,
     useShadowColorFromDataset: false
   };
-
-  const atalhosData = [
-    {
-      id: '1',
-      title: 'Relatório',
-      iconName: 'signal',
-      iconComponent: FontAwesome,
-    },
-    {
-      id: '2',
-      title: 'Pesquisa',
-      iconName: 'search',
-      iconComponent: FontAwesome,
-    },
-    {
-      id: '3',
-      title: '',
-      iconName: 'plus-circle',
-      iconComponent: FontAwesome,
-    },
-  ];
-  
-  const AtalhoItem = ({ title, iconName, iconComponent: Icon } : AtalhoItemProps) => (
-    <TouchableOpacity style={styles.atalhoItem}>
-      <Icon name={iconName} size={32} color="#f1c40f" />
-      <Text style={styles.atalhoText}>{title}</Text>
-    </TouchableOpacity>
-  );
   
 
   return (
@@ -130,18 +159,22 @@ export default function TelaHome() {
             Atalhos
           </Text>
           <FlatList
-          data={atalhosData}
-          renderItem={({ item }) => (
-            <AtalhoItem
-              title={item.title}
-              iconName={item.iconName}
-              iconComponent={item.iconComponent}
-            />
-          )}
-          keyExtractor={(item) => item.id}
+          data={atalhos}
+          keyExtractor={(item) => item.id.toString()}
           horizontal={true}
+          renderItem={({ item }) => (
+              <View style={{ marginRight: 12 }}>
+                  <Atalho
+                      iconName=
+                      text={item.nome}
+                      onPress={() => {
+                          console.log("Atalho pressionado:", item.nome);
+                      }}
+                  />
+              </View>
+          )}
+          contentContainerStyle={{ paddingVertical: 10 }}
           showsHorizontalScrollIndicator={false}
-          style={{marginTop: 10}}
         />
         </View>
       </View>
@@ -156,7 +189,7 @@ export default function TelaHome() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#2c2c2c',
+    backgroundColor: '#2c2c2c', 
   },
   content: {
     flex: 1,

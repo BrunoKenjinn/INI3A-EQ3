@@ -32,9 +32,9 @@ export default function App() {
   return (
       <NavigationContainer>
         <Stack.Navigator>
-            <Stack.Screen name="TelaHome" component={TelaHome} options={{headerShown: false}}/>
-            <Stack.Screen name="TelaInicial" component={TelaInicial} option s={{headerShown: false}}/>
+            <Stack.Screen name="TelaInicial" component={TelaInicial} options={{headerShown: false}}/>
             <Stack.Screen name="TelaLogin" component={TelaLogin} options={{headerShown: false}}/>
+            <Stack.Screen name="TelaHome" component={TelaHome} options={{headerShown: false}}/>
             <Stack.Screen name="TelaCategorias" component={TelaCategorias} options={{headerShown: false}}/>
             <Stack.Screen name="TelaAdicionarCategoria" component={TelaAdicionarCategoria} options={{headerShown: false}}/>
             <Stack.Screen name="TelaCadastro" component={TelaCadastro} options={{headerShown: false}}/>
