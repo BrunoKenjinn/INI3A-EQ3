@@ -13,7 +13,7 @@ export function Balanço({ debito, credito }: Props) {
     const parseValor = (valor: string) =>
         parseFloat(valor.replace('.', '').replace(',', '.'));
 
-    const saldo = (parseValor(debito) + parseValor(credito)).toFixed(2);
+    const saldo = (parseValor(debito) - parseValor(credito)).toFixed(2);
 
     const formatar = (valor: string) => {
         const num = parseFloat(valor);
