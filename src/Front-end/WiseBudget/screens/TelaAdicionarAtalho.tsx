@@ -11,30 +11,38 @@ import { useFocusEffect } from "@react-navigation/native";
 
 
 export default function TelaAdicionarAtalhos({ navigation }) {
-    const [atalhos, setAtalhos] = useState([]);
-    const atalhosComAdicionar = [...atalhos, { id: 'adicionar', nome: 'Adicionar', icone: 'plus' }];
-    useFocusEffect(
-        useCallback(() => {
-            const carregarAtalhos = async () => {
-                try {
-                    const token = await AsyncStorage.getItem('auth_token');
-                    const response = await axios.get('http://localhost:8000/api/atalhos', {
-                        headers: {
-                            Authorization: `Bearer ${token}`
-                        }
-                    });
+    const atalhosPredefinidos = [
+    { id: 1, nome: 'Financas', icone: 'dollar-sign'},
+    { id: 2, nome: 'Gastos', icone: 'credit-card'},
+    { id: 3, nome: 'Investimentos', icone: 'chart-line'}
+    ];
 
-                    setAtalhos(response.data);
-                } catch (error) {
-                    console.error('Erro ao buscar atalhos:', error.response?.data || error.message);
+    const [atalhos, setAtalhos] = useState(atalhosPredefinidos);
+
+    const [selectedValue, setSelectedValue] = useState('cutlery'); // ícone inicial padrão
+    const [title, setTitle] = useState('');
+
+    const handleSave = async () => {
+        try {
+            const token = await AsyncStorage.getItem('auth_token');
+
+            const response = await axios.post('http://localhost:8000/api/atalhos', {
+                nome: title,
+                icone: selectedValue
+            }, {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                    Accept: 'application/json'
                 }
-            };
+            });
 
-            carregarAtalhos();
+            console.log('Categoria criada:', response.data);
+            navigation.navigate('TelaCategorias');
 
-            return () => { };
-        }, [])
-    );
+        } catch (error) {
+            console.error('Erro ao salvar categoria:', error.response?.data || error.message);
+        }
+    }
 
     return <>
         <SafeAreaView style={styles.container}>

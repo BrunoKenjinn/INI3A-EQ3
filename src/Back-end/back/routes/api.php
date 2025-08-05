@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\CategoriaController;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\UsuarioController;
+use App\Http\Controllers\AtalhoController;
 
 /*
 |--------------------------------------------------------------------------
@@ -35,10 +36,10 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::delete('/usuario', [UsuarioController::class, 'excluir'])->name('usuario.excluir');
     
     //home
-    Route::get('/atalhos', [CategoriaController::class, 'index'])->name('atalhos.index');
-    Route::post('/atalhos', [CategoriaController::class, 'salvar'])->name('atalhos.salvar');
-    Route::put('/atalhos/{atalho}', [CategoriaController::class, 'atualizar'])->name('atalhos.atualizar'); 
-    Route::delete('/atalhos/{atalho}', [CategoriaController::class, 'excluir'])->name('atalhos.excluir');
+    Route::get('/atalhos', [AtalhoController::class, 'index'])->name('atalhos.index');
+    Route::post('/atalhos', [AtalhoController::class, 'salvar'])->name('atalhos.salvar');
+    Route::put('/atalhos/{atalho}', [AtalhoController::class, 'atualizar'])->name('atalhos.atualizar'); 
+    Route::delete('/atalhos/{atalho}', [AtalhoController::class, 'excluir'])->name('atalhos.excluir');
 
     //categorias
     Route::get('/categorias', [CategoriaController::class, 'index'])->name('categorias.index');

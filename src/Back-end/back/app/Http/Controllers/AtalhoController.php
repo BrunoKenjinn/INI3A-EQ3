@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Atalhos;
 use Illuminate\Http\Request;
+
 
 class AtalhoController extends Controller
 {
@@ -10,12 +12,7 @@ class AtalhoController extends Controller
     {
         $user = $request->user();
 
-        $atalhos = atalho::where('user_id', $user->id)->get();
-
-        if ($atalhos->isEmpty() && $user->atalhos()->count() === 0) {
-            $this->copiaratalhosModeloParaUsuario($user);
-            $atalhos = atalho::where('user_id', $user->id)->get();
-        }
+        $atalhos = Atalhos::where('user_id', $user->id)->get();
 
         return response()->json($atalhos);
     }
@@ -25,20 +22,7 @@ class AtalhoController extends Controller
     {
         $user = $request->user();
 
-        $validatedData = $request->validate([
-            'nome' => [
-                'required',
-                'string',
-                'max:255',
-
-                Rule::unique('atalhos')->where(function ($query) use ($user) {
-                    return $query->where('user_id', $user->id);
-                }),
-            ],
-        ]);
-
-        $atalho = new atalho();
-        $atalho->nome = $validatedData['nome'];
+        $atalho = new Atalhos();
         $atalho->user_id = $user->id; 
         $atalho->save();
 
@@ -46,7 +30,7 @@ class AtalhoController extends Controller
     }
 
 
-    public function atualizar(Request $request, atalho $atalho)
+    public function atualizar(Request $request, Atalhos $atalho)
     {
         $user = $request->user();
 
@@ -54,25 +38,13 @@ class AtalhoController extends Controller
             return response()->json(['message' => 'Não autorizado.'], 403);
         }
 
-        $validatedData = $request->validate([
-            'nome' => [
-                'sometimes',
-                'required',
-                'string',
-                'max:255',
-                Rule::unique('atalhos')->where(function ($query) use ($user, $atalho) {
-                    return $query->where('user_id', $user->id)->where('id', '!=', $atalho->id);
-                }),
-            ],
-        ]);
-
-        $atalho->update($validatedData);
+        $atalho->update($request);
 
         return response()->json($atalho);
     }
 
 
-    public function excluir(Request $request, atalho $atalho)
+    public function excluir(Request $request, Atalhos $atalho)
     {
         $user = $request->user();
 

@@ -2,26 +2,42 @@ import FontAwesome from '@expo/vector-icons/FontAwesome';
 import { View, StyleSheet, Text, TouchableOpacity } from 'react-native';
 
 type Props = {
+    iconName: string;
     text: string;
     onPress: () => void;
 };
 
 export function Atalho({iconName, text, onPress} : Props) {
     return <View className='mb-3 mt-5'>
-                <TouchableOpacity style={styles.atalho} className='w-100 h-[105px] rounded-2xl flex items-center justify-center' onPress={onPress}>
-                    <FontAwesome name={iconName} size={50} color="#f1c40f" />
+                <TouchableOpacity style={styles.atalhoItem}>
+                    <FontAwesome name={iconName} size={32} color="#f1c40f" />
+                    <Text style={styles.atalhoText}>{text}</Text>
                 </TouchableOpacity>
-                <Text style={styles.text} className='text-center text-lg'>{text}</Text>
         </View>
 }
 
 const styles = StyleSheet.create({
-    atalho: {
-        backgroundColor: '#393939',
-    },
-
-    text: {
-        color: '#f1c40f',
-        fontFamily: 'Poppins-Regular'
-    }
+    atalhosTitle: {
+    color: 'white',
+    fontSize: 20,
+    fontFamily: 'Poppins-Regular',  
+    marginBottom: 10,
+  },
+  atalhoItem: {
+    backgroundColor: '#393939',
+    borderRadius: 15,
+    padding: 20,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginRight: 19,
+    width: 110, 
+    height: 110, 
+  },
+  atalhoText: {
+    color: 'white',
+    fontSize: 14,
+    fontFamily: 'Poppins-Regular',
+    marginTop: 8,
+    textAlign: 'center',
+  },
 });

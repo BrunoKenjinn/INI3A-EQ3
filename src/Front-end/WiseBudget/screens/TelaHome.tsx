@@ -14,15 +14,9 @@ import axios from "axios";
 
 type IconComponentType = ComponentType<IconProps<keyof typeof FontAwesome.glyphMap>>;
 
-interface AtalhoItemProps {
-  title: string;
-  iconName: string;
-  iconComponent: IconComponentType;
-}
-
-export default function TelaHome() {
+export default function TelaHome({ navigation }) {
   const [atalhos, setAtalhos] = useState([]);
-  const atalhosComAdicionar = [...atalhos, { id: 'adicionar', nome: 'Adicionar', icone: 'plus' }];
+  const atalhosComAdicionar = [...atalhos, { id:'adicionar', nome: 'Adicionar', icone: 'plus' }];
 
   useFocusEffect(
     useCallback(() => {
@@ -46,34 +40,6 @@ export default function TelaHome() {
         return () => { };
     }, [])
 );
-
-  const atalhosData = [
-  {
-    id: '1',
-    title: 'Relatório',
-    iconName: 'signal',
-    iconComponent: FontAwesome,
-  },
-  {
-    id: '2',
-    title: 'Pesquisa',
-    iconName: 'search',
-    iconComponent: FontAwesome,
-  },
-  {
-    id: '3',
-    title: '',
-    iconName: 'plus-circle',
-    iconComponent: FontAwesome,
-  },
-];
-  
-  const AtalhoItem = ({ title, iconName, iconComponent: Icon } : AtalhoItemProps) => (
-    <TouchableOpacity style={styles.atalhoItem}>
-      <Icon name={iconName} size={32} color="#f1c40f" />
-      <Text style={styles.atalhoText}>{title}</Text>
-    </TouchableOpacity>
-  );
 
   const data = [
     {
@@ -158,24 +124,30 @@ export default function TelaHome() {
           <Text style={{color: 'white', fontFamily: 'Poppins-Regular'}}>
             Atalhos
           </Text>
+          
           <FlatList
-          data={atalhos}
-          keyExtractor={(item) => item.id.toString()}
-          horizontal={true}
-          renderItem={({ item }) => (
-              <View style={{ marginRight: 12 }}>
-                  <Atalho
-                      iconName=
-                      text={item.nome}
-                      onPress={() => {
-                          console.log("Atalho pressionado:", item.nome);
-                      }}
-                  />
-              </View>
-          )}
-          contentContainerStyle={{ paddingVertical: 10 }}
-          showsHorizontalScrollIndicator={false}
-        />
+            data={atalhosComAdicionar}
+            keyExtractor={(item) => item.id.toString()}
+            horizontal={true}
+            renderItem={({ item }) => (
+                <View style={{ marginRight: 12 }}>
+                    <Atalho
+                        iconName={item.icone}
+                        text={item.nome}
+                        onPress={() => {
+                            if (item.id === 'adicionar') {
+                                  navigation.navigate('TelaAdicionarAtalho');
+                                } else {
+                                    const destino = `Tela${item.nome}`;
+                                    navigation.navigate(destino);
+                                }
+                        }}
+                    />
+                </View>
+            )}
+            contentContainerStyle={{ paddingVertical: 10 }}
+            showsHorizontalScrollIndicator={false}
+          />
         </View>
       </View>
 
@@ -200,28 +172,5 @@ const styles = StyleSheet.create({
     bottom: 0,
     left: 0,
     right: 0,
-  },
-  atalhosTitle: {
-    color: 'white',
-    fontSize: 20,
-    fontFamily: 'Poppins-Regular',  
-    marginBottom: 10,
-  },
-  atalhoItem: {
-    backgroundColor: '#393939',
-    borderRadius: 15,
-    padding: 20,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginRight: 19,
-    width: 110, 
-    height: 110, 
-  },
-  atalhoText: {
-    color: 'white',
-    fontSize: 14,
-    fontFamily: 'Poppins-Regular',
-    marginTop: 8,
-    textAlign: 'center',
   },
 });
