@@ -10,8 +10,10 @@ type Props = {
 export function Balanço({ debito, credito }: Props) {
     const [mostrarValores, setMostrarValores] = useState(true);
 
-    const parseValor = (valor: string) =>
-        parseFloat(valor.replace('.', '').replace(',', '.'));
+    const parseValor = (valor: string | undefined | null) => {
+    if (!valor) return 0;
+    return parseFloat(valor.replace('.', '').replace(',', '.'));
+}
 
     const saldo = (parseValor(debito) - parseValor(credito)).toFixed(2);
 

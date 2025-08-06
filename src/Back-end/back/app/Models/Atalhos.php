@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class Atalhos extends Model
 {
     protected $fillable = [
-        'nome', 'icone','user_id'
+        'nome', 'icone', 'rota','user_id'
     ];
 
     public function user(){

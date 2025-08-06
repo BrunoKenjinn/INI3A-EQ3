@@ -22,11 +22,18 @@ class AtalhoController extends Controller
     {
         $user = $request->user();
 
-        $atalho = new Atalhos();
-        $atalho->user_id = $user->id; 
-        $atalho->save();
+        $validated = $request->validate([
+            'nome' => 'required|string',
+            'icone' => 'required|string',
+            'rota' => 'required|string',
+        ]);
 
-        return response()->json($atalho, 201);
+        $atalho = new Atalhos();
+        $atalho->user_id = $user->id;
+        $atalho->nome = $validated['nome'];
+        $atalho->icone = $validated['icone'];
+        $atalho->rota = $validated['rota'];
+        $atalho->save();
     }
 
 

@@ -1,5 +1,7 @@
 import { View, StyleSheet, Text } from "react-native";
 import AntDesign from '@expo/vector-icons/AntDesign';
+import { useNavigation } from '@react-navigation/native';
+import { TouchableOpacity } from 'react-native';
 
 type Props = {
   title: string;
@@ -24,11 +26,17 @@ export function Header({
   rightIconColor = "#fff",
   rightIconComponent: RightIcon = AntDesign,
 }: Props) {
+
+  
+const navigation = useNavigation();
+
   return (
     <View style={[styles.header, { marginTop: 28 }]}>
       {leftIconName && (
+      <TouchableOpacity onPress={() => navigation.goBack()}>
         <LeftIcon name={leftIconName} size={leftIconSize} color={leftIconColor} />
-      )}
+      </TouchableOpacity>
+    )}
       <Text style={[styles.title, { fontSize: 20 }]}>{title}</Text>
       {rightIconName && (
         <RightIcon name={rightIconName} size={rightIconSize} color={rightIconColor} />

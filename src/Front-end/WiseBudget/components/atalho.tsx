@@ -5,11 +5,13 @@ type Props = {
     iconName: string;
     text: string;
     onPress: () => void;
+    onLongPress?: () => void;
+    rota?: string;
 };
 
-export function Atalho({iconName, text, onPress} : Props) {
-    return <View className='mb-3 mt-5'>
-                <TouchableOpacity style={styles.atalhoItem}>
+export function Atalho({iconName, text, onPress, onLongPress} : Props) {
+    return <View style={{ marginBottom: 12, marginTop: 20 }}>
+                <TouchableOpacity style={styles.atalhoItem} onPress={onPress} onLongPress={onLongPress} delayLongPress={500}>
                     <FontAwesome name={iconName} size={32} color="#f1c40f" />
                     <Text style={styles.atalhoText}>{text}</Text>
                 </TouchableOpacity>
@@ -17,19 +19,12 @@ export function Atalho({iconName, text, onPress} : Props) {
 }
 
 const styles = StyleSheet.create({
-    atalhosTitle: {
-    color: 'white',
-    fontSize: 20,
-    fontFamily: 'Poppins-Regular',  
-    marginBottom: 10,
-  },
   atalhoItem: {
     backgroundColor: '#393939',
     borderRadius: 15,
     padding: 20,
     alignItems: 'center',
     justifyContent: 'center',
-    marginRight: 19,
     width: 110, 
     height: 110, 
   },

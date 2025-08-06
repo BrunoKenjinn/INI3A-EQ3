@@ -1,4 +1,4 @@
-import { StyleSheet, SafeAreaView, View, Text, FlatList, TouchableOpacity } from "react-native";
+import { StyleSheet, SafeAreaView, View, Text, FlatList, TouchableOpacity, Alert } from "react-native";
 import { Header } from "../components/header";
 import FontAwesome5 from '@expo/vector-icons/FontAwesome5';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
@@ -16,7 +16,9 @@ type IconComponentType = ComponentType<IconProps<keyof typeof FontAwesome.glyphM
 
 export default function TelaHome({ navigation }) {
   const [atalhos, setAtalhos] = useState([]);
+  const [title, setTitle] = useState(''); 
   const atalhosComAdicionar = [...atalhos, { id:'adicionar', nome: 'Adicionar', icone: 'plus' }];
+
 
   useFocusEffect(
     useCallback(() => {
@@ -40,6 +42,33 @@ export default function TelaHome({ navigation }) {
         return () => { };
     }, [])
 );
+
+  const handleDelete = async (nome: string) => {
+    Alert.alert(
+      "Excluir Atalho",
+      "Tem certeza que deseja excluir este atalho?",
+      [
+        { text: "Cancelar", style: "cancel" },
+        {
+          text: "Excluir",
+          onPress: async () => {
+            try {
+              const token = await AsyncStorage.getItem("auth_token");
+              await axios.delete(`http://localhost:8000/api/atalhos/${id}`, {
+                headers: {
+                  Authorization: `Bearer ${token}`,
+                },
+              });
+            } catch (error) {
+              console.error("Erro ao excluir atalho:", error.response?.data || error.message);
+            }
+          },
+          style: "destructive",
+        },
+      ]
+    );
+  };
+
 
   const data = [
     {
@@ -129,18 +158,23 @@ export default function TelaHome({ navigation }) {
             data={atalhosComAdicionar}
             keyExtractor={(item) => item.id.toString()}
             horizontal={true}
+
             renderItem={({ item }) => (
                 <View style={{ marginRight: 12 }}>
                     <Atalho
                         iconName={item.icone}
                         text={item.nome}
                         onPress={() => {
-                            if (item.id === 'adicionar') {
-                                  navigation.navigate('TelaAdicionarAtalho');
-                                } else {
-                                    const destino = `Tela${item.nome}`;
-                                    navigation.navigate(destino);
-                                }
+                          if (item.id === 'adicionar') {
+                            navigation.navigate('TelaAdicionarAtalho');
+                          } else {
+                            navigation.navigate(item.rota);
+                          }
+                        }}
+                        onLongPress={() => {
+                        if (item.id !== 'adicionar') {
+                          handleDelete(item.nome); 
+                        }
                         }}
                     />
                 </View>
