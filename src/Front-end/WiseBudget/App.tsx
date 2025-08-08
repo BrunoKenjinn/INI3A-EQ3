@@ -13,6 +13,7 @@ import TelaHome from './screens/TelaHome';
 import TelaOrientacao from './screens/TelaOrientacao';
 import FontAwesome5 from '@expo/vector-icons/FontAwesome5';
 import TelaAdicionarAtalho from './screens/TalaAdicionarAtalho';
+import TelaPerfil from './screens/TelaPerfil';
 
 const Stack = createNativeStackNavigator();
 
@@ -28,12 +29,13 @@ export default function App() {
   });
 
   if (!fontsLoaded) {
-    return null; // ou um splash screen
+    return null;
   }
   
   return (
       <NavigationContainer>
         <Stack.Navigator> 
+            <Stack.Screen name="TelaPerfil" component={TelaPerfil} options={{headerShown: false}}/>
             <Stack.Screen name="TelaInicial" component={TelaInicial} options={{headerShown: false}}/>
             <Stack.Screen name="TelaLogin" component={TelaLogin} options={{headerShown: false}}/>
             <Stack.Screen name="TelaHome" component={TelaHome} options={{headerShown: false}}/>
@@ -42,8 +44,7 @@ export default function App() {
             <Stack.Screen name="TelaCategorias" component={TelaCategorias} options={{headerShown: false}}/>
             <Stack.Screen name="TelaAdicionarCategoria" component={TelaAdicionarCategoria} options={{headerShown: false}}/>
             <Stack.Screen name="TelaCadastro" component={TelaCadastro} options={{headerShown: false}}/>
-            <Stack.Screen name="TelaEditarCategoria" component={TelaEditarCategoria} options={{headerShown: false}}/>
-            
+            <Stack.Screen name="TelaEditarCategoria" component={TelaEditarCategoria} options={{headerShown: false}}/>    
         </Stack.Navigator>
     </NavigationContainer>
   
