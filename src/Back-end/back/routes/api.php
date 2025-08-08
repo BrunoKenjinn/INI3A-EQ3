@@ -47,6 +47,9 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::put('/categorias/{categoria}', [CategoriaController::class, 'atualizar'])->name('categorias.atualizar'); 
     Route::delete('/categorias/{categoria}', [CategoriaController::class, 'excluir'])->name('categorias.excluir');
 
+    //transacoes
+    Route::get('/gastos-por-categoria', [App\Http\Controllers\TransacaoController::class, 'getGastosPorCategoria']);
+
     Route::post('/logout', [LoginController::class, 'sair']);
 
     
