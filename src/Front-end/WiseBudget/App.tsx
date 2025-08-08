@@ -3,6 +3,7 @@ import { SafeAreaView, StyleSheet, Text, View } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator} from '@react-navigation/native-stack';
 import { useFonts } from 'expo-font';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import TelaInicial from './screens/TelaInicial';
 import TelaCadastro from './screens/TelaCadastro';
 import TelaCategorias from './screens/TelaCategorias';

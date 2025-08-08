@@ -13,11 +13,27 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
 
 type IconComponentType = ComponentType<IconProps<keyof typeof FontAwesome.glyphMap>>;
+interface ChartDataItem {
+  name: string;
+  population: number;
+  color: string;
+  legendFontColor: string;
+  legendFontSize: number;
+}
 
 export default function TelaHome({ navigation }) {
   const [atalhos, setAtalhos] = useState([]);
+  const [chartData, setChartData] = useState<ChartDataItem[]>([
+    {
+      name: "Carregando...",
+      population: 100,
+      color: "#5A5A5A",
+      legendFontColor: "#7F7F7F",
+      legendFontSize: 15
+    }
+  ]);
   const [title, setTitle] = useState(''); 
-  const atalhosComAdicionar = [...atalhos, { id:'adicionar', nome: 'Adicionar', icone: 'plus' }];
+  const atalhosComAdicionar = [...atalhos, { id:'adicionar', nome: 'Adicionar', icone: 'plus', rota: 'TelaAdicionarAtalho' }];
 
 
   useFocusEffect(
@@ -36,8 +52,34 @@ export default function TelaHome({ navigation }) {
                 console.error('Erro ao buscar atalhos:', error.response?.data || error.message);
             }
         };
+        const carregarDadosGrafico = async () => {
+          try {
+            const token = await AsyncStorage.getItem('auth_token');
+            const response = await axios.get('http://localhost:8000/api/gastos-por-categoria?periodo=hoje', {
+              headers: { Authorization: `Bearer ${token}` }
+            });
+
+            if (response.data && response.data.length > 0) {
+              setChartData(response.data);
+            } else {
+              setChartData([
+                {
+                  name: "Nenhum Gasto",
+                  population: 100, 
+                  color: "#5A5A5A", 
+                  legendFontColor: "#7F7F7F",
+                  legendFontSize: 15
+                }
+              ]);
+            }
+
+          } catch (error) {
+            console.error('Erro ao buscar dados do gráfico:', error.response?.data || error.message);
+          }
+        };
 
         carregarAtalhos();
+        carregarDadosGrafico();
 
         return () => { };
     }, [])
@@ -69,23 +111,6 @@ export default function TelaHome({ navigation }) {
     );
   };
 
-
-  const data = [
-    {
-      name: "Valorant",
-      population: 70,
-      color: "rgba(131, 167, 234, 1)",
-      legendFontColor: "#7F7F7F",
-      legendFontSize: 15
-    },
-    {
-      name: "Restaurante",
-      population: 30,
-      color: "#F00",
-      legendFontColor: "#7F7F7F",
-      legendFontSize: 15
-    }
-  ];
 
   const chartConfig = {
     backgroundGradientFrom: "#1E2923",
@@ -119,9 +144,9 @@ export default function TelaHome({ navigation }) {
           <Text style={{color: 'white', fontFamily: 'Poppins-Regular'}}>
             Gráfico de Setores
           </Text>
-          <View style={{width: '100%', backgroundColor: '#393939', borderRadius: 20, marginTop: 10}}>
+          <View style={{width: '100%', backgroundColor: '#393939', borderRadius: 20, marginTop: 10, alignItems: "center"}}>
           <PieChart
-              data={data}
+              data={chartData}
               width={400}
               height={150}
               chartConfig={chartConfig} 
@@ -165,11 +190,7 @@ export default function TelaHome({ navigation }) {
                         iconName={item.icone}
                         text={item.nome}
                         onPress={() => {
-                          if (item.id === 'adicionar') {
-                            navigation.navigate('TelaAdicionarAtalho');
-                          } else {
                             navigation.navigate(item.rota);
-                          }
                         }}
                         onLongPress={() => {
                         if (item.id !== 'adicionar') {
