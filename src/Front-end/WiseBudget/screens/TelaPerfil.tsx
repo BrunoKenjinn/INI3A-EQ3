@@ -1,11 +1,11 @@
-import { Image, SafeAreaView, Text, View } from 'react-native'
+import { Image, SafeAreaView, Text, TouchableOpacity, View, StyleSheet } from 'react-native'
 import { Header } from '../components/header'
 import FontAwesome5 from '@expo/vector-icons/FontAwesome5';
 
 export default function TelaPerfil() {
     return (
         <SafeAreaView style={{flex: 1, backgroundColor: '#2c2c2c'}}>
-            <View style={{flex: 1}}>
+            <View style={{flex: 1, position: 'relative'}}>
                 <Header 
                     leftIconName="arrow-left"
                     leftIconColor="#f1c40f"
@@ -20,10 +20,67 @@ export default function TelaPerfil() {
 
                 <Image source={require('../assets/images/FotoPerfil.png')}/>
 
-                <View style={{position: 'absolute', bottom: 0, left: 0,right: 0,backgroundColor: '#', borderTopLeftRadius: 20, borderTopRightRadius: 20, zIndex: 99}}>
-                    
+                <View style={{position: 'absolute', bottom: 0, left: 0,right: 0,backgroundColor: '#2c2c2c', borderTopLeftRadius: 30, borderTopRightRadius: 30, zIndex: 99, height: 530, padding: 20}}>
+                    <View style={{display: 'flex', justifyContent: 'space-between', flexDirection: 'row', marginTop: 20}}>
+                        <View>
+                            <Text style={{color: '#f1c40f', fontFamily:'Poppins-Bold',fontSize: 30, lineHeight: 25}}>Bruno Kenji</Text>
+                            <Text style={{color:'#a3a3a3',fontFamily:'Poppins-Regular',fontSize: 16}}>25, Pessoa física</Text>
+                        </View>
+                        <TouchableOpacity style={styles.botaoEditar}>
+                            <Text style={{fontFamily: 'Poppins-Bold', fontSize: 18, color: '#2c2c2c'}}>Editar</Text>
+                        </TouchableOpacity>
+                    </View>
+                </View>
+
+                <View style={styles.botoes}>
+                    <View style={styles.botao}>
+                        <FontAwesome5 name="user-friends" size={24} color="#f1c40f" />
+                        <Text>Amigos</Text>
+                    </View>
+                    <View style={styles.botao}>
+                        <FontAwesome5 name="sliders-h" size={24} color="#f1c40f" />
+                        <Text>Configs</Text>
+                    </View>
+                    <View style={styles.botao}>
+                        <FontAwesome5 name="comment-alt" size={24} color="#f1c40f" />
+                        <Text>Chat</Text>
+                    </View>
+                    <View style={styles.botao}>
+                        <FontAwesome5 name="wallet" size={24} color="#f1c40f" />
+                        <Text>Carteira</Text>
+                    </View>
+                    <View style={styles.botao}>
+                        <FontAwesome5 name="piggy-bank" size={24} color="#f1c40f" />
+                        <Text>Cofrinho</Text>
+                    </View>
+                    <View style={styles.botao}>
+                        <FontAwesome5 name="sign-out-alt" size={24} color="#f1c40f" />
+                        <Text>Sair</Text>
+                    </View>
                 </View>
             </View>  
         </SafeAreaView>
     )
 }
+
+const styles = StyleSheet.create({
+    botaoEditar: {
+        backgroundColor: '#f1c40f',
+        borderRadius : 20,
+        padding : 5,
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        width: 120,
+    },
+    botoes: {
+        display: 'flex',
+        flexDirection: 'row',
+        borderColor: '#f1c40f',
+        borderWidth: 1,
+        zIndex: 100
+    },
+    botao: {
+
+    }
+})
