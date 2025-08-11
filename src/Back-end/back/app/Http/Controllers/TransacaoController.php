@@ -24,6 +24,7 @@ class TransacaoController extends Controller
             ->join('categorias', 'transacaos.categoria_id', '=', 'categorias.id')
             ->select(
                 'categorias.nome as categoria_nome',
+                'categorias.cor as categoria_cor',
                 DB::raw('SUM(transacaos.valor) as total_gasto')
             );
 
@@ -40,13 +41,13 @@ class TransacaoController extends Controller
                 break;
         }
 
-        $gastos = $query->groupBy('categorias.nome')->get();
+        $gastos = $query->groupBy('categorias.id', 'categorias.nome', 'categorias.cor')->get();
 
         $dadosFormatados = $gastos->map(function ($item) {
             return [
                 'name' => $item->categoria_nome,
                 'population' => (float) $item->total_gasto,
-                'color' => '#' . substr(md5(rand()), 0, 6), 
+                'color' => $item->categoria_cor, 
                 'legendFontColor' => "#7F7F7F",
                 'legendFontSize' => 15
             ];

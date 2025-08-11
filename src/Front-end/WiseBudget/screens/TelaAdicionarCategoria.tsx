@@ -4,12 +4,15 @@ import { SafeAreaView, Text, View, StyleSheet, TextInput, Button, TouchableOpaci
 import { Header } from '../components/header';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import ColorPicker, { fromHsv } from 'react-native-color-picker';
+
 
 
 export default function TelaAdicionarCategoria({navigation}) {
 
     const [selectedValue, setSelectedValue] = useState('cutlery');
     const [title, setTitle] = useState('');
+    const [corSelecionada, setCorSelecionada] = useState('#FF6384');
 
     const handleSave = async () => {
         try {
@@ -17,7 +20,8 @@ export default function TelaAdicionarCategoria({navigation}) {
 
             const response = await axios.post('http://localhost:8000/api/categorias', {
                 nome: title,
-                icone: selectedValue
+                icone: selectedValue,
+                cor: corSelecionada,
             }, {
                 headers: {
                     Authorization: `Bearer ${token}`,
@@ -77,6 +81,18 @@ export default function TelaAdicionarCategoria({navigation}) {
                     </Picker>
                 </View>
 
+                <View style={styles.inputArea}>
+                        <Text style={styles.textInput}>Selecione a cor</Text>
+                        <View style={{height: 300}}>
+                            <ColorPicker
+                                onColorChange={(color: any) => setCorSelecionada(fromHsv(color))}
+                                style={{flex: 1}}
+                                hideSliders={true}
+                                defaultColor={corSelecionada}
+                            />
+                        </View>
+                </View>
+
                 <TouchableOpacity style={styles.button} onPress={handleSave}>
                     <Text style={styles.textButton}>Salvar</Text>
                 </TouchableOpacity>
@@ -95,6 +111,7 @@ const styles = StyleSheet.create({
     main: {
         display: 'flex',
         alignItems: 'center',
+        paddingBottom: 50,
     },
 
     h1: {

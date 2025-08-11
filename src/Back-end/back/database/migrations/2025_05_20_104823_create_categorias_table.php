@@ -15,6 +15,7 @@ return new class extends Migration
             $table->increments('id');
             $table->string('nome');
             $table->string('icone');
+            $table->string('cor');
             $table->foreignId('user_id')->nullable()->constrained()->onDelete('cascade');
             
             $table->timestamps();

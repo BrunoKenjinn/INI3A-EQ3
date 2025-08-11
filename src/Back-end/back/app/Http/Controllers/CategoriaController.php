@@ -41,11 +41,13 @@ class CategoriaController extends Controller
                 }),
             ],
             'icone' => 'required|string|max:255',
+            'cor' => 'required|string|size:7',
         ]);
 
         $categoria = new Categoria();
         $categoria->nome = $validatedData['nome'];
         $categoria->icone = $validatedData['icone'];
+        $categoria->cor = $validatedData['cor'];
         $categoria->user_id = $user->id; 
         $categoria->save();
 
@@ -72,6 +74,7 @@ class CategoriaController extends Controller
                 }),
             ],
             'icone' => 'sometimes|required|string|max:255',
+            'cor' => 'sometimes|required|string|size:7',
         ]);
 
         $categoria->update($validatedData);
@@ -111,6 +114,7 @@ class CategoriaController extends Controller
                 $categoriasParaNovoUsuario[] = [
                     'nome' => $modelo->nome,
                     'icone' => $modelo->icone,
+                    'cor' => $modelo->cor,
                     'user_id' => $user->id,
                     'created_at' => $timestamp,
                     'updated_at' => $timestamp,
