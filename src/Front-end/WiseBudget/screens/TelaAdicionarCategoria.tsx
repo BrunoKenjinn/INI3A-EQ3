@@ -4,7 +4,9 @@ import { SafeAreaView, Text, View, StyleSheet, TextInput, Button, TouchableOpaci
 import { Header } from '../components/header';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import ColorPicker, { fromHsv } from 'react-native-color-picker';
+import WheelColorPicker from 'react-native-wheel-color-picker';
+
+
 
 
 
@@ -82,21 +84,33 @@ export default function TelaAdicionarCategoria({navigation}) {
                 </View>
 
                 <View style={styles.inputArea}>
-                        <Text style={styles.textInput}>Selecione a cor</Text>
-                        <View style={{height: 300}}>
-                            <ColorPicker
-                                onColorChange={(color: any) => setCorSelecionada(fromHsv(color))}
-                                style={{flex: 1}}
-                                hideSliders={true}
-                                defaultColor={corSelecionada}
-                            />
-                        </View>
-                </View>
+                    <Text style={styles.textInput}>Selecione a cor</Text>
+                    <View style={styles.inputAreaCor}>
+                            <View style={{ height: 200 }}>
+                                <WheelColorPicker
+                                    color={corSelecionada}
+                                    onColorChangeComplete={setCorSelecionada}
+                                    thumbSize={20}
+                                    sliderSize={20}
+                                    noSnap={true}
+                                    row={false}
+                                />
+                            </View>
 
-                <TouchableOpacity style={styles.button} onPress={handleSave}>
-                    <Text style={styles.textButton}>Salvar</Text>
-                </TouchableOpacity>
-            </View>
+                            <View style={{
+                                backgroundColor: corSelecionada,
+                                width: 30,
+                                height: 30,
+                                borderRadius: 25,
+                                marginTop: 10
+                            }} />
+                            </View>
+                    </View>
+                    <TouchableOpacity style={styles.button} onPress={handleSave}>
+                        <Text style={styles.textButton}>Salvar</Text>
+                    </TouchableOpacity>
+                </View>
+                
         </SafeAreaView>
     </>
 }
@@ -107,24 +121,27 @@ const styles = StyleSheet.create({
         height: '100%',
         padding: 20,
     },
-
     main: {
         display: 'flex',
         alignItems: 'center',
         paddingBottom: 50,
     },
-
     h1: {
         fontSize: 30,
         fontWeight: 'bold',
         color: '#f1c40f',
         marginTop: 25
     },
-
     inputArea: {
-        width: '100%'
+        width: '95%',
+        margin: 10
     },
-
+    inputAreaCor: {
+        width: '80%',
+        margin:20,
+        marginLeft:40,
+        marginBottom: 40,
+    },
     input: {
         backgroundColor: '#393939',
         padding: 10,
@@ -132,13 +149,11 @@ const styles = StyleSheet.create({
         width: '100%',
         color: '#ffffff'
     },
-
     textInput: {
         color: '#ffffff',
         marginLeft: 15,
         marginBottom: 5
     },
-
     button: {
         backgroundColor: '#f1c40f',
         padding: 5,
@@ -149,7 +164,6 @@ const styles = StyleSheet.create({
         borderRadius: 15,
         marginTop: 20
     },
-
     textButton: {
         fontSize: 20,
         fontWeight: 'bold'

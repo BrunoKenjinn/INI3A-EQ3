@@ -4,12 +4,14 @@ import { SafeAreaView, Text, View, StyleSheet, TextInput, TouchableOpacity, Aler
 import { Header } from '../components/header';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import WheelColorPicker from 'react-native-wheel-color-picker';
 
 
 export default function TelaEditarCategoria({ navigation , route} ) {;
     const { categoria } = route.params;
     const [selectedValue, setSelectedValue] = useState(categoria.icone);
     const [title, setTitle] = useState(categoria.nome);
+    const [corSelecionada, setCorSelecionada] = useState(categoria.cor || '#FF6384');
 
     
 
@@ -18,7 +20,8 @@ export default function TelaEditarCategoria({ navigation , route} ) {;
             const token = await AsyncStorage.getItem('auth_token');
             const response = await axios.put(`http://localhost:8000/api/categorias/${categoria.id}`, {
             nome: title,
-            icone: selectedValue
+            icone: selectedValue,
+            cor: corSelecionada,
             }, {
             headers: {
                 Authorization: `Bearer ${token}`
@@ -56,23 +59,25 @@ export default function TelaEditarCategoria({ navigation , route} ) {;
     };
 
 
-    return <>
+    return (
         <SafeAreaView style={styles.container}>
-            <Header leftIconName="arrowleft"
-                                    leftIconSize={24}
-                                    leftIconColor="#f1c40f"
-                                    rightIconName="bells"
-                                    rightIconSize={24}
-                                    rightIconColor="#f1c40f"
-                                    title="Categorias"/>
+            <Header
+                leftIconName="arrowleft"
+                leftIconSize={24}
+                leftIconColor="#f1c40f"
+                rightIconName="bells"
+                rightIconSize={24}
+                rightIconColor="#f1c40f"
+                title="Categorias"
+            />
 
             <View style={styles.main}>
                 <Text style={styles.h1}>Editar Categoria</Text>
 
                 <View style={styles.inputArea}>
                     <Text style={styles.textInput}>Digite o nome</Text>
-                    <TextInput 
-                        placeholder={categoria.nome} 
+                    <TextInput
+                        placeholder={categoria.nome}
                         style={styles.input}
                         value={title}
                         onChangeText={setTitle}
@@ -80,10 +85,10 @@ export default function TelaEditarCategoria({ navigation , route} ) {;
                 </View>
 
                 <View style={styles.inputArea}>
-                    <Text style={styles.textInput}>Selecione o icone</Text>
+                    <Text style={styles.textInput}>Selecione o ícone</Text>
                     <Picker
                         selectedValue={selectedValue}
-                        onValueChange={(itemValue, itemIndex) => setSelectedValue(itemValue)}
+                        onValueChange={(itemValue) => setSelectedValue(itemValue)}
                         style={{ height: 40, backgroundColor: '#393939', borderRadius: 20, color: '#ffffff' }}
                     >
                         <Picker.Item label="Alimentação" value="cutlery" />
@@ -100,6 +105,30 @@ export default function TelaEditarCategoria({ navigation , route} ) {;
                     </Picker>
                 </View>
 
+                <View style={styles.inputArea}>
+                    <Text style={styles.textInput}>Selecione a cor</Text>
+                    <View style={styles.inputAreaCor}>
+                        <View style={{ height: 200 }}>
+                            <WheelColorPicker
+                                color={corSelecionada}
+                                onColorChangeComplete={setCorSelecionada}
+                                thumbSize={20}
+                                sliderSize={20}
+                                noSnap={true}
+                                row={false}
+                            />
+                        </View>
+
+                        <View style={{
+                            backgroundColor: corSelecionada,
+                            width: 30,
+                            height: 30,
+                            borderRadius: 25,
+                            marginTop: 10
+                        }} />
+                    </View>
+                </View>
+
                 <TouchableOpacity style={styles.button} onPress={handleUpdate}>
                     <Text style={styles.textButton}>Editar</Text>
                 </TouchableOpacity>
@@ -109,7 +138,7 @@ export default function TelaEditarCategoria({ navigation , route} ) {;
                 </TouchableOpacity>
             </View>
         </SafeAreaView>
-    </>
+    );
 }
 
 const styles = StyleSheet.create({
@@ -118,23 +147,27 @@ const styles = StyleSheet.create({
         height: '100%',
         padding: 20,
     },
-
     main: {
         display: 'flex',
         alignItems: 'center',
+        paddingBottom: 50,
     },
-
     h1: {
         fontSize: 30,
         fontWeight: 'bold',
         color: '#f1c40f',
         marginTop: 25
     },
-
     inputArea: {
-        width: '100%'
+        width: '95%',
+        margin: 10
     },
-
+    inputAreaCor: {
+        width: '80%',
+        margin: 20,
+        marginLeft: 40,
+        marginBottom: 40,
+    },
     input: {
         backgroundColor: '#393939',
         padding: 10,
@@ -142,13 +175,11 @@ const styles = StyleSheet.create({
         width: '100%',
         color: '#ffffff'
     },
-
     textInput: {
         color: '#ffffff',
         marginLeft: 15,
         marginBottom: 5
     },
-
     button: {
         backgroundColor: '#f1c40f',
         padding: 5,
@@ -159,7 +190,6 @@ const styles = StyleSheet.create({
         borderRadius: 15,
         marginTop: 20
     },
-
     textButton: {
         fontSize: 20,
         fontWeight: 'bold'
