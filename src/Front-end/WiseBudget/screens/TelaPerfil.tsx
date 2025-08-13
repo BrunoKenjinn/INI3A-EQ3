@@ -1,8 +1,11 @@
 import { Image, SafeAreaView, Text, TouchableOpacity, View, StyleSheet } from 'react-native'
 import { Header } from '../components/header'
 import FontAwesome5 from '@expo/vector-icons/FontAwesome5';
+import { useAuth } from '../App';
 
 export default function TelaPerfil() {
+    const {signOut} = useAuth();
+
     return (
         <SafeAreaView style={{flex: 1, backgroundColor: '#2c2c2c'}}>
             <View style={{flex: 1, position: 'relative'}}>
@@ -53,10 +56,10 @@ export default function TelaPerfil() {
                         <FontAwesome5 name="piggy-bank" size={24} color="#f1c40f" />
                         <Text>Cofrinho</Text>
                     </View>
-                    <View style={styles.botao}>
+                    <TouchableOpacity style={styles.botao} onPress={signOut}>
                         <FontAwesome5 name="sign-out-alt" size={24} color="#f1c40f" />
                         <Text>Sair</Text>
-                    </View>
+                    </TouchableOpacity>
                 </View>
             </View>  
         </SafeAreaView>
@@ -81,6 +84,7 @@ const styles = StyleSheet.create({
         zIndex: 100
     },
     botao: {
-
+        padding: 10,
+        alignItems: 'center',
     }
 })

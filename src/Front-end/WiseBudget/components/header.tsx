@@ -1,7 +1,11 @@
 import { View, StyleSheet, Text } from "react-native";
 import AntDesign from '@expo/vector-icons/AntDesign';
-import { useNavigation } from '@react-navigation/native';
+import { NavigationProp, useNavigation } from '@react-navigation/native';
 import { TouchableOpacity } from 'react-native';
+
+type RootStackParamList = {
+  TelaPerfil: undefined;
+};
 
 type Props = {
   title: string;
@@ -28,18 +32,26 @@ export function Header({
 }: Props) {
 
   
-const navigation = useNavigation();
+const navigation = useNavigation<NavigationProp<RootStackParamList>>();
 
   return (
     <View style={[styles.header, { marginTop: 28 }]}>
-      {leftIconName && (
-      <TouchableOpacity onPress={() => navigation.goBack()}>
-        <LeftIcon name={leftIconName} size={leftIconSize} color={leftIconColor} />
-      </TouchableOpacity>
-    )}
+      {leftIconName ? (
+        <TouchableOpacity onPress={() => navigation.goBack()}>
+          <LeftIcon name={leftIconName} size={leftIconSize} color={leftIconColor} />
+        </TouchableOpacity>
+      ) : (
+        <View style={{ width: leftIconSize }} />
+      )}
+
       <Text style={[styles.title, { fontSize: 20 }]}>{title}</Text>
-      {rightIconName && (
-        <RightIcon name={rightIconName} size={rightIconSize} color={rightIconColor} />
+
+      {rightIconName ? (
+        <TouchableOpacity onPress={() => navigation.navigate('TelaPerfil')}>
+          <RightIcon name={rightIconName} size={rightIconSize} color={rightIconColor} />
+        </TouchableOpacity>
+      ) : (
+        <View style={{ width: rightIconSize }} /> 
       )}
     </View>
   );

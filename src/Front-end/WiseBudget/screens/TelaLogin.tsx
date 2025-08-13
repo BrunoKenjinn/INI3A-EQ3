@@ -4,9 +4,10 @@ import { useState } from "react";
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
+import { useAuth } from "../App";
 
 export default function TelaLogin({ navigation }) {
-
+    const { signIn } = useAuth();
     const [mostrarSenha, setMostrarSenha] = useState(false);
     const [identifier, setIdentifier] = useState('');
     const [password, setPassword] = useState('');
@@ -22,16 +23,12 @@ export default function TelaLogin({ navigation }) {
             password: password,
         })
         .then(async response => {
-            const { user, access_token } = response.data;
-
-            navigation.navigate("TelaHome");
-
-            await AsyncStorage.setItem('auth_token', access_token);
-            await AsyncStorage.setItem('user', JSON.stringify(user));
-
-            
-            console.log('Token:', access_token);
-            console.log('Dados do Usuário:', user);
+            const {access_token } = response.data;
+            if (access_token){
+                signIn(access_token);
+            } else{
+                Alert.alert("Token nao recebido");
+            }
         })
         .catch(error => {
             if (error.response) {
