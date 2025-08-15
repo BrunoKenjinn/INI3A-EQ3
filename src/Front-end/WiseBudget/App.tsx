@@ -35,12 +35,12 @@ function AuthStack() {
 function AppStack() {
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
+      <Stack.Screen name="TelaOrientacao" component={TelaOrientacao} />
       <Stack.Screen name="TelaHome" component={TelaHome} />
       <Stack.Screen name="TelaCategorias" component={TelaCategorias} />
       <Stack.Screen name="TelaAdicionarCategoria" component={TelaAdicionarCategoria} />
       <Stack.Screen name="TelaEditarCategoria" component={TelaEditarCategoria} />
       <Stack.Screen name="TelaAdicionarAtalho" component={TelaAdicionarAtalho} />
-      <Stack.Screen name="TelaOrientacao" component={TelaOrientacao} />
       <Stack.Screen name="TelaPerfil" component={TelaPerfil} />
     </Stack.Navigator>
   );

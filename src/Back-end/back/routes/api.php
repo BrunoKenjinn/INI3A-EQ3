@@ -6,6 +6,7 @@ use App\Http\Controllers\CategoriaController;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\UsuarioController;
 use App\Http\Controllers\AtalhoController;
+use App\Http\Controllers\TransacaoController;
 
 /*
 |--------------------------------------------------------------------------
@@ -48,7 +49,9 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::delete('/categorias/{categoria}', [CategoriaController::class, 'excluir'])->name('categorias.excluir');
 
     //transacoes
-    Route::get('/gastos-por-categoria', [App\Http\Controllers\TransacaoController::class, 'getGastosPorCategoria']);
+    Route::get('/gastos-por-categoria', [TransacaoController::class, 'getGastosPorCategoria']);
+    Route::get('/entradas-hoje', [TransacaoController::class, 'getEntradasHoje']);
+
 
     Route::post('/logout', [LoginController::class, 'sair']);
 

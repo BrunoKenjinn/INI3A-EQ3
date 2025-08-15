@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useRef, useState, useEffect } from "react";
 import {
   Animated,
   Dimensions,
@@ -7,6 +7,8 @@ import {
   Text,
   View,
   TouchableOpacity,
+  ScrollView,
+  Image,
 } from "react-native";
 import { StatusBar } from "expo-status-bar";
 
@@ -29,8 +31,28 @@ const slides = [
 
 export default function OnboardingScreen() {
   const scrollX = useRef(new Animated.Value(0)).current;
-  const scrollRef = useRef(null);
+  const scrollRef = useRef<ScrollView>(null);
   const [currentIndex, setCurrentIndex] = useState(0);
+  
+  // Valor animado para a opacidade do botão
+  const buttonOpacity = useRef(new Animated.Value(0)).current;
+
+  // Efeito para animar o botão quando chegar na última tela
+  useEffect(() => {
+    if (currentIndex === slides.length - 1) {
+      Animated.timing(buttonOpacity, {
+        toValue: 1,
+        duration: 500, // Duração da animação em milissegundos
+        useNativeDriver: true,
+      }).start();
+    } else {
+      Animated.timing(buttonOpacity, {
+        toValue: 0,
+        duration: 200,
+        useNativeDriver: true,
+      }).start();
+    }
+  }, [currentIndex]);
 
   const handleNext = () => {
     if (currentIndex < slides.length - 1 && scrollRef.current) {
@@ -44,17 +66,28 @@ export default function OnboardingScreen() {
     }
   };
 
+  const handleFinish = () => {
+    // Adicione a lógica para o que acontece ao concluir
+    // Por exemplo, navegar para a tela principal do app
+    console.log("Onboarding concluído!");
+  };
+
   const onScroll = Animated.event(
     [{ nativeEvent: { contentOffset: { x: scrollX } } }],
     {
       useNativeDriver: false,
-      listener: (event) => {
+      listener: (event: { nativeEvent: { contentOffset: { x: any; }; }; }) => {
         const x = event.nativeEvent.contentOffset.x;
-        const index = Math.round(x / width);
-        setCurrentIndex(index);
+        setCurrentIndex(Math.round(x / width));
       },
     }
   );
+
+  const images = [
+    require("../assets/images/circle-1.png"),
+    require("../assets/images/circle-2.png"),
+    require("../assets/images/circle-3.png"),
+  ];
 
   return (
     <SafeAreaView style={styles.container}>
@@ -70,7 +103,9 @@ export default function OnboardingScreen() {
       >
         {slides.map((slide, index) => (
           <View key={index} style={styles.slide}>
-            <View style={styles.circle}></View>
+            <View style={styles.circle}>
+              <Image source={images[index]} style={{ width: '100%', height: '100%' }} />
+            </View>
             <Text style={styles.title}>{slide.title}</Text>
             <Text style={styles.text}>{slide.text}</Text>
           </View>
@@ -93,19 +128,29 @@ export default function OnboardingScreen() {
           return (
             <Animated.View
               key={index}
-              style={[styles.dot, { width: dotWidth, opacity }]} />
+              style={[styles.dot, { width: dotWidth, opacity }]}
+            />
           );
         })}
       </View>
 
-      <View style={styles.arrowsContainer}>
-        <TouchableOpacity onPress={handlePrev} disabled={currentIndex === 0}>
-          <Text style={[styles.arrow, currentIndex === 0 && styles.arrowDisabled]}>{"<"}</Text>
-        </TouchableOpacity>
-        <TouchableOpacity onPress={handleNext} disabled={currentIndex === slides.length - 1}>
-          <Text style={[styles.arrow, currentIndex === slides.length - 1 && styles.arrowDisabled]}>{">"}</Text>
-        </TouchableOpacity>
-      </View>
+      {/* Renderização condicional: mostra setas ou o botão "Concluir" */}
+      {currentIndex === slides.length - 1 ? (
+        <Animated.View style={[styles.buttonContainer, { opacity: buttonOpacity }]}>
+          <TouchableOpacity style={styles.button} onPress={handleFinish} activeOpacity={0.7}>
+            <Text style={styles.buttonText}>Concluir</Text>
+          </TouchableOpacity>
+        </Animated.View>
+      ) : (
+        <View style={styles.arrowsContainer}>
+          <TouchableOpacity onPress={handlePrev} disabled={currentIndex === 0}>
+            <Text style={[styles.arrow, currentIndex === 0 && styles.arrowDisabled]}>{"<"}</Text>
+          </TouchableOpacity>
+          <TouchableOpacity onPress={handleNext} disabled={currentIndex === slides.length - 1}>
+            <Text style={[styles.arrow, currentIndex === slides.length - 1 && styles.arrowDisabled]}>{">"}</Text>
+          </TouchableOpacity>
+        </View>
+      )}
     </SafeAreaView>
   );
 }
@@ -116,40 +161,42 @@ const styles = StyleSheet.create({
     backgroundColor: "#1e1e1e",
   },
   slide: {
-    width,
-    paddingHorizontal: 40,
+    width: width,
+    padding: 20,
     justifyContent: "center",
     alignItems: "center",
   },
   circle: {
-    margin: '20%',
-    width: 220,
-    height: 220,
-    backgroundColor: "#f1c40f",
-    borderRadius: '100%',
-    alignItems: "center",
-    justifyContent: "center",
-    marginBottom: 24,
+    marginTop: 50,
+    width: 230,
+    height: 230,
+    // A cor de fundo é desnecessária se a imagem preenche o círculo
+    borderRadius: 115, // Metade da largura/altura para ser um círculo perfeito
+    marginBottom: 20,
+    overflow: 'hidden', // Garante que a imagem não saia dos limites do círculo
   },
   title: {
-    fontSize: 20,
+    fontFamily: 'Poppins-Regular',
+    fontSize: 16,
     color: "#fff",
-    fontFamily: 'Poppins-Bold',
-    marginBottom: 16,
+    fontWeight: "bold",
+    marginTop: 30,
+    textAlign: "left",
+    width: "90%",
   },
   text: {
-    marginTop: 10,
-    fontSize: 13,
-    color: "#fff",
-    textAlign: "justify",
     fontFamily: 'Poppins-Regular',
+    marginTop: 20,
+    fontSize: 14,
+    color: "#fff",
+    textAlign: "left",
+    lineHeight: 23,
+    width: "90%",
   },
   dotsContainer: {
     flexDirection: "row",
     justifyContent: "center",
-    alignItems: "center",
     marginBottom: 16,
-    gap: 8,
   },
   dot: {
     height: 8,
@@ -160,15 +207,39 @@ const styles = StyleSheet.create({
   arrowsContainer: {
     flexDirection: "row",
     justifyContent: "space-between",
-    paddingHorizontal: 32,
-    paddingBottom: '20%',
+    paddingHorizontal: 40,
+    paddingBottom: 30,
+    height: 50, // Altura fixa para evitar pulos na interface
+    alignItems: 'center',
   },
   arrow: {
-    fontSize: 24,
+    fontSize: 28,
     color: "#f1c40f",
     fontWeight: "bold",
   },
   arrowDisabled: {
     opacity: 0.3,
   },
-}); 
+  // NOVOS ESTILOS PARA O BOTÃO
+  buttonContainer: {
+    paddingHorizontal: 40,
+    paddingBottom: 30,
+    height: 50, // Mesma altura das setas para consistência
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  button: {
+    backgroundColor: '#f1c40f',
+    paddingVertical: 6,
+    paddingHorizontal: 50,
+    borderRadius: 25,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  buttonText: {
+    color: '#1e1e1e',
+    fontSize: 14,
+    fontWeight: 'bold',
+    fontFamily: 'Poppins-Regular',
+  },
+});
