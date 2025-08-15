@@ -55,4 +55,25 @@ class TransacaoController extends Controller
 
         return response()->json($dadosFormatados);
     }
+
+    public function getEntradasHoje(Request $request)
+    {
+        $user = Auth::user();
+
+        $entradas = $user->transacoes()
+            ->join('categorias', 'transacaos.categoria_id', '=', 'categorias.id')
+            ->where('transacaos.tipo', 'saida') 
+            ->whereDate('transacaos.data', today()) 
+            ->orderBy('transacaos.created_at', 'desc') 
+            ->get([
+                'transacaos.id', 
+                'transacaos.fonte as descricao', 
+                'transacaos.valor', 
+                'transacaos.created_at as data',
+                'categorias.icone', 
+                'categorias.cor'    
+        ]);
+
+        return response()->json($entradas);
+    }
 }

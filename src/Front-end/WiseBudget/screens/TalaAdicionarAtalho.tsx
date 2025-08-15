@@ -34,13 +34,13 @@ export default function TelaAdicionarAtalhos({ navigation }) {
     };
 
     const atalhosPredefinidos = [
-    { id: 1, nome: 'Balanço', icone: 'money', rota: 'TelaBalanco' },
-    { id: 2, nome: 'Análise Rápida', icone: 'flash', rota: 'TelaAnaliseRapida' },
-    { id: 3, nome: 'Categorias', icone: 'th-large', rota: 'TelaCategorias' },
-    { id: 4, nome: 'Configurações', icone: 'cog', rota: 'TelaConfiguracoes' },
-    { id: 5, nome: 'Adicionar Gastos', icone: 'plus', rota: 'TelaAdicionarGastos' },
-    { id: 6, nome: 'Metas', icone: 'bullseye', rota: 'TelaMetas' },
-    { id: 7, nome: 'Transações', icone: 'exchange', rota: 'TelaTransacoes' },
+    { id: 2, nome: 'Balanço', icone: 'money', rota: 'TelaBalanco' },
+    { id: 3, nome: 'Análise Rápida', icone: 'flash', rota: 'TelaAnaliseRapida' },
+    { id: 4, nome: 'Categorias', icone: 'th-large', rota: 'TelaCategorias' },
+    { id: 5, nome: 'Configurações', icone: 'cog', rota: 'TelaConfiguracoes' },
+    { id: 6, nome: 'Adicionar Gastos', icone: 'plus', rota: 'TelaAdicionarGastos' },
+    { id: 7, nome: 'Metas', icone: 'bullseye', rota: 'TelaMetas' },
+    { id: 8, nome: 'Transações', icone: 'exchange', rota: 'TelaTransacoes' },
 ];
 
     const [atalhos, setAtalhos] = useState(atalhosPredefinidos);
