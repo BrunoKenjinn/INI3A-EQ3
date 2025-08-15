@@ -8,6 +8,7 @@ import { PieChart } from 'react-native-chart-kit'
 import { ComponentType, useCallback, useState } from 'react';
 import { IconProps } from '@expo/vector-icons/build/createIconSet';
 import { Atalho } from "../components/atalho";
+import { TransacaoCard } from "../components/transacaoCard";
 import { useFocusEffect } from "@react-navigation/native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
@@ -33,7 +34,19 @@ export default function TelaHome({ navigation }) {
     }
   ]);
   const [title, setTitle] = useState(''); 
-  const atalhosComAdicionar = [...atalhos, { id:'adicionar', nome: 'Adicionar', icone: 'plus', rota: 'TelaAdicionarAtalho' }];
+  const atalhosComAdicionar = [...atalhos, { id:0, nome: 'Adicionar', icone: 'plus', rota: 'TelaAdicionarAtalho' }];
+
+  interface Entrada {
+    id: number;
+    descricao: string;
+    valor: number;
+    data: string;
+    icone: React.ComponentProps<typeof FontAwesome>['name']; 
+    cor: string;
+  }
+
+
+  const [entradasHoje, setEntradasHoje] = useState<Entrada[]>([]);
 
 
   useFocusEffect(
@@ -52,6 +65,7 @@ export default function TelaHome({ navigation }) {
                 console.error('Erro ao buscar atalhos:', error.response?.data || error.message);
             }
         };
+
         const carregarDadosGrafico = async () => {
           try {
             const token = await AsyncStorage.getItem('auth_token');
@@ -78,14 +92,27 @@ export default function TelaHome({ navigation }) {
           }
         };
 
+        const carregarEntradas = async () => {
+          try {
+            const token = await AsyncStorage.getItem('auth_token');
+            const response = await axios.get('http://localhost:8000/api/entradas-hoje', {
+              headers: { Authorization: `Bearer ${token}` }
+            });
+            setEntradasHoje(response.data);
+          } catch (error) {
+            console.error('Erro ao buscar entradas:', error.response?.data || error.message);
+          }
+        };
+
         carregarAtalhos();
         carregarDadosGrafico();
+        carregarEntradas();
 
         return () => { };
     }, [])
 );
 
-  const handleDelete = async (nome: string) => {
+  const handleDelete = async (id: number) => {
     Alert.alert(
       "Excluir Atalho",
       "Tem certeza que deseja excluir este atalho?",
@@ -162,16 +189,22 @@ export default function TelaHome({ navigation }) {
           <Text style={{color: 'white', fontFamily: 'Poppins-Regular'}}>
             Sua carteira
           </Text>
-          <View style={{width: '100%', backgroundColor: '#EAE3C9', borderRadius: 20, marginTop: 10, display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', padding: 20}}>
-            <View style={{display: 'flex', flexDirection: 'row', gap: 10}}>
-              <View style={{height: 50, width: 50, borderRadius: 10, backgroundColor: '#B1B1B1'}}></View>
-              <View>
-                <Text style={{fontFamily: 'Poppins-Bold'}}>Salário</Text>
-                <Text style={{fontFamily: 'Poppins-Regular', color: '#B7B7B7'}}>12:34 - Abril 12</Text>
-              </View>
-            </View>
-            <Text style={{fontFamily: 'Poppins-Bold'}}>R$1.234,56</Text>
-          </View>
+
+          <FlatList
+            data={entradasHoje}
+            keyExtractor={(item) => item.id.toString()}
+            style={{maxHeight: 200}} 
+            showsVerticalScrollIndicator={false}
+            renderItem={({ item }) => (
+              <TransacaoCard
+                descricao={item.descricao}
+                valor={item.valor}
+                hora={new Date(item.data).toLocaleTimeString([], {hour: '2-digit', minute: '2-digit'})}
+                icone={item.icone}
+                cor={item.cor}
+              />
+            )}
+          />
         </View>
 
         <View style={{width: '100%', marginTop: 20}}>
@@ -193,8 +226,8 @@ export default function TelaHome({ navigation }) {
                             navigation.navigate(item.rota);
                         }}
                         onLongPress={() => {
-                        if (item.id !== 'adicionar') {
-                          handleDelete(item.nome); 
+                        if (item.id !== 0) {
+                          handleDelete(item.id); 
                         }
                         }}
                     />
