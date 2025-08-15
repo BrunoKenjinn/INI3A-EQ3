@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { View, Text, Image, StyleSheet, TextInput, TouchableOpacity, Alert, ScrollView } from "react-native";
 import axios from 'axios';
 import Logo from '../assets/LogoAmarela.png';
+import { MaskedTextInput } from "react-native-mask-text";
 
 export default function TelaCadastro({ navigation }) {
     const [nome, setNome] = useState('');
@@ -71,34 +72,36 @@ export default function TelaCadastro({ navigation }) {
 
             <View style={styles.inputGroup}>
                 <Text style={styles.label}>CPF</Text>
-                <TextInput
+                <MaskedTextInput
                     style={styles.input}
-                    placeholder="Apenas números"
+                    placeholder="Digite o CPF"
                     value={cpf}
                     onChangeText={setCpf}
                     keyboardType="numeric"
-                    maxLength={11}
+                    mask='999.999.999-99'
                 />
             </View>
 
             <View style={styles.inputGroup}>
                 <Text style={styles.label}>Celular</Text>
-                <TextInput
+                <MaskedTextInput
                     style={styles.input}
-                    placeholder="(99) 99999-9999"
+                    placeholder="Digite o Telefone"
                     value={celular}
                     onChangeText={setCelular}
                     keyboardType="phone-pad"
+                    mask="(99) 99999-9999"
                 />
             </View>
 
             <View style={styles.inputGroup}>
                 <Text style={styles.label}>Data de Nascimento</Text>
-                <TextInput
+                <MaskedTextInput
                     style={styles.input}
-                    placeholder="AAAA-MM-DD"
+                    placeholder="DD/MM/AAAA"
                     value={dataNascimento}
                     onChangeText={setDataNascimento}
+                    mask='99/99/9999'
                 />
             </View>
 

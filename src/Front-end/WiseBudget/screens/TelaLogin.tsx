@@ -5,12 +5,15 @@ import FontAwesome from '@expo/vector-icons/FontAwesome';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 import { useAuth } from "../App";
+import { MaskedTextInput } from "react-native-mask-text";
 
 export default function TelaLogin({ navigation }) {
     const { signIn } = useAuth();
     const [mostrarSenha, setMostrarSenha] = useState(false);
     const [identifier, setIdentifier] = useState('');
     const [password, setPassword] = useState('');
+    const [mask, setMask] = useState("");
+    const [value, setValue] = useState("");
 
     const handleLogin = () => {
         if (!identifier || !password) {
@@ -41,6 +44,16 @@ export default function TelaLogin({ navigation }) {
         });
     };
 
+    const handleChange = (text) => {
+
+        if (/[a-zA-Z]/.test(text)) {
+          setMask("");
+        } else {
+          setMask("999.999.999-99");
+        }
+        setIdentifier(text);
+      };
+
     return <>
         <SafeAreaView style={styles.container}>
             <Image source={LogoAmarela} style={styles.logo} />
@@ -51,14 +64,15 @@ export default function TelaLogin({ navigation }) {
                     <Text style={styles.textInput}>
                         CPF ou Email
                     </Text>
-                    <TextInput
-                        placeholder="exemplo@exemplo.com"
+                    <MaskedTextInput
+                        placeholder="Digite o Email ou CPF"
                         style={styles.input}
                         placeholderTextColor="#6E6E6E"
-                        selectionColor="#393939"
+                        selectionColor="#393939"    
                         value={identifier}
-                        onChangeText={setIdentifier}
+                        onChangeText={handleChange}
                         autoCapitalize="none"
+                        mask={mask || undefined}
                     />
                 </View>
 
