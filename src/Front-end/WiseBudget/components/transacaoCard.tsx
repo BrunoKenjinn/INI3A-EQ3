@@ -5,7 +5,7 @@ type Props = {
   descricao: string;
   valor: number | string; 
   hora: string;
-  icone: React.ComponentProps<typeof FontAwesome>['name'];
+  icone: string;
   cor: string;
 };
 
@@ -15,7 +15,7 @@ export function TransacaoCard({ descricao, valor, hora, icone,  cor}: Props) {
   return (
     <View style={{
       width: '100%',
-      backgroundColor: '#EAE3C9',
+      backgroundColor: '#393939',
       borderRadius: 20,
       marginTop: 10,
       flexDirection: 'row',
@@ -35,11 +35,11 @@ export function TransacaoCard({ descricao, valor, hora, icone,  cor}: Props) {
             <FontAwesome name={icone} size={24} color={cor} />
         </View>
         <View>
-          <Text style={{ fontFamily: 'Poppins-Bold' }}>{descricao}</Text>
-          <Text style={{ fontFamily: 'Poppins-Regular', color: '#B7B7B7' }}>{hora}</Text>
+          <Text style={{ fontFamily: 'Poppins-Bold', color: '#ffffff' }}>{descricao}</Text>
+          <Text style={{ fontFamily: 'Poppins-Regular', color: '#ffffff' }}>{hora}</Text>
         </View>
       </View>
-      <Text style={{ fontFamily: 'Poppins-Bold' }}>R${valorNumerico.toFixed(2).replace('.', ',')}</Text>
+      <Text style={{ fontFamily: 'Poppins-Bold', color: '#ffffff' }}>R${valorNumerico.toFixed(2).replace('.', ',')}</Text>
     </View>
   );
 }

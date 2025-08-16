@@ -12,12 +12,14 @@ import TelaEditarCategoria from './screens/TelaEditarCategoria';
 import TelaLogin from './screens/TelaLogin';
 import TelaHome from './screens/TelaHome';
 import TelaOrientacao from './screens/TelaOrientacao';
+import TelaTransacoes from './screens/TelaTransacoes';
 import FontAwesome5 from '@expo/vector-icons/FontAwesome5';
 import TelaAdicionarAtalho from './screens/TalaAdicionarAtalho';
 import TelaPerfil from './screens/TelaPerfil';
 import TelaEditarPerfil from './screens/TelaEditarPerfil';
 import { createContext, useContext, useEffect, useState } from 'react';
 import axios from 'axios';
+import TelaAdicionarTransação from './screens/TeleAdicionarTransação';
 
 const Stack = createNativeStackNavigator();
 const AuthContext = createContext(null);
@@ -25,7 +27,7 @@ export const useAuth = () => useContext(AuthContext);
 
 function AuthStack() {
   return (
-    <Stack.Navigator screenOptions={{ headerShown: false }}>
+    <Stack.Navigator initialRouteName="TelaInicial" screenOptions={{ headerShown: false }}>
       <Stack.Screen name="TelaOrientacao" component={TelaOrientacao} />
       <Stack.Screen name="TelaInicial" component={TelaInicial} />
       <Stack.Screen name="TelaLogin" component={TelaLogin} />
@@ -36,7 +38,8 @@ function AuthStack() {
 
 function AppStack() {
   return (
-    <Stack.Navigator screenOptions={{ headerShown: false }}>
+      
+    <Stack.Navigator initialRouteName="TelaHome" screenOptions={{ headerShown: false }}>
       <Stack.Screen name="TelaHome" component={TelaHome} />
       <Stack.Screen name="TelaCategorias" component={TelaCategorias} />
       <Stack.Screen name="TelaAdicionarCategoria" component={TelaAdicionarCategoria} />
@@ -44,12 +47,24 @@ function AppStack() {
       <Stack.Screen name="TelaAdicionarAtalho" component={TelaAdicionarAtalho} />
       <Stack.Screen name="TelaPerfil" component={TelaPerfil} />
       <Stack.Screen name="TelaEditarPerfil" component={TelaEditarPerfil} />
+      <Stack.Screen name ="TelaTransacoes" component = {TelaTransacoes} />
+      <Stack.Screen name="TelaAdicionarTransação" component={TelaAdicionarTransação} />
     </Stack.Navigator>
   );
 }
 
+function OnboardingStack() {
+    return (
+        <Stack.Navigator initialRouteName="TelaOrientacao" screenOptions={{ headerShown: false }}>
+            <Stack.Screen name="TelaOrientacao" component={TelaOrientacao} />
+            <Stack.Screen name="Auth" component={AuthStack} />
+        </Stack.Navigator>
+    )
+}
+
 function AuthProvider({ children }) {
   const [userToken, setUserToken] = useState(null);
+  const [hasSeenOrientations, setHasSeenOrientations] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
 
   const signIn = async (token) => {
@@ -84,20 +99,42 @@ function AuthProvider({ children }) {
     }
     setIsLoading(false);
   };
+  
+  const markOrientationsAsSeen = async () => {
+    await AsyncStorage.setItem('hasSeenOrientations', 'true');
+    setHasSeenOrientations(true);
+  };
 
   useEffect(() => {
-    isLoggedIn();
+    const checkInitialState = async () => {
+      try {
+        const token = await AsyncStorage.getItem('auth_token');
+        const seen = await AsyncStorage.getItem('hasSeenOrientations');
+        
+        if (token) {
+          axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+          setUserToken(token);
+        }
+        if (seen === 'true') {
+          setHasSeenOrientations(true);
+        }
+      } catch (e) {
+        console.error("Erro ao buscar estado inicial", e);
+      }
+      setIsLoading(false);
+    };
+    checkInitialState();
   }, []);
 
   return (
-    <AuthContext.Provider value={{ userToken, isLoading, signIn, signOut }}>
+    <AuthContext.Provider value={{ userToken, hasSeenOrientations, isLoading, signIn, signOut, markOrientationsAsSeen }}>
       {children}
     </AuthContext.Provider>
   );
 }
 
 function AppNavigator() {
-  const { userToken, isLoading } = useAuth();
+  const { userToken, hasSeenOrientations, isLoading } = useAuth();
 
   const [fontsLoaded] = useFonts({
     'Poppins-Regular': require('./assets/fonts/Poppins-Regular.ttf'),
@@ -116,7 +153,15 @@ function AppNavigator() {
 
   return (
     <NavigationContainer>
-      {userToken !== null ? <AppStack /> : <AuthStack />}
+      <Stack.Navigator screenOptions={{ headerShown: false }}>
+        {!hasSeenOrientations ? (
+          <Stack.Screen name="Onboarding" component={OnboardingStack} />
+        ) : userToken == null ? (
+          <Stack.Screen name="Auth" component={AuthStack} />
+        ) : (
+          <Stack.Screen name="App" component={AppStack} />
+        )}
+      </Stack.Navigator>
     </NavigationContainer>
   );
 }
