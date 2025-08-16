@@ -17,6 +17,7 @@ import TelaAdicionarAtalho from './screens/TalaAdicionarAtalho';
 import TelaPerfil from './screens/TelaPerfil';
 import { createContext, useContext, useEffect, useState } from 'react';
 import axios from 'axios';
+import TelaAdicionarTransação from './screens/TeleAdicionarTransação';
 
 const Stack = createNativeStackNavigator();
 const AuthContext = createContext(null);
@@ -35,6 +36,7 @@ function AuthStack() {
 function AppStack() {
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
+      <Stack.Screen name="TelaAdicionarTransação" component={TelaAdicionarTransação} />
       <Stack.Screen name="TelaOrientacao" component={TelaOrientacao} />
       <Stack.Screen name="TelaHome" component={TelaHome} />
       <Stack.Screen name="TelaCategorias" component={TelaCategorias} />

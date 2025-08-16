@@ -4,6 +4,7 @@ import FontAwesome5 from '@expo/vector-icons/FontAwesome5';
 import { useAuth } from '../App';
 import CustomBottomTab from '../components/CustomBottomTab';
 
+
 export default function TelaPerfil() {
     const { signOut } = useAuth();
 
