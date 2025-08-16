@@ -8,9 +8,9 @@ import { useFocusEffect } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 
-export default function TelaPerfil() {
-        const [infoUser, setinfoUser] = useState([]);
-        useFocusEffect(
+export default function TelaPerfil({navigation}) {
+    const [infoUser, setInfoUser] = useState<any>(null);
+    useFocusEffect(
         useCallback(() => {
             const carregarInformacoes = async () => {
                 try {
@@ -20,9 +20,8 @@ export default function TelaPerfil() {
                             Authorization: `Bearer ${token}`
                         }
                     });
-
-                    setinfoUser(response.data);
-                } catch (error) {
+                    setInfoUser(response.data);
+                } catch (error: any) {
                     console.error('Erro ao buscar as informações do usuario:', error.response?.data || error.message);
                 }
             };
@@ -42,7 +41,7 @@ export default function TelaPerfil() {
                     leftIconColor="#f1c40f"
                     leftIconSize={24}
                     leftIconComponent={FontAwesome5}
-                    title=""
+                    title="Perfil"
                     rightIconName="bell"
                     rightIconColor="#f1c40f"
                     rightIconSize={24}
@@ -54,10 +53,10 @@ export default function TelaPerfil() {
                 <View style={{ position: 'absolute', bottom: 0, left: 0, right: 0, backgroundColor: '#2c2c2c', borderTopLeftRadius: 30, borderTopRightRadius: 30, zIndex: 99, height: 530, padding: 20 }}>
                     <View style={{ display: 'flex', justifyContent: 'space-between', flexDirection: 'row', marginTop: 20 }}>
                         <View>
-                            <Text style={{ color: '#f1c40f', fontFamily: 'Poppins-Bold', fontSize: 30, lineHeight: 25 }}>Bruno Kenji</Text>
-                            <Text style={{ color: '#a3a3a3', fontFamily: 'Poppins-Regular', fontSize: 16 }}>25, Pessoa física</Text>
+                            <Text style={{ color: '#f1c40f', fontFamily: 'Poppins-Bold', fontSize: 30, lineHeight: 25 }}>  {infoUser?.nome || "Carregando..."}</Text>
+                            <Text style={{ color: '#a3a3a3', fontFamily: 'Poppins-Regular', fontSize: 16 }}>  {infoUser?.idade ? `${infoUser.idade} anos, Pessoa Física` : "Idade não disponível"}</Text>
                         </View>
-                        <TouchableOpacity style={styles.botaoEditar}>
+                        <TouchableOpacity style={styles.botaoEditar} onPress={() => navigation.navigate('TelaEditarPerfil', { usuario: infoUser })}>
                             <Text style={{ fontFamily: 'Poppins-Bold', fontSize: 18, color: '#2c2c2c' }}>Editar</Text>
                         </TouchableOpacity>
                     </View>

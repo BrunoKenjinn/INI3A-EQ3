@@ -14,32 +14,36 @@ export default function TelaCadastro({ navigation }) {
     const [passwordConfirmation, setPasswordConfirmation] = useState('');
 
     const handleRegister = async () => {
+        // CORREÇÃO: Limpa os dados mascarados antes de enviar
+        const dadosParaEnviar = {
+            nome,
+            email,
+            cpf: String(cpf).replace(/\D/g, ''), // Remove tudo o que não for dígito
+            celular: String(celular).replace(/\D/g, ''), // Remove tudo o que não for dígito
+            data_nascimento: dataNascimento,
+            password,
+            password_confirmation: passwordConfirmation,
+        };
+
         try {
-            const response = await axios.post('http://localhost:8000/api/register', {
-                nome,
-                email,
-                cpf,
-                celular,
-                data_nascimento: dataNascimento,
-                password,
-                password_confirmation: passwordConfirmation,
-            }, {
+            // Use 10.0.2.2 para emuladores Android ou localhost para web
+            await axios.post('http://localhost:8000/api/register', dadosParaEnviar, {
                 headers: {
                     Accept: 'application/json',
                 }
             });
 
             Alert.alert("Sucesso", "Usuário cadastrado com sucesso.");
-            navigation.navigate('TelaLogin'); // ajuste se tiver outro nome
+            navigation.navigate('TelaLogin');
         } catch (error) {
             console.log('Erro no cadastro:', error.response?.data);
-
             const errors = error.response?.data?.errors;
             if (errors) {
                 const messages = Object.values(errors).flat().join('\n');
                 Alert.alert("Erro no cadastro", messages);
             } else {
-                Alert.alert("Erro", "Não foi possível cadastrar. Tente novamente.");
+                const errorMessage = error.response?.data?.message || "Não foi possível cadastrar. Tente novamente.";
+                Alert.alert("Erro", errorMessage);
             }
         }
     };
@@ -76,7 +80,8 @@ export default function TelaCadastro({ navigation }) {
                     style={styles.input}
                     placeholder="Digite o CPF"
                     value={cpf}
-                    onChangeText={setCpf}
+                    // Salva o valor sem máscara no estado
+                    onChangeText={(text, rawText) => setCpf(rawText)}
                     keyboardType="numeric"
                     mask='999.999.999-99'
                 />
@@ -88,7 +93,8 @@ export default function TelaCadastro({ navigation }) {
                     style={styles.input}
                     placeholder="Digite o Telefone"
                     value={celular}
-                    onChangeText={setCelular}
+                    // Salva o valor sem máscara no estado
+                    onChangeText={(text, rawText) => setCelular(rawText)}
                     keyboardType="phone-pad"
                     mask="(99) 99999-9999"
                 />
@@ -142,10 +148,9 @@ export default function TelaCadastro({ navigation }) {
 const styles = StyleSheet.create({
     container: {
         backgroundColor: '#2c2c2c',
-        height:'100%',
         alignItems: 'center',
-        paddingRight:30,
-        paddingLeft:30,
+        paddingVertical: 20,
+        paddingHorizontal:30,
     },
     logo: {
         width: 150,
@@ -185,17 +190,14 @@ const styles = StyleSheet.create({
         fontSize: 18,
         fontWeight: 'bold'
     },
-
     loginLink: {
-    marginTop: 10,
-    color: '#ffffff',
-    textAlign: 'center'
+        marginTop: 15,
+        color: '#ffffff',
+        textAlign: 'center'
     },
-
     linkText: {
         color: '#f1c40f',
         fontWeight: 'bold',
         textDecorationLine: 'underline'
     }
-
 });

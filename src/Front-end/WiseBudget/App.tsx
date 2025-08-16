@@ -15,6 +15,7 @@ import TelaOrientacao from './screens/TelaOrientacao';
 import FontAwesome5 from '@expo/vector-icons/FontAwesome5';
 import TelaAdicionarAtalho from './screens/TalaAdicionarAtalho';
 import TelaPerfil from './screens/TelaPerfil';
+import TelaEditarPerfil from './screens/TelaEditarPerfil';
 import { createContext, useContext, useEffect, useState } from 'react';
 import axios from 'axios';
 
@@ -42,6 +43,7 @@ function AppStack() {
       <Stack.Screen name="TelaEditarCategoria" component={TelaEditarCategoria} />
       <Stack.Screen name="TelaAdicionarAtalho" component={TelaAdicionarAtalho} />
       <Stack.Screen name="TelaPerfil" component={TelaPerfil} />
+      <Stack.Screen name="TelaEditarPerfil" component={TelaEditarPerfil} />
     </Stack.Navigator>
   );
 }

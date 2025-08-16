@@ -15,9 +15,8 @@ class UsuarioSeeder extends Seeder
     {
             $dados=[
                 'nome'=>"Thomaz",
-                'login'=>"oBueninho",
                 'email'=>"thomaz.bueno@unesp.br",
-                'cpf'=>"212111111111",
+                'cpf'=>"21211111111",
                 'celular'=>"99299",
                 'data_nascimento'=>'2012-12-12', // Formato YYYY-MM-DD
                 'password'=>bcrypt("123")

@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rule;
 use App\Models\User;
 use Illuminate\Support\Facades\Validator;
-
+use Carbon\Carbon; // 1. Importe a classe Carbon
 
 class UsuarioController extends Controller
 {
@@ -15,12 +15,12 @@ class UsuarioController extends Controller
     {
         try {
             $validator = Validator::make($request->all(), [
-                'nome'            => 'required|string|max:255',
-                'email'           => 'required|string|email|max:255|unique:users',
-                'cpf'             => 'required|string|size:11|unique:users',
-                'celular'         => 'required|string|max:15',
-                'data_nascimento' => 'required|date|before:today',
-                'password'        => 'required|string|min:6|confirmed',
+                'nome'              => 'required|string|max:255',
+                'email'             => 'required|string|email|max:255|unique:users',
+                'cpf'               => 'required|string|size:11|unique:users',
+                'celular'           => 'required|string|max:15',
+                'data_nascimento'   => 'required|date_format:d/m/Y|before:today',
+                'password'          => 'required|string|min:6|confirmed',
             ]);
 
             if ($validator->fails()) {
@@ -28,13 +28,12 @@ class UsuarioController extends Controller
             }
 
             $user = User::create([
-                'nome'            => $request->nome,
-                'login'           => $request->nome,
-                'email'           => $request->email,
-                'cpf'             => $request->cpf,
-                'celular'         => $request->celular,
-                'data_nascimento' => $request->data_nascimento,
-                'password'        => Hash::make($request->password),
+                'nome'              => $request->nome,
+                'email'             => $request->email,
+                'cpf'               => $request->cpf,
+                'celular'           => $request->celular,
+                'data_nascimento'   => Carbon::createFromFormat('d/m/Y', $request->data_nascimento)->format('Y-m-d'),
+                'password'          => Hash::make($request->password),
             ]);
 
             return response()->json(['message' => 'Usuário cadastrado com sucesso.'], 201);
@@ -52,7 +51,6 @@ class UsuarioController extends Controller
         return response()->json($request->user());
     }
 
-    // Atualizar dados do próprio usuário
     public function atualizar(Request $request)
     {
         $user = $request->user();
@@ -63,25 +61,31 @@ class UsuarioController extends Controller
                 'sometimes', 'required', 'email', 'max:255',
                 Rule::unique('users')->ignore($user->id),
             ],
-            'password' => 'sometimes|required|string|min:6|confirmed',
+            'cpf' => [
+                'sometimes', 'required', 'string', 'size:11',
+                Rule::unique('users')->ignore($user->id),
+            ],
+            'celular' => 'sometimes|required|string|max:15',
+            'data_nascimento' => 'sometimes|required|date_format:d/m/Y|before:today',
+            'password' => 'sometimes|nullable|string|min:6|confirmed',
         ]);
 
-        if (isset($validated['nome'])) {
-            $user->nome = $validated['nome'];
+        // 2. Se a data de nascimento foi enviada, converta o formato
+        if (isset($validated['data_nascimento'])) {
+            $validated['data_nascimento'] = Carbon::createFromFormat('d/m/Y', $validated['data_nascimento'])->format('Y-m-d');
         }
 
-        if (isset($validated['email'])) {
-            $user->email = $validated['email'];
+        if (isset($validated['password']) && $validated['password']) {
+            $validated['password'] = Hash::make($validated['password']);
+        } else {
+            unset($validated['password']); 
         }
 
-        if (isset($validated['password'])) {
-            $user->password = Hash::make($validated['password']);
-        }
-
-        $user->save();
+        $user->update($validated);
 
         return response()->json($user);
     }
+
 
     // Excluir a própria conta
     public function excluir(Request $request)

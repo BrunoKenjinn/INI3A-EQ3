@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
+use Carbon\Carbon;
 
 class User extends Authenticatable
 {
@@ -16,10 +17,20 @@ class User extends Authenticatable
      * The attributes that are mass assignable.
      *
      * @var array<int, string>
+     * 
      */
+
+    protected $appends = ['idade']; // Adiciona o campo extra na resposta JSON
+
+    public function getIdadeAttribute()
+    {
+        return $this->data_nascimento 
+            ? Carbon::parse($this->data_nascimento)->age 
+            : null;
+    }
+
     protected $fillable = [
         'nome',
-        'login',
         'email',
         'cpf',
         'celular',

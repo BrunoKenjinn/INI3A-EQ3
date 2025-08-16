@@ -114,7 +114,7 @@ export default function TelaHome({ navigation }) {
 
   const handleDelete = async (id: number) => {
     Alert.alert(
-      "Excluir Atalho",
+      "Excluir Flho",
       "Tem certeza que deseja excluir este atalho?",
       [
         { text: "Cancelar", style: "cancel" },
