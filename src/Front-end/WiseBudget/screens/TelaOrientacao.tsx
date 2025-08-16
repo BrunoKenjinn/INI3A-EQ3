@@ -29,20 +29,19 @@ const slides = [
   },
 ];
 
-export default function OnboardingScreen() {
+export default function OnboardingScreen ({ navigation }) {
   const scrollX = useRef(new Animated.Value(0)).current;
   const scrollRef = useRef<ScrollView>(null);
   const [currentIndex, setCurrentIndex] = useState(0);
   
-  // Valor animado para a opacidade do botão
+
   const buttonOpacity = useRef(new Animated.Value(0)).current;
 
-  // Efeito para animar o botão quando chegar na última tela
   useEffect(() => {
     if (currentIndex === slides.length - 1) {
       Animated.timing(buttonOpacity, {
         toValue: 1,
-        duration: 500, // Duração da animação em milissegundos
+        duration: 500,
         useNativeDriver: true,
       }).start();
     } else {
@@ -67,9 +66,7 @@ export default function OnboardingScreen() {
   };
 
   const handleFinish = () => {
-    // Adicione a lógica para o que acontece ao concluir
-    // Por exemplo, navegar para a tela principal do app
-    console.log("Onboarding concluído!");
+      navigation.navigate('TelaInicial');
   };
 
   const onScroll = Animated.event(
@@ -134,7 +131,6 @@ export default function OnboardingScreen() {
         })}
       </View>
 
-      {/* Renderização condicional: mostra setas ou o botão "Concluir" */}
       {currentIndex === slides.length - 1 ? (
         <Animated.View style={[styles.buttonContainer, { opacity: buttonOpacity }]}>
           <TouchableOpacity style={styles.button} onPress={handleFinish} activeOpacity={0.7}>

@@ -25,6 +25,7 @@ export const useAuth = () => useContext(AuthContext);
 function AuthStack() {
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
+      <Stack.Screen name="TelaOrientacao" component={TelaOrientacao} />
       <Stack.Screen name="TelaInicial" component={TelaInicial} />
       <Stack.Screen name="TelaLogin" component={TelaLogin} />
       <Stack.Screen name="TelaCadastro" component={TelaCadastro} />
@@ -35,7 +36,6 @@ function AuthStack() {
 function AppStack() {
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
-      <Stack.Screen name="TelaOrientacao" component={TelaOrientacao} />
       <Stack.Screen name="TelaHome" component={TelaHome} />
       <Stack.Screen name="TelaCategorias" component={TelaCategorias} />
       <Stack.Screen name="TelaAdicionarCategoria" component={TelaAdicionarCategoria} />
