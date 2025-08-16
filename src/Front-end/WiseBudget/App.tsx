@@ -12,6 +12,7 @@ import TelaEditarCategoria from './screens/TelaEditarCategoria';
 import TelaLogin from './screens/TelaLogin';
 import TelaHome from './screens/TelaHome';
 import TelaOrientacao from './screens/TelaOrientacao';
+import TelaTransacoes from './screens/TelaTransacoes';
 import FontAwesome5 from '@expo/vector-icons/FontAwesome5';
 import TelaAdicionarAtalho from './screens/TalaAdicionarAtalho';
 import TelaPerfil from './screens/TelaPerfil';
@@ -35,6 +36,7 @@ function AuthStack() {
 function AppStack() {
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
+      <Stack.Screen name ="TelaTransacoes" component = {TelaTransacoes} />
       <Stack.Screen name="TelaOrientacao" component={TelaOrientacao} />
       <Stack.Screen name="TelaHome" component={TelaHome} />
       <Stack.Screen name="TelaCategorias" component={TelaCategorias} />
