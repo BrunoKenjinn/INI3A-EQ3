@@ -3,9 +3,36 @@ import { Header } from '../components/header'
 import FontAwesome5 from '@expo/vector-icons/FontAwesome5';
 import { useAuth } from '../App';
 import CustomBottomTab from '../components/CustomBottomTab';
+import { useCallback, useState } from 'react';
+import { useFocusEffect } from '@react-navigation/native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import axios from 'axios';
 
 
 export default function TelaPerfil() {
+        const [infoUser, setinfoUser] = useState([]);
+        useFocusEffect(
+        useCallback(() => {
+            const carregarInformacoes = async () => {
+                try {
+                    const token = await AsyncStorage.getItem('auth_token');
+                    const response = await axios.get('http://localhost:8000/api/usuario', {
+                        headers: {
+                            Authorization: `Bearer ${token}`
+                        }
+                    });
+
+                    setinfoUser(response.data);
+                } catch (error) {
+                    console.error('Erro ao buscar as informações do usuario:', error.response?.data || error.message);
+                }
+            };
+            carregarInformacoes();
+
+            return () => { };
+        }, [])
+    );
+
     const { signOut } = useAuth();
 
     return (

@@ -11,6 +11,8 @@ import {
   Image,
 } from "react-native";
 import { StatusBar } from "expo-status-bar";
+import {useAuth} from "../App";
+import FontAwesome from "@expo/vector-icons/FontAwesome";
 
 const { width } = Dimensions.get("window");
 
@@ -29,20 +31,22 @@ const slides = [
   },
 ];
 
-export default function OnboardingScreen() {
+export default function TelaOrientacao ({ navigation }) {
+  const { markOrientationsAsSeen } = useAuth();
+  const [dontShowAgain, setDontShowAgain] = useState(false);
+
   const scrollX = useRef(new Animated.Value(0)).current;
   const scrollRef = useRef<ScrollView>(null);
   const [currentIndex, setCurrentIndex] = useState(0);
   
-  // Valor animado para a opacidade do botão
+
   const buttonOpacity = useRef(new Animated.Value(0)).current;
 
-  // Efeito para animar o botão quando chegar na última tela
   useEffect(() => {
     if (currentIndex === slides.length - 1) {
       Animated.timing(buttonOpacity, {
         toValue: 1,
-        duration: 500, // Duração da animação em milissegundos
+        duration: 500,
         useNativeDriver: true,
       }).start();
     } else {
@@ -67,11 +71,11 @@ export default function OnboardingScreen() {
   };
 
   const handleFinish = () => {
-    // Adicione a lógica para o que acontece ao concluir
-    // Por exemplo, navegar para a tela principal do app
-    console.log("Onboarding concluído!");
+      if (dontShowAgain) {
+          markOrientationsAsSeen();
+      }
+      navigation.replace('Auth'); 
   };
-
   const onScroll = Animated.event(
     [{ nativeEvent: { contentOffset: { x: scrollX } } }],
     {
@@ -134,11 +138,14 @@ export default function OnboardingScreen() {
         })}
       </View>
 
-      {/* Renderização condicional: mostra setas ou o botão "Concluir" */}
       {currentIndex === slides.length - 1 ? (
         <Animated.View style={[styles.buttonContainer, { opacity: buttonOpacity }]}>
           <TouchableOpacity style={styles.button} onPress={handleFinish} activeOpacity={0.7}>
             <Text style={styles.buttonText}>Concluir</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.checkboxContainer} onPress={() => setDontShowAgain(!dontShowAgain)}>
+            <FontAwesome name={dontShowAgain ? "check-square" : "square-o"} size={24} color="#a3a3a3" />
+            <Text style={styles.skipButtonText}>Não mostrar novamente</Text>
           </TouchableOpacity>
         </Animated.View>
       ) : (
@@ -170,10 +177,9 @@ const styles = StyleSheet.create({
     marginTop: 50,
     width: 230,
     height: 230,
-    // A cor de fundo é desnecessária se a imagem preenche o círculo
-    borderRadius: 115, // Metade da largura/altura para ser um círculo perfeito
+    borderRadius: 115, 
     marginBottom: 20,
-    overflow: 'hidden', // Garante que a imagem não saia dos limites do círculo
+    overflow: 'hidden', 
   },
   title: {
     fontFamily: 'Poppins-Regular',
@@ -209,7 +215,7 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     paddingHorizontal: 40,
     paddingBottom: 30,
-    height: 50, // Altura fixa para evitar pulos na interface
+    height: 100, 
     alignItems: 'center',
   },
   arrow: {
@@ -220,11 +226,10 @@ const styles = StyleSheet.create({
   arrowDisabled: {
     opacity: 0.3,
   },
-  // NOVOS ESTILOS PARA O BOTÃO
   buttonContainer: {
     paddingHorizontal: 40,
     paddingBottom: 30,
-    height: 50, // Mesma altura das setas para consistência
+    height: 100, 
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -241,5 +246,16 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: 'bold',
     fontFamily: 'Poppins-Regular',
+  },
+  checkboxContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 20,
+  },
+  skipButtonText: {
+    color: '#a3a3a3',
+    fontSize: 14,
+    fontFamily: 'Poppins-Regular',
+    marginLeft: 10,
   },
 });
