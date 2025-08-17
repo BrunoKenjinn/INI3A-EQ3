@@ -34,7 +34,7 @@ export default function TelaPerfil({navigation}) {
     const { signOut } = useAuth();
 
     return (
-        <SafeAreaView style={{ flex: 1, backgroundColor: '#2c2c2c' }}>
+        <SafeAreaView style={{ flex: 1, backgroundColor: '#2c2c2c', height:'100%', width:'100%'}}>
             <View style={{ flex: 1, position: 'relative' }}>
                 <Header
                     leftIconName="arrow-left"
@@ -48,7 +48,7 @@ export default function TelaPerfil({navigation}) {
                     rightIconComponent={FontAwesome5}
                 />
 
-                <Image source={require('../assets/images/FotoPerfil.png')} />
+                <Image style={{width:'100%'}} source={require('../assets/images/FotoPerfil.png')} />
 
                 <View style={{ position: 'absolute', bottom: 0, left: 0, right: 0, backgroundColor: '#2c2c2c', borderTopLeftRadius: 30, borderTopRightRadius: 30, zIndex: 99, height: 530, padding: 20 }}>
                     <View style={{ display: 'flex', justifyContent: 'space-between', flexDirection: 'row', marginTop: 20 }}>

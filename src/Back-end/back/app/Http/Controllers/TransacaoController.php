@@ -9,6 +9,77 @@ use App\Models\User;
 
 class TransacaoController extends Controller
 {
+    public function store(Request $request)
+    {
+        $user = $request->user();
+
+        $validatedData = $request->validate([
+            'fonte' => 'required|string|max:255',
+            'valor' => 'required|numeric|min:0.01',
+            'tipo' => ['required', Rule::in(['entrada', 'saida'])],
+            'data' => 'required|date',
+            'recorrente' => 'boolean',
+            'frequencia' => 'nullable|required_if:recorrente,true|in:diaria,semanal,mensal,anual',
+            'proxima_execucao' => 'nullable|date',
+            'categoria_id' => [
+                'required',
+                Rule::exists('categorias', 'id')->where(function ($query) use ($user) {
+                    $query->where('user_id', $user->id)->orWhereNull('user_id');
+                }),
+            ],
+        ]);
+
+        $validatedData['user_id'] = $user->id;
+
+        $transacao = Transacao::create($validatedData);
+
+        return response()->json($transacao, 201);
+    }
+
+        public function update(Request $request, Transacao $transacao)
+    {
+        $user = $request->user();
+
+        if ($transacao->user_id !== $user->id) {
+            return response()->json(['message' => 'Não autorizado.'], 403);
+        }
+
+        $validatedData = $request->validate([
+            'fonte' => 'sometimes|required|string|max:255',
+            'valor' => 'sometimes|required|numeric|min:0.01',
+            'tipo' => ['sometimes', 'required', Rule::in(['entrada', 'saida'])],
+            'data' => 'sometimes|required|date',
+            'recorrente' => 'boolean',
+            'frequencia' => 'nullable|required_if:recorrente,true|in:diaria,semanal,mensal,anual',
+            'proxima_execucao' => 'nullable|date',
+            'categoria_id' => [
+                'sometimes',
+                'required',
+                Rule::exists('categorias', 'id')->where(function ($query) use ($user, $transacao) {
+                    $query->where('user_id', $user->id)->orWhereNull('user_id');
+                }),
+            ],
+        ]);
+
+        $transacao->update($validatedData);
+
+        return response()->json($transacao);
+    }
+
+    public function destroy(Request $request, Transacao $transacao)
+    {
+        $user = $request->user();
+
+        if ($transacao->user_id !== $user->id) {
+            return response()->json(['message' => 'Não autorizado.'], 403);
+        }
+
+        $transacao->delete();
+
+        return response()->json(null, 204);
+    }
+
+
     public function getGastosPorCategoria(Request $request)
     {
         $user = Auth::user();
