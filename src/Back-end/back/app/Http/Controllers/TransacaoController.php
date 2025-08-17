@@ -76,4 +76,48 @@ class TransacaoController extends Controller
 
         return response()->json($entradas);
     }
+
+    public function listarTransacoes(Request $request)
+    {
+        $user = Auth::user();
+
+        $request->validate([
+            'periodo' => 'sometimes|in:semana,mes',
+            'tipo' => 'sometimes|in:todos,entrada,saida,recorrente',
+        ]);
+
+        $periodo = $request->input('periodo', 'semana');
+        $tipo = $request->input('tipo', 'todos');    
+
+        $query = $user->transacoes()
+            ->join('categorias', 'transacaos.categoria_id', '=', 'categorias.id')
+            ->select(
+                'transacaos.id', 
+                'transacaos.fonte as descricao', 
+                'transacaos.valor', 
+                'transacaos.data',
+                'transacaos.tipo',
+                'categorias.icone', 
+                'categorias.cor'
+            );
+
+        if ($tipo !== 'todos') {
+            $query->where('transacaos.tipo', $tipo);
+        } elseif($tipo === 'recorrente'){
+            $query->where('transacoes.recorrente', true);
+        }
+
+        switch ($periodo) {
+            case 'semana':
+                $query->whereBetween('transacaos.data', [now()->startOfWeek(), now()->endOfWeek()]);
+                break;
+            case 'mes':
+                $query->whereBetween('transacaos.data', [now()->startOfMonth(), now()->endOfMonth()]);
+                break;
+        }
+
+        $transacoes = $query->orderBy('transacaos.data', 'desc')->get();
+
+        return response()->json($transacoes);
+    }
 }
