@@ -14,19 +14,17 @@ export default function TelaCadastro({ navigation }) {
     const [passwordConfirmation, setPasswordConfirmation] = useState('');
 
     const handleRegister = async () => {
-        // CORREÇÃO: Limpa os dados mascarados antes de enviar
         const dadosParaEnviar = {
             nome,
             email,
-            cpf: String(cpf).replace(/\D/g, ''), // Remove tudo o que não for dígito
-            celular: String(celular).replace(/\D/g, ''), // Remove tudo o que não for dígito
+            cpf: String(cpf).replace(/\D/g, ''), 
+            celular: String(celular).replace(/\D/g, ''), 
             data_nascimento: dataNascimento,
             password,
             password_confirmation: passwordConfirmation,
         };
 
         try {
-            // Use 10.0.2.2 para emuladores Android ou localhost para web
             await axios.post('http://localhost:8000/api/register', dadosParaEnviar, {
                 headers: {
                     Accept: 'application/json',
@@ -80,7 +78,6 @@ export default function TelaCadastro({ navigation }) {
                     style={styles.input}
                     placeholder="Digite o CPF"
                     value={cpf}
-                    // Salva o valor sem máscara no estado
                     onChangeText={(text, rawText) => setCpf(rawText)}
                     keyboardType="numeric"
                     mask='999.999.999-99'
@@ -93,7 +90,6 @@ export default function TelaCadastro({ navigation }) {
                     style={styles.input}
                     placeholder="Digite o Telefone"
                     value={celular}
-                    // Salva o valor sem máscara no estado
                     onChangeText={(text, rawText) => setCelular(rawText)}
                     keyboardType="phone-pad"
                     mask="(99) 99999-9999"

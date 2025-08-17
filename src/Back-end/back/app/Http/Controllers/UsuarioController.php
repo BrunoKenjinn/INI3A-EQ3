@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rule;
 use App\Models\User;
 use Illuminate\Support\Facades\Validator;
-use Carbon\Carbon; // 1. Importe a classe Carbon
+use Carbon\Carbon; 
 
 class UsuarioController extends Controller
 {
@@ -45,7 +45,6 @@ class UsuarioController extends Controller
         }
     }
 
-    // Ver dados do próprio usuário
     public function index(Request $request)
     {
         return response()->json($request->user());
@@ -70,7 +69,6 @@ class UsuarioController extends Controller
             'password' => 'sometimes|nullable|string|min:6|confirmed',
         ]);
 
-        // 2. Se a data de nascimento foi enviada, converta o formato
         if (isset($validated['data_nascimento'])) {
             $validated['data_nascimento'] = Carbon::createFromFormat('d/m/Y', $validated['data_nascimento'])->format('Y-m-d');
         }
@@ -86,8 +84,6 @@ class UsuarioController extends Controller
         return response()->json($user);
     }
 
-
-    // Excluir a própria conta
     public function excluir(Request $request)
     {
         $user = $request->user();

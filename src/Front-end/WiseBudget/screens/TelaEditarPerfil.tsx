@@ -24,7 +24,6 @@ export default function TelaEditarPerfil({ navigation, route }) {
             data_nascimento: dataNascimento,
         };
 
-        // As linhas de depuração foram removidas. Agora a requisição será enviada.
         try {
             await axios.put(`http://localhost:8000/api/usuario`, dadosParaEnviar, {
                 headers: {
@@ -60,7 +59,7 @@ export default function TelaEditarPerfil({ navigation, route }) {
                         try {
                             await axios.delete(`http://localhost:8000/api/usuario`);
                             Alert.alert("Sucesso", "A sua conta foi excluída.");
-                            signOut(); // Desloga o usuário e redireciona
+                            signOut();
                         } catch (error) {
                             console.error("Erro ao excluir conta:", error.response?.data);
                             Alert.alert("Erro", "Não foi possível excluir a sua conta.");

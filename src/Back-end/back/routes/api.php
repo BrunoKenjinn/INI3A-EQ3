@@ -51,6 +51,9 @@ Route::middleware('auth:sanctum')->group(function () {
     //transacoes
     Route::get('/gastos-por-categoria', [TransacaoController::class, 'getGastosPorCategoria']);
     Route::get('/entradas-hoje', [TransacaoController::class, 'getEntradasHoje']);
+    Route::post('/transacoes', [TransacaoController::class, 'store']);
+    Route::put('/transacoes/{transacao}', [TransacaoController::class, 'update']);
+    Route::delete('/transacoes/{transacao}', [TransacaoController::class, 'destroy']);
 
 
     Route::post('/logout', [LoginController::class, 'sair']);

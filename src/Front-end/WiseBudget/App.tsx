@@ -19,7 +19,7 @@ import TelaPerfil from './screens/TelaPerfil';
 import TelaEditarPerfil from './screens/TelaEditarPerfil';
 import { createContext, useContext, useEffect, useState } from 'react';
 import axios from 'axios';
-import TelaAdicionarTransação from './screens/TeleAdicionarTransação';
+import TelaAdicionarTransação from './screens/TelaAdicionarTransação';
 
 const Stack = createNativeStackNavigator();
 const AuthContext = createContext(null);
