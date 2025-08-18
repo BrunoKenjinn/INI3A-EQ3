@@ -17,7 +17,7 @@ export default function TelaAdicionarTransação({navigation}) {
     const [date, setDate] = useState(new Date());
     const [open, setOpen] = useState(false);
     const [fonte,setFonte] = useState('');
-    const [selectedValue, setSelectedValue] = useState('');
+    const [selectedValue, setSelectedValue] = useState('entrada');
     const [valor, setValor] = useState('');
     const [categorias, setCategorias] = useState<Categoria[]>([]);
     const [categoriaId, setCategoriaId] = useState(1);

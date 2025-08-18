@@ -49,11 +49,12 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::delete('/categorias/{categoria}', [CategoriaController::class, 'excluir'])->name('categorias.excluir');
 
     //transacoes
-    Route::get('/gastos-por-categoria', [TransacaoController::class, 'getGastosPorCategoria']);
-    Route::get('/entradas-hoje', [TransacaoController::class, 'getEntradasHoje']);
+    Route::get('/transacoes', [TransacaoController::class, 'index']);
     Route::post('/transacoes', [TransacaoController::class, 'store']);
     Route::put('/transacoes/{transacao}', [TransacaoController::class, 'update']);
     Route::delete('/transacoes/{transacao}', [TransacaoController::class, 'destroy']);
+    Route::get('/gastos-por-categoria', [TransacaoController::class, 'getGastosPorCategoria']);
+    Route::get('/entradas-hoje', [TransacaoController::class, 'getEntradasHoje']);
 
 
     Route::post('/logout', [LoginController::class, 'sair']);
