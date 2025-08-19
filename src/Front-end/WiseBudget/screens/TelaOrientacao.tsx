@@ -32,7 +32,7 @@ const slides = [
 ];
 
 export default function TelaOrientacao ({ navigation }) {
-  const { markOrientationsAsSeen } = useAuth();
+  const { markOrientationsAsSeen , dismissOrientations} = useAuth();
   const [dontShowAgain, setDontShowAgain] = useState(false);
 
   const scrollX = useRef(new Animated.Value(0)).current;
@@ -73,8 +73,9 @@ export default function TelaOrientacao ({ navigation }) {
   const handleFinish = () => {
       if (dontShowAgain) {
           markOrientationsAsSeen();
+      } else {
+        dismissOrientations();
       }
-      navigation.replace('Auth'); 
   };
   const onScroll = Animated.event(
     [{ nativeEvent: { contentOffset: { x: scrollX } } }],

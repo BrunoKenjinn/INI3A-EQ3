@@ -65,6 +65,7 @@ function OnboardingStack() {
 function AuthProvider({ children }) {
   const [userToken, setUserToken] = useState(null);
   const [hasSeenOrientations, setHasSeenOrientations] = useState(false);
+  const [orientationsDismissed, setOrientationsDismissed] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
 
   const signIn = async (token) => {
@@ -86,23 +87,14 @@ function AuthProvider({ children }) {
       console.error("Erro ao remover token", e);
     }
   };
-
-  const isLoggedIn = async () => {
-    try {
-      const token = await AsyncStorage.getItem('auth_token');
-      if (token) {
-        axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
-        setUserToken(token);
-      }
-    } catch (e) {
-      console.error("Erro ao buscar token", e);
-    }
-    setIsLoading(false);
-  };
   
   const markOrientationsAsSeen = async () => {
     await AsyncStorage.setItem('hasSeenOrientations', 'true');
     setHasSeenOrientations(true);
+  };
+
+  const dismissOrientations = () => {
+    setOrientationsDismissed(true);
   };
 
   useEffect(() => {
@@ -127,14 +119,14 @@ function AuthProvider({ children }) {
   }, []);
 
   return (
-    <AuthContext.Provider value={{ userToken, hasSeenOrientations, isLoading, signIn, signOut, markOrientationsAsSeen }}>
+    <AuthContext.Provider value={{ userToken, hasSeenOrientations, orientationsDismissed, isLoading, signIn, signOut, markOrientationsAsSeen, dismissOrientations }}>
       {children}
     </AuthContext.Provider>
   );
 }
 
 function AppNavigator() {
-  const { userToken, hasSeenOrientations, isLoading } = useAuth();
+  const { userToken, hasSeenOrientations, orientationsDismissed, isLoading } = useAuth();
 
   const [fontsLoaded] = useFonts({
     'Poppins-Regular': require('./assets/fonts/Poppins-Regular.ttf'),
@@ -154,7 +146,7 @@ function AppNavigator() {
   return (
     <NavigationContainer>
       <Stack.Navigator screenOptions={{ headerShown: false }}>
-        {!hasSeenOrientations ? (
+        {!hasSeenOrientations && !orientationsDismissed ? (
           <Stack.Screen name="Onboarding" component={OnboardingStack} />
         ) : userToken == null ? (
           <Stack.Screen name="Auth" component={AuthStack} />
