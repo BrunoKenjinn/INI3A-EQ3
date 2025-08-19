@@ -7,6 +7,7 @@ import DatePicker from 'react-native-date-picker'
 import { useEffect, useState } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
+import useApi from "../hooks/useApi";
 
 type Categoria = {
   id: number;
@@ -24,9 +25,10 @@ export default function TelaAdicionarTransação({navigation}) {
 
         useEffect(() => {
         const fetchCategorias = async () => {
+            let {url} = useApi();
             try {
                 const token = await AsyncStorage.getItem("auth_token");
-                const response = await axios.get("http://localhost:8000/api/categorias", {
+                const response = await axios.get(url + "/api/categorias", {
                     headers: {
                         Authorization: `Bearer ${token}`,
                         Accept: "application/json",
@@ -53,9 +55,10 @@ export default function TelaAdicionarTransação({navigation}) {
         }
 
         try {
+            let {url} = useApi();
             const token = await AsyncStorage.getItem("auth_token");
 
-            const response = await axios.post("http://localhost:8000/api/transacoes", {
+            const response = await axios.post(url + "/api/transacoes", {
                 fonte: fonte,
                 valor: parseFloat(valor.replace(",", ".")),
                 tipo: selectedValue,

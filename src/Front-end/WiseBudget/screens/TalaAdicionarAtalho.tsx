@@ -5,16 +5,16 @@ import axios from 'axios';
 import { useCallback, useEffect, useState } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Atalho } from "../components/atalho";
-
-
+import useApi from "../hooks/useApi";
 
 
 export default function TelaAdicionarAtalhos({ navigation }) {
     const handleSave = async (nome: string, icone: string, rota:string) => {
+        let {url} = useApi();
         try {
             const token = await AsyncStorage.getItem('auth_token');
 
-            const response = await axios.post('http://localhost:8000/api/atalhos', {
+            const response = await axios.post(url + '/api/atalhos', {
                 nome,
                 icone,
                 rota,

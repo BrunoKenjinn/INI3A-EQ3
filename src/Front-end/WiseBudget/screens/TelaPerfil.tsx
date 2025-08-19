@@ -7,6 +7,7 @@ import { useCallback, useState } from 'react';
 import { useFocusEffect } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
+import useApi from '../hooks/useApi';
 
 export default function TelaPerfil({navigation}) {
     const [infoUser, setInfoUser] = useState<any>(null);
@@ -14,8 +15,9 @@ export default function TelaPerfil({navigation}) {
         useCallback(() => {
             const carregarInformacoes = async () => {
                 try {
+                    let {url} = useApi();
                     const token = await AsyncStorage.getItem('auth_token');
-                    const response = await axios.get('http://localhost:8000/api/usuario', {
+                    const response = await axios.get(url + '/api/usuario', {
                         headers: {
                             Authorization: `Bearer ${token}`
                         }

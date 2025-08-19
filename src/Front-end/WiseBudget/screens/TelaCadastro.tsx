@@ -3,6 +3,7 @@ import { View, Text, Image, StyleSheet, TextInput, TouchableOpacity, Alert, Scro
 import axios from 'axios';
 import Logo from '../assets/LogoAmarela.png';
 import { MaskedTextInput } from "react-native-mask-text";
+import useApi from "../hooks/useApi";
 
 export default function TelaCadastro({ navigation }) {
     const [nome, setNome] = useState('');
@@ -25,7 +26,8 @@ export default function TelaCadastro({ navigation }) {
         };
 
         try {
-            await axios.post('http://localhost:8000/api/register', dadosParaEnviar, {
+            let {url} = useApi();
+            await axios.post(url + '/api/register', dadosParaEnviar, {
                 headers: {
                     Accept: 'application/json',
                 }

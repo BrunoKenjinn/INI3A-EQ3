@@ -3,7 +3,8 @@ import { View, Text, Image, StyleSheet, TextInput, TouchableOpacity, Alert, Scro
 import axios from 'axios';
 import { MaskedTextInput } from "react-native-mask-text";
 import { Header } from '../components/header';
-import { useAuth } from '../App'; 
+import { useAuth } from '../App';
+import useApi from "../hooks/useApi";
 
 export default function TelaEditarPerfil({ navigation, route }) {
     const { usuario } = route.params;
@@ -25,7 +26,8 @@ export default function TelaEditarPerfil({ navigation, route }) {
         };
 
         try {
-            await axios.put(`http://localhost:8000/api/usuario`, dadosParaEnviar, {
+            let {url} = useApi();
+            await axios.put(url + `/api/usuario`, dadosParaEnviar, {
                 headers: {
                     Accept: 'application/json',
                 }
@@ -57,7 +59,8 @@ export default function TelaEditarPerfil({ navigation, route }) {
                     style: "destructive",
                     onPress: async () => {
                         try {
-                            await axios.delete(`http://localhost:8000/api/usuario`);
+                            let {url} = useApi();
+                            await axios.delete(url + `/api/usuario`);
                             Alert.alert("Sucesso", "A sua conta foi excluída.");
                             signOut();
                         } catch (error) {

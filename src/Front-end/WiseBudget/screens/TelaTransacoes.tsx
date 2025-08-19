@@ -8,6 +8,7 @@ import { useCallback, useState } from "react";
 import { useFocusEffect } from "@react-navigation/native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
+import useApi from "../hooks/useApi";
 
 interface Transacao {
   id: number;
@@ -31,8 +32,9 @@ export default function TelaTransacoes() {
       const carregarTransacoes = async () => {
         setLoading(true);
         try {
+          let {url} = useApi();
           const token = await AsyncStorage.getItem('auth_token');
-          const response = await axios.get(`http://localhost:8000/api/transacoes?periodo=${filtroPeriodo}&tipo=${filtroTipo}`, {
+          const response = await axios.get(url + `/api/transacoes?periodo=${filtroPeriodo}&tipo=${filtroTipo}`, {
             headers: { Authorization: `Bearer ${token}` }
           });
           setTransacoes(response.data);

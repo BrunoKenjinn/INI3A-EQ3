@@ -5,6 +5,7 @@ import { Header } from '../components/header';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import WheelColorPicker from 'react-native-wheel-color-picker';
+import useApi from "../hooks/useApi";
 
 
 
@@ -17,10 +18,11 @@ export default function TelaAdicionarCategoria({navigation}) {
     const [corSelecionada, setCorSelecionada] = useState('#FF6384');
 
     const handleSave = async () => {
+        let {url} = useApi();
         try {
             const token = await AsyncStorage.getItem('auth_token');
 
-            const response = await axios.post('http://localhost:8000/api/categorias', {
+            const response = await axios.post(url + '/api/categorias', {
                 nome: title,
                 icone: selectedValue,
                 cor: corSelecionada,

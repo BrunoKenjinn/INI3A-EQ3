@@ -5,6 +5,7 @@ import { Header } from '../components/header';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import WheelColorPicker from 'react-native-wheel-color-picker';
+import useApi from "../hooks/useApi";
 
 
 export default function TelaEditarCategoria({ navigation , route} ) {;
@@ -17,8 +18,9 @@ export default function TelaEditarCategoria({ navigation , route} ) {;
 
     const handleUpdate = async () => {
         try {
+            let {url} = useApi();
             const token = await AsyncStorage.getItem('auth_token');
-            const response = await axios.put(`http://localhost:8000/api/categorias/${categoria.id}`, {
+            const response = await axios.put(url + `/api/categorias/${categoria.id}`, {
             nome: title,
             icone: selectedValue,
             cor: corSelecionada,
@@ -41,9 +43,10 @@ export default function TelaEditarCategoria({ navigation , route} ) {;
 
     const handleDelete = async () => {
         try {
+            let {url} = useApi();
             const token = await AsyncStorage.getItem('auth_token');
 
-            await axios.delete(`http://localhost:8000/api/categorias/${categoria.id}`, {
+            await axios.delete(url + `/api/categorias/${categoria.id}`, {
                 headers: {
                 Authorization: `Bearer ${token}`
             }});

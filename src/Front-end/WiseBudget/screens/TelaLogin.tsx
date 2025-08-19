@@ -6,6 +6,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 import { useAuth } from "../App";
 import { MaskedTextInput } from "react-native-mask-text";
+import useApi from "../hooks/useApi";
 
 export default function TelaLogin({ navigation }) {
     const { signIn } = useAuth();
@@ -16,12 +17,13 @@ export default function TelaLogin({ navigation }) {
     const [value, setValue] = useState("");
 
     const handleLogin = () => {
+        let {url} = useApi();
         if (!identifier || !password) {
             Alert.alert('Atenção', 'Por favor, preencha o CPF/Email e a senha.');
             return;
         }
 
-        axios.post('http://localhost:8000/api/login', {
+        axios.post(url + '/api/login', {
             identifier: identifier,
             password: password,
         })

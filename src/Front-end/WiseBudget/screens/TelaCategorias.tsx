@@ -6,6 +6,7 @@ import axios from 'axios';
 import { useCallback, useEffect, useState } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useFocusEffect } from "@react-navigation/native";
+import useApi from "../hooks/useApi";
 
 
 
@@ -17,8 +18,9 @@ export default function TelaCategorias({ navigation }) {
         useCallback(() => {
             const carregarCategorias = async () => {
                 try {
+                    let {url} = useApi();
                     const token = await AsyncStorage.getItem('auth_token');
-                    const response = await axios.get('http://localhost:8000/api/categorias', {
+                    const response = await axios.get(url + '/api/categorias', {
                         headers: {
                             Authorization: `Bearer ${token}`
                         }

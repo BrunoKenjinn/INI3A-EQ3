@@ -12,6 +12,7 @@ import { TransacaoCard } from "../components/transacaoCard";
 import { useFocusEffect } from "@react-navigation/native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
+import useApi from "../hooks/useApi";
 
 type IconComponentType = ComponentType<IconProps<keyof typeof FontAwesome.glyphMap>>;
 interface ChartDataItem {
@@ -53,8 +54,9 @@ export default function TelaHome({ navigation }) {
     useCallback(() => {
         const carregarAtalhos = async () => {
             try {
+              let {url} = useApi();
                 const token = await AsyncStorage.getItem('auth_token');
-                const response = await axios.get('http://localhost:8000/api/atalhos', {
+                const response = await axios.get(url + '/api/atalhos', {
                     headers: {
                         Authorization: `Bearer ${token}`
                     }
@@ -68,8 +70,9 @@ export default function TelaHome({ navigation }) {
 
         const carregarDadosGrafico = async () => {
           try {
+            let {url} = useApi();
             const token = await AsyncStorage.getItem('auth_token');
-            const response = await axios.get('http://localhost:8000/api/gastos-por-categoria?periodo=hoje', {
+            const response = await axios.get(url + '/api/gastos-por-categoria?periodo=hoje', {
               headers: { Authorization: `Bearer ${token}` }
             });
 
@@ -94,8 +97,9 @@ export default function TelaHome({ navigation }) {
 
         const carregarEntradas = async () => {
           try {
+            let {url} = useApi();
             const token = await AsyncStorage.getItem('auth_token');
-            const response = await axios.get('http://localhost:8000/api/entradas-hoje', {
+            const response = await axios.get(url + '/api/entradas-hoje', {
               headers: { Authorization: `Bearer ${token}` }
             });
             setEntradasHoje(response.data);
@@ -122,8 +126,9 @@ export default function TelaHome({ navigation }) {
           text: "Excluir",
           onPress: async () => {
             try {
+              let {url} = useApi();
               const token = await AsyncStorage.getItem("auth_token");
-              await axios.delete(`http://localhost:8000/api/atalhos/${id}`, {
+              await axios.delete(url + `/api/atalhos/${id}`, {
                 headers: {
                   Authorization: `Bearer ${token}`,
                 },
