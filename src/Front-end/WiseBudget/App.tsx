@@ -22,7 +22,7 @@ import axios from 'axios';
 import TelaAdicionarTransação from './screens/TelaAdicionarTransação';
 
 const Stack = createNativeStackNavigator();
-const AuthContext = createContext(null);
+const AuthContext = createContext({signIn : (token: string) =>{}});
 export const useAuth = () => useContext(AuthContext);
 
 function AuthStack() {

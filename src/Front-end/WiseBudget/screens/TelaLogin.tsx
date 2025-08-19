@@ -1,5 +1,4 @@
-import { Image, SafeAreaView, StyleSheet, Text, TextInput, TouchableOpacity, View, Alert } from "react-native";
-import LogoAmarela from '../assets/LogoAmarela.png'; 
+import { Image, SafeAreaView, StyleSheet, Text, TextInput, TouchableOpacity, View, Alert } from "react-native"; 
 import { useState } from "react";
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -46,7 +45,7 @@ export default function TelaLogin({ navigation }) {
         });
     };
 
-    const handleChange = (text) => {
+    const handleChange = (text: string) => {
 
         if (/[a-zA-Z]/.test(text)) {
           setMask("");
@@ -58,7 +57,7 @@ export default function TelaLogin({ navigation }) {
 
     return <>
         <SafeAreaView style={styles.container}>
-            <Image source={LogoAmarela} style={styles.logo} />
+            <Image source={require('../assets/LogoAmarela.png')} style={styles.logo} />
             <Text style={styles.title}>Bem-vindo</Text>
 
             <View style={styles.form}>
