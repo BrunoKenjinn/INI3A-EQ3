@@ -35,6 +35,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/usuario', [UsuarioController::class, 'index'])->name('usuario.index');
     Route::put('/usuario', [UsuarioController::class, 'atualizar'])->name('usuario.atualizar');
     Route::delete('/usuario', [UsuarioController::class, 'excluir'])->name('usuario.excluir');
+    Route::put('/definir-saldo-inicial', [UsuarioController::class, 'definirSaldoInicial']);
     
     //home
     Route::get('/atalhos', [AtalhoController::class, 'index'])->name('atalhos.index');
@@ -55,6 +56,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::delete('/transacoes/{transacao}', [TransacaoController::class, 'destroy']);
     Route::get('/gastos-por-categoria', [TransacaoController::class, 'getGastosPorCategoria']);
     Route::get('/entradas-hoje', [TransacaoController::class, 'getEntradasHoje']);
+    Route::get('/balanco', [TransacaoController::class, 'getBalanco']);
 
 
     Route::post('/logout', [LoginController::class, 'sair']);

@@ -18,9 +18,8 @@ return new class extends Migration
             $table->string('cpf')->unique();
             $table->string('celular')->nullable();
             $table->date('data_nascimento')->nullable();
-
             $table->string('password');
-
+            $table->decimal('saldo_inicial', 10, 2)->nullable();
             $table->rememberToken();
             $table->timestamps();
         });

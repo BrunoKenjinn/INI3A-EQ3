@@ -23,6 +23,22 @@ interface ChartDataItem {
   legendFontSize: number;
 }
 
+interface BalancoData {
+  credito_mes: number;
+  debito_mes: number;
+  saldo_total: number;
+  saldo_inicial: number;
+}
+
+interface Entrada {
+  id: number;
+  descricao: string;
+  valor: number;
+  data: string;
+  icone: React.ComponentProps<typeof FontAwesome>['name'];
+  cor: string;
+}
+
 export default function TelaHome({ navigation }) {
   const [atalhos, setAtalhos] = useState([]);
   const [chartData, setChartData] = useState<ChartDataItem[]>([
@@ -34,87 +50,97 @@ export default function TelaHome({ navigation }) {
       legendFontSize: 15
     }
   ]);
-  const [title, setTitle] = useState(''); 
-  const atalhosComAdicionar = [...atalhos, { id:0, nome: 'Adicionar', icone: 'plus', rota: 'TelaAdicionarAtalho' }];
-
-  interface Entrada {
-    id: number;
-    descricao: string;
-    valor: number;
-    data: string;
-    icone: React.ComponentProps<typeof FontAwesome>['name']; 
-    cor: string;
-  }
-
+  const [title, setTitle] = useState('');
+  const atalhosComAdicionar = [...atalhos, { id: 0, nome: 'Adicionar', icone: 'plus', rota: 'TelaAdicionarAtalho' }];
+  const [balanco, setBalanco] = useState<BalancoData>({
+    credito_mes: 0,
+    debito_mes: 0,
+    saldo_total: 0,
+    saldo_inicial: 0,
+  });
 
   const [entradasHoje, setEntradasHoje] = useState<Entrada[]>([]);
 
 
   useFocusEffect(
     useCallback(() => {
-        const carregarAtalhos = async () => {
-            try {
-              let {url} = useApi();
-                const token = await AsyncStorage.getItem('auth_token');
-                const response = await axios.get(url + '/api/atalhos', {
-                    headers: {
-                        Authorization: `Bearer ${token}`
-                    }
-                });
-
-                setAtalhos(response.data);
-            } catch (error) {
-                console.error('Erro ao buscar atalhos:', error.response?.data || error.message);
+      const carregarAtalhos = async () => {
+        try {
+          let { url } = useApi();
+          const token = await AsyncStorage.getItem('auth_token');
+          const response = await axios.get(url + '/api/atalhos', {
+            headers: {
+              Authorization: `Bearer ${token}`
             }
-        };
+          });
 
-        const carregarDadosGrafico = async () => {
-          try {
-            let {url} = useApi();
-            const token = await AsyncStorage.getItem('auth_token');
-            const response = await axios.get(url + '/api/gastos-por-categoria?periodo=hoje', {
-              headers: { Authorization: `Bearer ${token}` }
-            });
+          setAtalhos(response.data);
+        } catch (error) {
+          console.error('Erro ao buscar atalhos:', error.response?.data || error.message);
+        }
+      };
 
-            if (response.data && response.data.length > 0) {
-              setChartData(response.data);
-            } else {
-              setChartData([
-                {
-                  name: "Nenhum Gasto",
-                  population: 100, 
-                  color: "#5A5A5A", 
-                  legendFontColor: "#7F7F7F",
-                  legendFontSize: 15
-                }
-              ]);
-            }
+      const carregarDadosGrafico = async () => {
+        try {
+          let { url } = useApi();
+          const token = await AsyncStorage.getItem('auth_token');
+          const response = await axios.get(url + '/api/gastos-por-categoria?periodo=hoje', {
+            headers: { Authorization: `Bearer ${token}` }
+          });
 
-          } catch (error) {
-            console.error('Erro ao buscar dados do gráfico:', error.response?.data || error.message);
+          if (response.data && response.data.length > 0) {
+            setChartData(response.data);
+          } else {
+            setChartData([
+              {
+                name: "Nenhum Gasto",
+                population: 100,
+                color: "#5A5A5A",
+                legendFontColor: "#7F7F7F",
+                legendFontSize: 15
+              }
+            ]);
           }
-        };
 
-        const carregarEntradas = async () => {
-          try {
-            let {url} = useApi();
-            const token = await AsyncStorage.getItem('auth_token');
-            const response = await axios.get(url + '/api/entradas-hoje', {
-              headers: { Authorization: `Bearer ${token}` }
-            });
-            setEntradasHoje(response.data);
-          } catch (error) {
-            console.error('Erro ao buscar entradas:', error.response?.data || error.message);
-          }
-        };
+        } catch (error) {
+          console.error('Erro ao buscar dados do gráfico:', error.response?.data || error.message);
+        }
+      };
 
-        carregarAtalhos();
-        carregarDadosGrafico();
-        carregarEntradas();
+      const carregarEntradas = async () => {
+        try {
+          let { url } = useApi();
+          const token = await AsyncStorage.getItem('auth_token');
+          const response = await axios.get(url + '/api/entradas-hoje', {
+            headers: { Authorization: `Bearer ${token}` }
+          });
+          setEntradasHoje(response.data);
+        } catch (error) {
+          console.error('Erro ao buscar entradas:', error.response?.data || error.message);
+        }
+      };
 
-        return () => { };
+      const carregarBalanco = async () => {
+        try {
+          let { url } = useApi();
+          const token = await AsyncStorage.getItem('auth_token');
+          const response = await axios.get(url + '/api/balanco', {
+            headers: { Authorization: `Bearer ${token}` }
+          });
+          setBalanco(response.data);
+        } catch (error) {
+          console.error("Erro ao buscar balanço:", error.response?.data || error.message);
+        }
+      };
+
+      carregarAtalhos();
+      carregarDadosGrafico();
+      carregarEntradas();
+      carregarBalanco();
+
+      return () => { };
     }, [])
-);
+  );
 
   const handleDelete = async (id: number) => {
     Alert.alert(
@@ -126,7 +152,7 @@ export default function TelaHome({ navigation }) {
           text: "Excluir",
           onPress: async () => {
             try {
-              let {url} = useApi();
+              let { url } = useApi();
               const token = await AsyncStorage.getItem("auth_token");
               await axios.delete(url + `/api/atalhos/${id}`, {
                 headers: {
@@ -150,16 +176,16 @@ export default function TelaHome({ navigation }) {
     backgroundGradientTo: "#08130D",
     backgroundGradientToOpacity: 0.5,
     color: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
-    strokeWidth: 2  ,
+    strokeWidth: 2,
     barPercentage: 0.5,
     useShadowColorFromDataset: false
   };
-  
+
 
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.content}>
-        <Header 
+        <Header
           leftIconName="bars"
           leftIconColor="#f1c40f"
           leftIconSize={24}
@@ -170,41 +196,45 @@ export default function TelaHome({ navigation }) {
           rightIconSize={24}
           rightIconComponent={FontAwesome5}
         />
-        <Balanço credito="200" debito="100"/>
+        <Balanço
+          credito={balanco.credito_mes.toString()}
+          debito={balanco.debito_mes.toString()}
+          saldo={balanco.saldo_total.toString()}
+        />
 
-        <View style={{width: '100%'}}>
-          <Text style={{color: 'white', fontFamily: 'Poppins-Regular'}}>
+        <View style={{ width: '100%' }}>
+          <Text style={{ color: 'white', fontFamily: 'Poppins-Regular' }}>
             Gráfico de Setores
           </Text>
-          <View style={{width: '100%', backgroundColor: '#393939', borderRadius: 20, marginTop: 10, alignItems: "center"}}>
-          <PieChart
+          <View style={{ width: '100%', backgroundColor: '#393939', borderRadius: 20, marginTop: 10, alignItems: "center" }}>
+            <PieChart
               data={chartData}
               width={400}
               height={150}
-              chartConfig={chartConfig} 
+              chartConfig={chartConfig}
               accessor={"population"}
               backgroundColor={"transparent"}
               paddingLeft={"-20"}
-              center={[0,0]}
+              center={[0, 0]}
             />
           </View>
         </View>
-        
-        <View style={{width: '100%', marginTop: 20}}>
-          <Text style={{color: 'white', fontFamily: 'Poppins-Regular'}}>
+
+        <View style={{ width: '100%', marginTop: 20 }}>
+          <Text style={{ color: 'white', fontFamily: 'Poppins-Regular' }}>
             Sua carteira
           </Text>
 
           <FlatList
             data={entradasHoje}
             keyExtractor={(item) => item.id.toString()}
-            style={{maxHeight: 200}} 
+            style={{ maxHeight: 200 }}
             showsVerticalScrollIndicator={false}
             renderItem={({ item }) => (
               <TransacaoCard
                 descricao={item.descricao}
                 valor={item.valor}
-                hora={new Date(item.data).toLocaleTimeString([], {hour: '2-digit', minute: '2-digit'})}
+                hora={new Date(item.data).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                 icone={item.icone}
                 cor={item.cor}
               />
@@ -212,31 +242,31 @@ export default function TelaHome({ navigation }) {
           />
         </View>
 
-        <View style={{width: '100%', marginTop: 20}}>
-          <Text style={{color: 'white', fontFamily: 'Poppins-Regular'}}>
+        <View style={{ width: '100%', marginTop: 20 }}>
+          <Text style={{ color: 'white', fontFamily: 'Poppins-Regular' }}>
             Atalhos
           </Text>
-          
+
           <FlatList
             data={atalhosComAdicionar}
             keyExtractor={(item) => item.id.toString()}
             horizontal={true}
 
             renderItem={({ item }) => (
-                <View style={{ marginRight: 12 }}>
-                    <Atalho
-                        iconName={item.icone}
-                        text={item.nome}
-                        onPress={() => {
-                            navigation.navigate(item.rota);
-                        }}
-                        onLongPress={() => {
-                        if (item.id !== 0) {
-                          handleDelete(item.id); 
-                        }
-                        }}
-                    />
-                </View>
+              <View style={{ marginRight: 12 }}>
+                <Atalho
+                  iconName={item.icone}
+                  text={item.nome}
+                  onPress={() => {
+                    navigation.navigate(item.rota);
+                  }}
+                  onLongPress={() => {
+                    if (item.id !== 0) {
+                      handleDelete(item.id);
+                    }
+                  }}
+                />
+              </View>
             )}
             contentContainerStyle={{ paddingVertical: 10 }}
             showsHorizontalScrollIndicator={false}
@@ -254,7 +284,7 @@ export default function TelaHome({ navigation }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#2c2c2c', 
+    backgroundColor: '#2c2c2c',
   },
   content: {
     flex: 1,

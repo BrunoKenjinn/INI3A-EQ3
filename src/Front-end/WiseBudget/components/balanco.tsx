@@ -5,17 +5,17 @@ import { useState } from "react";
 type Props = {
     debito: string;
     credito: string;
+    saldo: string;
 };
 
-export function Balanço({ debito, credito }: Props) {
+export function Balanço({ debito, credito, saldo }: Props) {
     const [mostrarValores, setMostrarValores] = useState(true);
 
     const parseValor = (valor: string | undefined | null) => {
-    if (!valor) return 0;
-    return parseFloat(valor.replace('.', '').replace(',', '.'));
-}
+        if (!valor) return 0;
+        return parseFloat(valor.replace('.', '').replace(',', '.'));
+    }
 
-    const saldo = (parseValor(debito) - parseValor(credito)).toFixed(2);
 
     const formatar = (valor: string) => {
         const num = parseFloat(valor);

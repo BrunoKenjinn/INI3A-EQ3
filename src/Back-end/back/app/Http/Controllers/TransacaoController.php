@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
-use App\Models\User; 
+use App\Models\User;
 use App\Models\Transacao;
 use Illuminate\Validation\Rule;
 
@@ -21,23 +21,23 @@ class TransacaoController extends Controller
         ]);
 
         $periodo = $request->input('periodo', 'semana');
-        $tipo = $request->input('tipo', 'todos');    
+        $tipo = $request->input('tipo', 'todos');
 
         $query = $user->transacoes()
             ->join('categorias', 'transacaos.categoria_id', '=', 'categorias.id')
             ->select(
-                'transacaos.id', 
-                'transacaos.fonte as descricao', 
-                'transacaos.valor', 
+                'transacaos.id',
+                'transacaos.fonte as descricao',
+                'transacaos.valor',
                 'transacaos.data',
                 'transacaos.tipo',
-                'categorias.icone', 
+                'categorias.icone',
                 'categorias.cor'
             );
 
         if ($tipo !== 'todos') {
             $query->where('transacaos.tipo', $tipo);
-        } elseif($tipo === 'recorrente'){
+        } elseif ($tipo === 'recorrente') {
             $query->where('transacoes.recorrente', true);
         }
 
@@ -82,7 +82,7 @@ class TransacaoController extends Controller
         return response()->json($transacao, 201);
     }
 
-        public function update(Request $request, Transacao $transacao)
+    public function update(Request $request, Transacao $transacao)
     {
         $user = $request->user();
 
@@ -134,10 +134,10 @@ class TransacaoController extends Controller
             'periodo' => 'sometimes|in:hoje,semana,mes'
         ]);
 
-        $periodo = $request->input('periodo', 'mes'); 
+        $periodo = $request->input('periodo', 'mes');
 
         $query = $user->transacoes()
-            ->where('tipo', 'saida') 
+            ->where('tipo', 'saida')
             ->join('categorias', 'transacaos.categoria_id', '=', 'categorias.id')
             ->select(
                 'categorias.nome as categoria_nome',
@@ -154,7 +154,7 @@ class TransacaoController extends Controller
                 break;
             case 'mes':
                 $query->whereYear('transacaos.data', now()->year)
-                      ->whereMonth('transacaos.data', now()->month);
+                    ->whereMonth('transacaos.data', now()->month);
                 break;
         }
 
@@ -164,7 +164,7 @@ class TransacaoController extends Controller
             return [
                 'name' => $item->categoria_nome,
                 'population' => (float) $item->total_gasto,
-                'color' => $item->categoria_cor, 
+                'color' => $item->categoria_cor,
                 'legendFontColor' => "#7F7F7F",
                 'legendFontSize' => 15
             ];
@@ -179,19 +179,47 @@ class TransacaoController extends Controller
 
         $entradas = $user->transacoes()
             ->join('categorias', 'transacaos.categoria_id', '=', 'categorias.id')
-            ->where('transacaos.tipo', 'entrada') 
-            ->whereDate('transacaos.data', today()) 
-            ->orderBy('transacaos.created_at', 'desc') 
+            ->where('transacaos.tipo', 'entrada')
+            ->whereDate('transacaos.data', today())
+            ->orderBy('transacaos.created_at', 'desc')
             ->get([
-                'transacaos.id', 
-                'transacaos.fonte as descricao', 
-                'transacaos.valor', 
+                'transacaos.id',
+                'transacaos.fonte as descricao',
+                'transacaos.valor',
                 'transacaos.created_at as data',
-                'categorias.icone', 
-                'categorias.cor'    
-        ]);
+                'categorias.icone',
+                'categorias.cor'
+            ]);
 
         return response()->json($entradas);
     }
 
+    public function getBalanco(Request $request)
+    {
+        $user = Auth::user();
+
+        $creditoMes = $user->transacoes()
+            ->where('tipo', 'entrada')
+            ->whereYear('data', now()->year)
+            ->whereMonth('data', now()->month)
+            ->sum('valor');
+
+        $debitoMes = $user->transacoes()
+            ->where('tipo', 'saida')
+            ->whereYear('data', now()->year)
+            ->whereMonth('data', now()->month)
+            ->sum('valor');
+
+        $creditoTotal = $user->transacoes()->where('tipo', 'entrada')->sum('valor');
+        $debitoTotal = $user->transacoes()->where('tipo', 'saida')->sum('valor');
+        $saldoInicial = $user->saldo_inicial ?? 0;
+        $saldoTotal = $saldoInicial + ($creditoTotal - $debitoTotal);
+
+        return response()->json([
+            'saldo_inicial' => (float) $saldoInicial,
+            'credito_mes'   => (float) $creditoMes,
+            'debito_mes'    => (float) $debitoMes,
+            'saldo_total'   => (float) $saldoTotal,
+        ]);
+    }
 }

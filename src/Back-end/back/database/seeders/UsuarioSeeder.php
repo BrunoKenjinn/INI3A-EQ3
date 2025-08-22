@@ -19,7 +19,7 @@ class UsuarioSeeder extends Seeder
                 'cpf'=>"21211111111",
                 'celular'=>"99299",
                 'data_nascimento'=>'2012-12-12', // Formato YYYY-MM-DD
-                'password'=>bcrypt("123")
+                'password'=>bcrypt("123"),
             ];
         User::create($dados);
     }

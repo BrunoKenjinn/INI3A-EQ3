@@ -1,7 +1,7 @@
 import './global.css'
 import { ActivityIndicator, SafeAreaView, StyleSheet, Text, View } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
-import { createNativeStackNavigator} from '@react-navigation/native-stack';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { useFonts } from 'expo-font';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import TelaInicial from './screens/TelaInicial';
@@ -17,12 +17,25 @@ import FontAwesome5 from '@expo/vector-icons/FontAwesome5';
 import TelaAdicionarAtalho from './screens/TalaAdicionarAtalho';
 import TelaPerfil from './screens/TelaPerfil';
 import TelaEditarPerfil from './screens/TelaEditarPerfil';
+import TelaDefinirSaldoInicial from './screens/TelaDefinirSaldoInicial';
 import { createContext, useContext, useEffect, useState } from 'react';
 import axios from 'axios';
 import TelaAdicionarTransação from './screens/TelaAdicionarTransação';
+import useApi from './hooks/useApi';
 
 const Stack = createNativeStackNavigator();
-const AuthContext = createContext({signIn : (token: string) =>{}});
+const AuthContext = createContext({
+  userToken: null,
+  hasSeenOrientations: false,
+  orientationsDismissed: false,
+  isLoading: true,
+  needSaldoInicial: false,
+  signIn: (token: string) => { },
+  signOut: () => { },
+  markOrientationsAsSeen: () => { },
+  dismissOrientations: () => { },
+  setNeedSaldoInicial: (v: boolean) => { },
+});
 export const useAuth = () => useContext(AuthContext);
 
 function AuthStack() {
@@ -38,7 +51,7 @@ function AuthStack() {
 
 function AppStack() {
   return (
-      
+
     <Stack.Navigator initialRouteName="TelaHome" screenOptions={{ headerShown: false }}>
       <Stack.Screen name="TelaHome" component={TelaHome} />
       <Stack.Screen name="TelaCategorias" component={TelaCategorias} />
@@ -47,19 +60,19 @@ function AppStack() {
       <Stack.Screen name="TelaAdicionarAtalho" component={TelaAdicionarAtalho} />
       <Stack.Screen name="TelaPerfil" component={TelaPerfil} />
       <Stack.Screen name="TelaEditarPerfil" component={TelaEditarPerfil} />
-      <Stack.Screen name ="TelaTransacoes" component = {TelaTransacoes} />
+      <Stack.Screen name="TelaTransacoes" component={TelaTransacoes} />
       <Stack.Screen name="TelaAdicionarTransação" component={TelaAdicionarTransação} />
     </Stack.Navigator>
   );
 }
 
 function OnboardingStack() {
-    return (
-        <Stack.Navigator initialRouteName="TelaOrientacao" screenOptions={{ headerShown: false }}>
-            <Stack.Screen name="TelaOrientacao" component={TelaOrientacao} />
-            <Stack.Screen name="Auth" component={AuthStack} />
-        </Stack.Navigator>
-    )
+  return (
+    <Stack.Navigator initialRouteName="TelaOrientacao" screenOptions={{ headerShown: false }}>
+      <Stack.Screen name="TelaOrientacao" component={TelaOrientacao} />
+      <Stack.Screen name="Auth" component={AuthStack} />
+    </Stack.Navigator>
+  )
 }
 
 function AuthProvider({ children }) {
@@ -67,12 +80,21 @@ function AuthProvider({ children }) {
   const [hasSeenOrientations, setHasSeenOrientations] = useState(false);
   const [orientationsDismissed, setOrientationsDismissed] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+  const [needSaldoInicial, setNeedSaldoInicial] = useState(false);
 
   const signIn = async (token) => {
     try {
       await AsyncStorage.setItem('auth_token', token);
       axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
       setUserToken(token);
+
+      try {
+        let {url} = useApi();
+        const res = await axios.get(url + "/api/user");
+        setNeedSaldoInicial(res.data?.saldo_inicial === null);
+      } catch (e) {
+        console.error("Falha ao buscar usuário após login", e.response?.data || e.message);
+      }
     } catch (e) {
       console.error("Erro ao salvar token", e);
     }
@@ -87,7 +109,7 @@ function AuthProvider({ children }) {
       console.error("Erro ao remover token", e);
     }
   };
-  
+
   const markOrientationsAsSeen = async () => {
     await AsyncStorage.setItem('hasSeenOrientations', 'true');
     setHasSeenOrientations(true);
@@ -102,10 +124,18 @@ function AuthProvider({ children }) {
       try {
         const token = await AsyncStorage.getItem('auth_token');
         const seen = await AsyncStorage.getItem('hasSeenOrientations');
-        
+
         if (token) {
           axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
-          setUserToken(token);
+          try {
+            let { url } = useApi();
+            const res = await axios.get(url + "/api/user");
+            setUserToken(token);
+            setNeedSaldoInicial(res.data?.saldo_inicial === null);
+          } catch (e) {
+            console.error("Token inválido", e.response?.data);
+            await signOut();
+          }
         }
         if (seen === 'true') {
           setHasSeenOrientations(true);
@@ -119,14 +149,14 @@ function AuthProvider({ children }) {
   }, []);
 
   return (
-    <AuthContext.Provider value={{ userToken, hasSeenOrientations, orientationsDismissed, isLoading, signIn, signOut, markOrientationsAsSeen, dismissOrientations }}>
+    <AuthContext.Provider value={{ userToken, hasSeenOrientations, orientationsDismissed, isLoading, needSaldoInicial, signIn, signOut, markOrientationsAsSeen, dismissOrientations, setNeedSaldoInicial }}>
       {children}
     </AuthContext.Provider>
   );
 }
 
 function AppNavigator() {
-  const { userToken, hasSeenOrientations, orientationsDismissed, isLoading } = useAuth();
+  const { userToken, hasSeenOrientations, orientationsDismissed, isLoading, needSaldoInicial } = useAuth();
 
   const [fontsLoaded] = useFonts({
     'Poppins-Regular': require('./assets/fonts/Poppins-Regular.ttf'),
@@ -150,6 +180,8 @@ function AppNavigator() {
           <Stack.Screen name="Onboarding" component={OnboardingStack} />
         ) : userToken == null ? (
           <Stack.Screen name="Auth" component={AuthStack} />
+        ) : needSaldoInicial ? (
+          <Stack.Screen name="TelaDefinirSaldoInicial" component={TelaDefinirSaldoInicial} />
         ) : (
           <Stack.Screen name="App" component={AppStack} />
         )}

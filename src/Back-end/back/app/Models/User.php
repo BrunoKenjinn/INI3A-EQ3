@@ -36,6 +36,7 @@ class User extends Authenticatable
         'celular',
         'data_nascimento',
         'password',
+        'saldo_inicial',
     ];
 
     /**

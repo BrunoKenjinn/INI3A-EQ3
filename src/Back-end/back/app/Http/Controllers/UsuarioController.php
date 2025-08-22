@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rule;
 use App\Models\User;
 use Illuminate\Support\Facades\Validator;
-use Carbon\Carbon; 
+use Carbon\Carbon;
 
 class UsuarioController extends Controller
 {
@@ -57,11 +57,17 @@ class UsuarioController extends Controller
         $validated = $request->validate([
             'nome' => 'sometimes|required|string|max:255',
             'email' => [
-                'sometimes', 'required', 'email', 'max:255',
+                'sometimes',
+                'required',
+                'email',
+                'max:255',
                 Rule::unique('users')->ignore($user->id),
             ],
             'cpf' => [
-                'sometimes', 'required', 'string', 'size:11',
+                'sometimes',
+                'required',
+                'string',
+                'size:11',
                 Rule::unique('users')->ignore($user->id),
             ],
             'celular' => 'sometimes|required|string|max:15',
@@ -76,7 +82,7 @@ class UsuarioController extends Controller
         if (isset($validated['password']) && $validated['password']) {
             $validated['password'] = Hash::make($validated['password']);
         } else {
-            unset($validated['password']); 
+            unset($validated['password']);
         }
 
         $user->update($validated);
@@ -90,5 +96,22 @@ class UsuarioController extends Controller
         $user->delete();
 
         return response()->json(null, 204);
+    }
+    public function definirSaldoInicial(Request $request)
+    {
+        $user = $request->user();
+
+        $validated = $request->validate([
+            'saldo_inicial' => 'required|numeric'
+        ]);
+
+        if ($user->saldo_inicial !== null) {
+            return response()->json(['message' => 'Saldo inicial já definido.'], 400);
+        }
+
+        $user->saldo_inicial = $validated['saldo_inicial'];
+        $user->save();
+
+        return response()->json(['message' => 'Saldo inicial definido com sucesso!', 'user' => $user]);
     }
 }
