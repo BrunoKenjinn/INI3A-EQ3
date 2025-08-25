@@ -10,6 +10,12 @@ import useApi from "../hooks/useApi";
 
 export default function TelaAdicionarAtalhos({ navigation }) {
     const handleSave = async (nome: string, icone: string, rota:string) => {
+          const jaExiste = atalhos.some((a) => a.rota === rota || a.nome === nome);
+        if (jaExiste) {
+            console.log("Duplicado", "Este atalho já foi adicionado.");
+            return;
+        }
+        
         let {url} = useApi();
         try {
             const token = await AsyncStorage.getItem('auth_token');
@@ -33,12 +39,30 @@ export default function TelaAdicionarAtalhos({ navigation }) {
         }
     };
 
+    useEffect(() => {
+        const carregarAtalhos = async () => {
+            try {
+            let { url } = useApi();
+            const token = await AsyncStorage.getItem("auth_token");
+            const response = await axios.get(url + "/api/atalhos", {
+                headers: { Authorization: `Bearer ${token}` },
+            });
+            setAtalhos(response.data);
+            } catch (error) {
+            console.error("Erro ao carregar atalhos:", error.response?.data || error.message);
+            }
+        };
+
+        carregarAtalhos();
+    }, []);
+
+
     const atalhosPredefinidos = [
     { id: 2, nome: 'Balanço', icone: 'money', rota: 'TelaBalanco' },
     { id: 3, nome: 'Análise Rápida', icone: 'flash', rota: 'TelaAnaliseRapida' },
     { id: 4, nome: 'Categorias', icone: 'th-large', rota: 'TelaCategorias' },
     { id: 5, nome: 'Configurações', icone: 'cog', rota: 'TelaConfiguracoes' },
-    { id: 6, nome: 'Adicionar Gastos', icone: 'plus', rota: 'TelaAdicionarTransacoes' },
+    { id: 6, nome: 'Adicionar Transações', icone: 'plus', rota: 'TelaAdicionarTransacoes' },
     { id: 7, nome: 'Metas', icone: 'bullseye', rota: 'TelaMetas' },
     { id: 8, nome: 'Transações', icone: 'exchange', rota: 'TelaTransacoes' },
 ];
