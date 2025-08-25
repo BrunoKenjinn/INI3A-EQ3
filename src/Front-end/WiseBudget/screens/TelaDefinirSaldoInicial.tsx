@@ -17,7 +17,6 @@ export default function TelaDefinirSaldoInicial({ navigation }) {
                 headers: { Authorization: `Bearer ${token}` }
             });
             setNeedSaldoInicial(false);
-            navigation.replace("App"); 
         } catch (error) {
             console.error(error.response?.data || error.message);
         }

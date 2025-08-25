@@ -5,15 +5,19 @@ import { useAuth } from '../App';
 import CustomBottomTab from '../components/CustomBottomTab';
 import { useCallback, useState } from 'react';
 import { useFocusEffect } from '@react-navigation/native';
+import { Loading } from '../components/loading';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 import useApi from '../hooks/useApi';
 
 export default function TelaPerfil({navigation}) {
+    const [isLoading, setIsLoading] = useState(true);
     const [infoUser, setInfoUser] = useState<any>(null);
     useFocusEffect(
         useCallback(() => {
             const carregarInformacoes = async () => {
+                if(!isLoading) 
+                    setIsLoading(true);
                 try {
                     let {url} = useApi();
                     const token = await AsyncStorage.getItem('auth_token');
@@ -25,6 +29,8 @@ export default function TelaPerfil({navigation}) {
                     setInfoUser(response.data);
                 } catch (error: any) {
                     console.error('Erro ao buscar as informações do usuario:', error.response?.data || error.message);
+                } finally{
+                    setIsLoading(false);
                 }
             };
             carregarInformacoes();
@@ -34,6 +40,9 @@ export default function TelaPerfil({navigation}) {
     );
 
     const { signOut } = useAuth();
+
+    if(isLoading)
+        return <Loading />
 
     return (
         <SafeAreaView style={{ flex: 1, backgroundColor: '#2c2c2c', height:'100%', width:'100%'}}>

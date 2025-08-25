@@ -11,6 +11,7 @@ import { Atalho } from "../components/atalho";
 import { TransacaoCard } from "../components/transacaoCard";
 import { useFocusEffect } from "@react-navigation/native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { Loading } from '../components/loading';
 import axios from "axios";
 import useApi from "../hooks/useApi";
 
@@ -41,6 +42,7 @@ interface Entrada {
 
 export default function TelaHome({ navigation }) {
   const [atalhos, setAtalhos] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
   const [chartData, setChartData] = useState<ChartDataItem[]>([
     {
       name: "Carregando...",
@@ -64,6 +66,20 @@ export default function TelaHome({ navigation }) {
 
   useFocusEffect(
     useCallback(() => {
+      const carregarTudo = async () => {
+        setIsLoading(true);
+        try {
+          await carregarAtalhos();
+          await carregarDadosGrafico();
+          await carregarEntradas();
+          await carregarBalanco();
+        } catch (error) {
+          console.error("Erro ao carregar dados da Tela Home:", error);
+          Alert.alert("Erro", "Não foi possível carregar os dados. Tente novamente.");
+        } finally {
+          setIsLoading(false);
+        }
+      };
       const carregarAtalhos = async () => {
         try {
           let { url } = useApi();
@@ -130,13 +146,10 @@ export default function TelaHome({ navigation }) {
           setBalanco(response.data);
         } catch (error) {
           console.error("Erro ao buscar balanço:", error.response?.data || error.message);
-        }
+        } 
       };
 
-      carregarAtalhos();
-      carregarDadosGrafico();
-      carregarEntradas();
-      carregarBalanco();
+      carregarTudo();
 
       return () => { };
     }, [])
@@ -181,6 +194,9 @@ export default function TelaHome({ navigation }) {
     useShadowColorFromDataset: false
   };
 
+  if(isLoading){
+    return <Loading />
+  }
 
   return (
     <SafeAreaView style={styles.container}>

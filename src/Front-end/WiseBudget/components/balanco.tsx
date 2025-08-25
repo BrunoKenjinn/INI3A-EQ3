@@ -11,29 +11,33 @@ type Props = {
 export function Balanço({ debito, credito, saldo }: Props) {
     const [mostrarValores, setMostrarValores] = useState(true);
 
-    const parseValor = (valor: string | undefined | null) => {
-        if (!valor) return 0;
-        return parseFloat(valor.replace('.', '').replace(',', '.'));
-    }
 
 
-    const formatar = (valor: string) => {
-        const num = parseFloat(valor);
-        return num.toLocaleString('pt-BR', {
-            minimumFractionDigits: 2,
-            maximumFractionDigits: 2
+    const formatar = (value: string) => {
+        const numberValue = parseFloat(value);
+        if (isNaN(numberValue)) {
+            return 'R$ 0,00';
+        }
+        return numberValue.toLocaleString('pt-BR', {
+            style: 'currency',
+            currency: 'BRL',
         });
     };
 
-    const valorVisivel = (valor: string) =>
-        mostrarValores ? formatar(valor) : 'XX.XXX,XX';
+    const valorMascarado = (valor: string) => {
+        const valorNumero = parseFloat(valor);
+        const valorComVirgula = valorNumero.toFixed(2);
+        const valorApenasDigitos = valorComVirgula.replace('.', '');
+        
+        return '*'.repeat(valorApenasDigitos.length);
+    };
 
     return (
         <View>
             <View style={styles.top}>
                 <Text style={styles.text1}>Saldo</Text>
                 <View style={styles.valorComOlho}>
-                    <Text style={styles.text2}>R$ {valorVisivel(saldo)}</Text>
+                    <Text style={styles.text2}>{mostrarValores ? formatar(saldo) : valorMascarado(saldo)}</Text>
                     <TouchableOpacity onPress={() => setMostrarValores(!mostrarValores)}>
                         <FontAwesome
                             name={mostrarValores ? "eye" : "eye-slash"}
@@ -46,12 +50,12 @@ export function Balanço({ debito, credito, saldo }: Props) {
             <View style={styles.bottom}>
                 <View style={styles.bottom1}>
                     <Text style={styles.text1}>Débito</Text>
-                    <Text style={styles.text2}>R$ {valorVisivel(debito)}</Text>
+                    <Text style={styles.text2}>{mostrarValores ? formatar(debito) : valorMascarado(debito)}</Text>
                 </View>
                 <Text style={styles.border}>|</Text>
                 <View style={styles.bottom2}>
                     <Text style={styles.text1}>Crédito</Text>
-                    <Text style={styles.text2}>R$ {valorVisivel(credito)}</Text>
+                    <Text style={styles.text2}>{mostrarValores ? formatar(credito) : valorMascarado(credito)}</Text>
                 </View>
             </View>
         </View>
