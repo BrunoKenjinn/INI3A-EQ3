@@ -6,17 +6,17 @@ import useApi from "../hooks/useApi";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export default function TelaDefinirSaldoInicial({ navigation }) {
-    const { signOut, setneedSaldoInicial } = useAuth();
+    const { signOut, setNeedSaldoInicial } = useAuth();
     const [saldo, setSaldo] = useState("");
 
     const salvarSaldo = async () => {
         try {
             const token = await AsyncStorage.getItem('auth_token');
             let {url} = useApi();
-            await axios.post(url + "/api/definir-saldo-inicial", { saldo_inicial: saldo }, {
+            await axios.put(url + "/api/definir-saldo-inicial", { saldo_inicial: saldo }, {
                 headers: { Authorization: `Bearer ${token}` }
             });
-            setneedSaldoInicial(false);
+            setNeedSaldoInicial(false);
             navigation.replace("App"); 
         } catch (error) {
             console.error(error.response?.data || error.message);

@@ -20,7 +20,7 @@ import TelaEditarPerfil from './screens/TelaEditarPerfil';
 import TelaDefinirSaldoInicial from './screens/TelaDefinirSaldoInicial';
 import { createContext, useContext, useEffect, useState } from 'react';
 import axios from 'axios';
-import TelaAdicionarTransação from './screens/TelaAdicionarTransação';
+import TelaAdicionarTransacoes from './screens/TelaAdicionarTransacoes';
 import useApi from './hooks/useApi';
 
 const Stack = createNativeStackNavigator();
@@ -61,7 +61,7 @@ function AppStack() {
       <Stack.Screen name="TelaPerfil" component={TelaPerfil} />
       <Stack.Screen name="TelaEditarPerfil" component={TelaEditarPerfil} />
       <Stack.Screen name="TelaTransacoes" component={TelaTransacoes} />
-      <Stack.Screen name="TelaAdicionarTransação" component={TelaAdicionarTransação} />
+      <Stack.Screen name="TelaAdicionarTransacoes" component={TelaAdicionarTransacoes} />
     </Stack.Navigator>
   );
 }

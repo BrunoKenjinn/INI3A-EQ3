@@ -14,7 +14,7 @@ type Categoria = {
   nome: string;
 };
 
-export default function TelaAdicionarTransação({navigation}) {
+export default function TelaAdicionarTransacoes({navigation}) {
     const [date, setDate] = useState(new Date());
     const [open, setOpen] = useState(false);
     const [fonte,setFonte] = useState('');
