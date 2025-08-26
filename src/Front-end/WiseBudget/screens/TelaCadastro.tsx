@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import { View, Text, Image, StyleSheet, TextInput, TouchableOpacity, Alert, ScrollView } from "react-native";
 import axios from 'axios';
-import Logo from '../assets/LogoAmarela.png';
 import { MaskedTextInput } from "react-native-mask-text";
 import useApi from "../hooks/useApi";
 
@@ -50,7 +49,7 @@ export default function TelaCadastro({ navigation }) {
 
     return (
         <ScrollView contentContainerStyle={styles.container}>
-            <Image source={Logo} style={styles.logo} />
+            <Image source={require('../assets/LogoAmarela.png')} style={styles.logo} />
             <Text style={styles.title}>Crie sua conta</Text>
 
             <View style={styles.inputGroup}>

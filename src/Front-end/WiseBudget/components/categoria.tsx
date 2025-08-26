@@ -8,14 +8,16 @@ type Props = {
     onPress: () => void;
 };
 
-export function Categoria({iconName, text, color, onPress} : Props) {
+export function Categoria({ iconName, text, color, onPress }: Props) {
     const displayColor = color || '#f1c40f'
     return <View className='mb-3 mt-5'>
-                <TouchableOpacity style={styles.categoria} className='w-100 h-[105px] rounded-2xl flex items-center justify-center' onPress={onPress}>
+            <View  className='w-[100px] h-[105px] '>
+                <TouchableOpacity style={styles.categoria} className=' w-[100px] h-[105px] flex items-center justify-center rounded-2xl' onPress={onPress} >
                     <FontAwesome name={iconName} size={50} color={displayColor} />
                 </TouchableOpacity>
-                <Text style={[styles.text, {color: displayColor}]}className='text-center text-lg'>{text}</Text>
-        </View>
+                <Text style={[styles.text, { color: displayColor }]} className='text-center text-x1 mt-2'>{text}</Text>
+            </View>
+    </View>
 }
 
 const styles = StyleSheet.create({

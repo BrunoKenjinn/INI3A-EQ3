@@ -46,7 +46,7 @@ export default function TelaCategorias({ navigation }) {
 
             const carregarCategorias = async () => {
                 try {
-                    let {url} = useApi();
+                    let { url } = useApi();
                     const token = await AsyncStorage.getItem('auth_token');
                     const response = await axios.get(url + '/api/categorias', {
                         headers: {
@@ -103,7 +103,7 @@ export default function TelaCategorias({ navigation }) {
                     keyExtractor={(item, index) => index.toString()}
                     numColumns={3}
                     renderItem={({ item }) => (
-                        <View style={{ flex: 1, margin: 8 }}>
+                        <View style={styles.categoriaWrapper}>
                             <Categoria
                                 iconName={item.icone}
                                 text={item.nome}
@@ -117,9 +117,9 @@ export default function TelaCategorias({ navigation }) {
                             />
                         </View>
                     )}
-                    contentContainerStyle={{ paddingVertical: 10 }}
-                    columnWrapperStyle={{ justifyContent: 'center' }}
                 />
+
+
             </ScrollView>
         </SafeAreaView>
     </>
@@ -130,5 +130,12 @@ const styles = StyleSheet.create({
         backgroundColor: '#2c2c2c',
         height: '100%',
         padding: 20
+    },
+    categoriaWrapper: {
+        width: '33.33%',   // sempre ocupa 1/3 da tela
+        alignItems: 'center',
+        justifyContent: 'center',
+        marginVertical: 15,
     }
+
 });

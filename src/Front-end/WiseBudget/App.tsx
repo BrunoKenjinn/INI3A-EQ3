@@ -22,13 +22,13 @@ import { createContext, useContext, useEffect, useState } from 'react';
 import axios from 'axios';
 import TelaAdicionarTransacoes from './screens/TelaAdicionarTransacoes';
 import useApi from './hooks/useApi';
+import { Loading } from './components/loading';
 
 const Stack = createNativeStackNavigator();
 const AuthContext = createContext({
   userToken: null,
   hasSeenOrientations: false,
   orientationsDismissed: false,
-  isLoading: true,
   needSaldoInicial: false,
   signIn: (token: string) => { },
   signOut: () => { },
@@ -79,8 +79,8 @@ function AuthProvider({ children }) {
   const [userToken, setUserToken] = useState(null);
   const [hasSeenOrientations, setHasSeenOrientations] = useState(false);
   const [orientationsDismissed, setOrientationsDismissed] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
   const [needSaldoInicial, setNeedSaldoInicial] = useState(false);
+  const [loadingAuthState, setLoadingAuthState] = useState(true);
 
   const signIn = async (token) => {
     try {
@@ -142,21 +142,26 @@ function AuthProvider({ children }) {
         }
       } catch (e) {
         console.error("Erro ao buscar estado inicial", e);
+      } finally {
+        setLoadingAuthState(false); 
       }
-      setIsLoading(false);
     };
     checkInitialState();
   }, []);
 
+    if (loadingAuthState) {
+    return <Loading />;
+  }
+
   return (
-    <AuthContext.Provider value={{ userToken, hasSeenOrientations, orientationsDismissed, isLoading, needSaldoInicial, signIn, signOut, markOrientationsAsSeen, dismissOrientations, setNeedSaldoInicial }}>
+    <AuthContext.Provider value={{ userToken, hasSeenOrientations, orientationsDismissed, needSaldoInicial, signIn, signOut, markOrientationsAsSeen, dismissOrientations, setNeedSaldoInicial }}>
       {children}
     </AuthContext.Provider>
   );
 }
 
 function AppNavigator() {
-  const { userToken, hasSeenOrientations, orientationsDismissed, isLoading, needSaldoInicial } = useAuth();
+  const { userToken, hasSeenOrientations, orientationsDismissed, needSaldoInicial } = useAuth();
 
   const [fontsLoaded] = useFonts({
     'Poppins-Regular': require('./assets/fonts/Poppins-Regular.ttf'),
@@ -165,7 +170,7 @@ function AppNavigator() {
     ...FontAwesome5.font
   });
 
-  if (isLoading || !fontsLoaded) {
+  if (!fontsLoaded) {
     return (
       <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#2c2c2c' }}>
         <ActivityIndicator size="large" color="#f1c40f" />
