@@ -1,4 +1,4 @@
-import { View, Text, Image, StyleSheet, Pressable, TextInput, SafeAreaView, FlatList, ScrollView } from "react-native";
+import { View, Text, Image, StyleSheet, Pressable, TextInput, SafeAreaView, FlatList, ScrollView, Alert } from "react-native";
 import { Header } from "../components/header";
 import { Balanço } from "../components/balanco";
 import { Categoria } from "../components/categoria";
@@ -7,6 +7,14 @@ import { useCallback, useEffect, useState } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useFocusEffect } from "@react-navigation/native";
 import useApi from "../hooks/useApi";
+import { Loading } from "../components/loading";
+
+interface BalancoData {
+    credito_mes: number;
+    debito_mes: number;
+    saldo_total: number;
+    saldo_inicial: number;
+}
 
 
 
@@ -14,8 +22,28 @@ import useApi from "../hooks/useApi";
 export default function TelaCategorias({ navigation }) {
     const [categorias, setCategorias] = useState([]);
     const categoriasComAdicionar = [...categorias, { id: 'adicionar', nome: 'Adicionar', icone: 'plus' }];
+    const [isLoading, setIsLoading] = useState(true); // Estado para o carregamento
+    const [balanco, setBalanco] = useState<BalancoData>({
+        credito_mes: 0,
+        debito_mes: 0,
+        saldo_total: 0,
+        saldo_inicial: 0,
+    });
     useFocusEffect(
         useCallback(() => {
+            const carregarTudo = async () => {
+                setIsLoading(true);
+                try {
+                    await carregarCategorias();
+                    await carregarBalanco();
+                } catch (error) {
+                    console.error("Erro ao carregar dados da Tela de Categorias:", error);
+                    Alert.alert("Erro", "Não foi possível carregar os dados. Tente novamente.");
+                } finally {
+                    setIsLoading(false);
+                }
+            };
+
             const carregarCategorias = async () => {
                 try {
                     let {url} = useApi();
@@ -32,11 +60,27 @@ export default function TelaCategorias({ navigation }) {
                 }
             };
 
-            carregarCategorias();
+            const carregarBalanco = async () => {
+                try {
+                    let { url } = useApi();
+                    const token = await AsyncStorage.getItem('auth_token');
+                    const response = await axios.get(url + '/api/balanco', {
+                        headers: { Authorization: `Bearer ${token}` }
+                    });
+                    setBalanco(response.data);
+                } catch (error) {
+                    console.error("Erro ao buscar balanço:", error.response?.data || error.message);
+                }
+            };
+            carregarTudo();
 
             return () => { };
         }, [])
     );
+
+    if (isLoading) {
+        return <Loading />;
+    }
 
     return <>
         <SafeAreaView style={styles.container}>
@@ -49,7 +93,11 @@ export default function TelaCategorias({ navigation }) {
                 title="Categorias" />
 
             <ScrollView contentContainerStyle={{ padding: 20 }}>
-                <Balanço saldo="12.345,00" gasto="12.345,00" />
+                <Balanço
+                    credito={balanco.credito_mes.toString()}
+                    debito={balanco.debito_mes.toString()}
+                    saldo={balanco.saldo_total.toString()}
+                />
                 <FlatList
                     data={categoriasComAdicionar}
                     keyExtractor={(item, index) => index.toString()}

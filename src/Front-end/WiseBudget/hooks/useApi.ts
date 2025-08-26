@@ -1,4 +1,4 @@
 function useApi(){
-    return {url: "http://eq3.ini3a.projetoscti.com.br/tcc"};
+    return {url: "http://localhost:8000"};
 }
 export default useApi;

@@ -170,6 +170,9 @@ const styles = StyleSheet.create({
     backgroundColor: '#393939',
     borderRadius: 8,
     marginHorizontal: 5,
+    height: 40,
+    fontSize: 15,
+    fontWeight: 'bold',
   },
   sectionHeader: {
     color: "#f1c40f",
