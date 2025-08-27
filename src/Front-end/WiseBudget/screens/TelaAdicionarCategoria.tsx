@@ -1,6 +1,6 @@
 import { Picker } from '@react-native-picker/picker';
 import { useState } from 'react';
-import { SafeAreaView, Text, View, StyleSheet, TextInput, Button, TouchableOpacity } from 'react-native';
+import { SafeAreaView, Text, View, StyleSheet, TextInput, Button, TouchableOpacity, Alert } from 'react-native';
 import { Header } from '../components/header';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -38,6 +38,7 @@ export default function TelaAdicionarCategoria({navigation}) {
 
         } catch (error) {
             console.error('Erro ao salvar categoria:', error.response?.data || error.message);
+            Alert.alert('Erro','Erro ao salvar categoria');
         }
     }
 

@@ -14,7 +14,6 @@ export default function TelaEditarCategoria({ navigation , route} ) {;
     const [title, setTitle] = useState(categoria.nome);
     const [corSelecionada, setCorSelecionada] = useState(categoria.cor || '#FF6384');
 
-//pedro esteve aqui mais de uma vez  
 
     const handleUpdate = async () => {
         try {
@@ -50,12 +49,13 @@ export default function TelaEditarCategoria({ navigation , route} ) {;
                 headers: {
                 Authorization: `Bearer ${token}`
             }});
-            Alert.alert('Sucesso', 'Categoria excluída com sucesso!');
             navigation.navigate('TelaCategorias');
         } catch (error) {
             if (error.response) {
-                Alert.alert('Erro', error.response.data.message || 'Erro ao excluir.');
+                console.log("Erro ao exclur", error.response.data.message);
+                Alert.alert('Erro', 'Erro ao excluir.');
             } else {
+                console.log("Erro de conexao")
                 Alert.alert('Erro', 'Erro de conexão.');
             }
         }

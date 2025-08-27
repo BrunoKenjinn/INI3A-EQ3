@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet, SafeAreaView, SectionList, ActivityIndicator } from "react-native";
+import { View, Text, StyleSheet, SafeAreaView, SectionList, ActivityIndicator, Alert } from "react-native";
 import { TransacaoCard } from "../components/transacaoCard";
 import { Header } from '../components/header';
 import FontAwesome5 from '@expo/vector-icons/FontAwesome5';
@@ -40,6 +40,7 @@ export default function TelaTransacoes() {
           setTransacoes(response.data);
         } catch (error) {
           console.error('Erro ao buscar transações:', error.response?.data || error.message);
+          Alert.alert("Erro","Erro ao buscar transações")
         } finally {
           setLoading(false);
         }

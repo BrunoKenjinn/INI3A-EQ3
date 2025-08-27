@@ -28,6 +28,7 @@ export default function TelaAdicionarAtalhos({ navigation }) {
         const jaExiste = atalhos.some((a) => a.rota === rota || a.nome === nome);
         if (jaExiste) {
             console.log("Duplicado", "Este atalho já foi adicionado.");
+            Alert.alert("Duplicado", "Este atalho já foi adicionado")
             return;
         }
         //esse ja é dele
@@ -51,6 +52,7 @@ export default function TelaAdicionarAtalhos({ navigation }) {
 
         } catch (error) {
             console.error('Erro ao salvar atalho:', error.response?.data || error.message);
+            Alert.alert('Erro','Erro ao salvar atalho');
         }
     };
 
@@ -77,6 +79,7 @@ export default function TelaAdicionarAtalhos({ navigation }) {
                 setAtalhos(response.data);
             } catch (error) {
                 console.error("Erro ao carregar atalhos:", error.response?.data || error.message);
+                Alert.alert('Erro','Errro ao carregar');
             }
         };
 
@@ -90,6 +93,7 @@ export default function TelaAdicionarAtalhos({ navigation }) {
                     setBalanco(response.data);
                 } catch (error) {
                     console.error("Erro ao buscar balanço:", error.response?.data || error.message);
+                    Alert.alert('Erro','Erro ao buscar balnço')
                 }
             };
 

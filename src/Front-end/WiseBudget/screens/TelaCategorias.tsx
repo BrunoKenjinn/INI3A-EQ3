@@ -57,6 +57,7 @@ export default function TelaCategorias({ navigation }) {
                     setCategorias(response.data);
                 } catch (error) {
                     console.error('Erro ao buscar categorias:', error.response?.data || error.message);
+                    Alert.alert("Erro", "Erro ao buscar categorias");
                 }
             };
 
@@ -70,6 +71,7 @@ export default function TelaCategorias({ navigation }) {
                     setBalanco(response.data);
                 } catch (error) {
                     console.error("Erro ao buscar balanço:", error.response?.data || error.message);
+                    Alert.alert("Erro", "erro ao buscar balanço");
                 }
             };
             carregarTudo();

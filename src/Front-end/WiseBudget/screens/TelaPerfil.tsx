@@ -1,4 +1,4 @@
-import { Image, SafeAreaView, Text, TouchableOpacity, View, StyleSheet } from 'react-native'
+import { Image, SafeAreaView, Text, TouchableOpacity, View, StyleSheet, Alert } from 'react-native'
 import { Header } from '../components/header'
 import FontAwesome5 from '@expo/vector-icons/FontAwesome5';
 import { useAuth } from '../App';
@@ -29,6 +29,7 @@ export default function TelaPerfil({navigation}) {
                     setInfoUser(response.data);
                 } catch (error: any) {
                     console.error('Erro ao buscar as informações do usuario:', error.response?.data || error.message);
+                    Alert.alert("Erro", "Erro ao buscar informações")
                 } finally{
                     setIsLoading(false);
                 }

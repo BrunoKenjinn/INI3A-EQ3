@@ -19,10 +19,11 @@ export default function TelaDefinirSaldoInicial({ navigation }) {
             setNeedSaldoInicial(false);
         } catch (error) {
             console.error(error.response?.data || error.message);
+            Alert.alert("Erro", "Erro ao inserir saldo");
         }
     };
-//aqui tbm (o pedro esteve no caso)
     return (
+        
         <SafeAreaView style={styles.container}>
             <Text style={styles.title}>Defina seu saldo inicial</Text>
             <TextInput
