@@ -1,4 +1,4 @@
-import { View, StyleSheet, Text, TextInput, TouchableOpacity, Alert } from "react-native"
+import { View, StyleSheet, Text, TextInput, TouchableOpacity, Alert, Switch } from "react-native"
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { Header } from "../components/header";
 import FontAwesome5 from '@expo/vector-icons/FontAwesome5';
@@ -10,22 +10,27 @@ import axios from "axios";
 import useApi from "../hooks/useApi";
 
 type Categoria = {
-  id: number;
-  nome: string;
+    id: number;
+    nome: string;
 };
 
-export default function TelaAdicionarTransacoes({navigation}) {
+export default function TelaAdicionarTransacoes({ navigation }) {
     const [date, setDate] = useState(new Date());
     const [open, setOpen] = useState(false);
-    const [fonte,setFonte] = useState('');
+    const [fonte, setFonte] = useState('');
     const [selectedValue, setSelectedValue] = useState('entrada');
     const [valor, setValor] = useState('');
     const [categorias, setCategorias] = useState<Categoria[]>([]);
     const [categoriaId, setCategoriaId] = useState(1);
+    const [recorrente, setRecorrente] = useState(false);
+    const [frequencia, setFrequencia] = useState('');
 
-        useEffect(() => {
+
+
+
+    useEffect(() => {
         const fetchCategorias = async () => {
-            let {url} = useApi();
+            let { url } = useApi();
             try {
                 const token = await AsyncStorage.getItem("auth_token");
                 const response = await axios.get(url + "/api/categorias", {
@@ -55,7 +60,7 @@ export default function TelaAdicionarTransacoes({navigation}) {
         }
 
         try {
-            let {url} = useApi();
+            let { url } = useApi();
             const token = await AsyncStorage.getItem("auth_token");
 
             const response = await axios.post(url + "/api/transacoes", {
@@ -63,8 +68,8 @@ export default function TelaAdicionarTransacoes({navigation}) {
                 valor: parseFloat(valor.replace(",", ".")),
                 tipo: selectedValue,
                 data: date.toISOString().split("T")[0],
-                recorrente: false,
-                frequencia: null,
+                recorrente: recorrente,
+                frequencia: recorrente ? frequencia : null,
                 proxima_execucao: null,
                 categoria_id: categoriaId
             }, {
@@ -86,27 +91,27 @@ export default function TelaAdicionarTransacoes({navigation}) {
     return (
         <SafeAreaView style={styles.container} edges={['top', 'right', 'bottom', 'left']}>
             <Header leftIconName="times"
-                    leftIconColor="#f1c40f"
-                    leftIconSize={24}
-                    leftIconComponent={FontAwesome5}
-                    title="Adicionar Transação"
-                    rightIconName=""
-                    rightIconColor=""
-                    rightIconSize={0}
-                    rightIconComponent={FontAwesome5}/>
+                leftIconColor="#f1c40f"
+                leftIconSize={24}
+                leftIconComponent={FontAwesome5}
+                title="Adicionar Transação"
+                rightIconName=""
+                rightIconColor=""
+                rightIconSize={0}
+                rightIconComponent={FontAwesome5} />
 
-            <View style={{paddingHorizontal: 20}}>
-                <View style={{display: 'flex'}}>
-                    <Text style={{textAlign: 'center', fontFamily: 'Poppins-Regular', color: '#fdfdfd'}}>Qual o valor da transação?</Text>
-                    <View style={{display: 'flex', flexDirection: 'row'}}>
-                        <Text style={{color: '#fdfdfd', fontSize: 45, opacity: 0.5, fontFamily:'Poppins-Bold', marginTop: 20}}>R$</Text>
-                        <TextInput 
-                            placeholder="0,00" 
-                            placeholderTextColor={'#393939'} 
-                            style={{height: 100, fontSize: 80, fontFamily: 'Poppins-Bold', color: '#fdfdfd', width: 332}}
+            <View style={{ paddingHorizontal: 20 }}>
+                <View style={{ display: 'flex' }}>
+                    <Text style={{ textAlign: 'center', fontFamily: 'Poppins-Regular', color: '#fdfdfd' }}>Qual o valor da transação?</Text>
+                    <View style={{ display: 'flex', flexDirection: 'row' }}>
+                        <Text style={{ color: '#fdfdfd', fontSize: 45, opacity: 0.5, fontFamily: 'Poppins-Bold', marginTop: 20 }}>R$</Text>
+                        <TextInput
+                            placeholder="0,00"
+                            placeholderTextColor={'#393939'}
+                            style={{ height: 100, fontSize: 80, fontFamily: 'Poppins-Bold', color: '#fdfdfd', width: 332 }}
                             value={valor}
                             onChangeText={valor => setValor(valor)}
-                         />
+                        />
                     </View>
                 </View>
                 <View>
@@ -127,7 +132,7 @@ export default function TelaAdicionarTransacoes({navigation}) {
                                 selectedValue={selectedValue}
                                 onValueChange={(itemValue, itemIndex) => setSelectedValue(itemValue)}
                                 style={{ height: 40, backgroundColor: '#393939', borderRadius: 20, color: '#ffffff' }}
-                                >
+                            >
                                 <Picker.Item label="Entrada/Crédito" value="entrada" />
                                 <Picker.Item label="Saída/Débito" value="saida" />
                             </Picker>
@@ -143,30 +148,60 @@ export default function TelaAdicionarTransacoes({navigation}) {
                                 open={open}
                                 date={date}
                                 onConfirm={(date) => {
-                                setOpen(false)
-                                setDate(date)
+                                    setOpen(false)
+                                    setDate(date)
                                 }}
                                 onCancel={() => {
-                                setOpen(false)
+                                    setOpen(false)
                                 }}
                             />
                         </View>
 
                         <Text style={styles.textInput}>Categoria</Text>
                         <View style={styles.inputAreaCor}>
-                        <Picker
-                            selectedValue={categoriaId}
-                            onValueChange={(itemValue) => setCategoriaId(itemValue)}
-                            style={{ height: 40, backgroundColor: '#393939', borderRadius: 20, color: '#ffffff' }}
-                        >
-                            {categorias.map((cat) => (
-                                <Picker.Item key={cat.id} label={cat.nome} value={cat.id} />
-                            ))}
-                        </Picker>
+                            <Picker
+                                selectedValue={categoriaId}
+                                onValueChange={(itemValue) => setCategoriaId(itemValue)}
+                                style={{ height: 40, backgroundColor: '#393939', borderRadius: 20, color: '#ffffff' }}
+                            >
+                                {categorias.map((cat) => (
+                                    <Picker.Item key={cat.id} label={cat.nome} value={cat.id} />
+                                ))}
+                            </Picker>
                         </View>
 
                     </View>
                 </View>
+                               <View style={{flexDirection: 'row', alignItems: 'center', marginLeft: 15, marginTop: 10}}>
+                    <Text style={{color: '#fff', marginRight: 10,  marginBottom: 30}}>É recorrente?</Text>
+                    <Switch
+                        style={{ marginBottom: 30}}
+                        value={recorrente}
+                        onValueChange={setRecorrente}
+                        thumbColor={recorrente ? "#f1c40f" : "#fff"}
+                    />
+                </View>
+
+                {recorrente && (
+                    <>
+                        <Text style={styles.textInput}>Frequência</Text>
+                        <View style={styles.inputAreaCor}>
+                            <Picker
+                                selectedValue={frequencia}
+                                onValueChange={(itemValue) => setFrequencia(itemValue)}
+                                style={{ height: 40, backgroundColor: '#393939', borderRadius: 20, color: '#ffffff' }}
+                            >
+                                <Picker.Item label="Selecione a frequência" value="" />
+                                <Picker.Item label="Diária" value="diaria" />
+                                <Picker.Item label="Semanal" value="semanal" />
+                                <Picker.Item label="Mensal" value="mensal" />
+                                <Picker.Item label="Anual" value="anual" />
+                            </Picker>
+                        </View>
+
+                    </>
+                )}
+
                 <View style={{alignItems: 'center'}}>
                     <TouchableOpacity style={styles.button} onPress={handleSave}>
                         <Text style={styles.textButton}>Salvar</Text>
@@ -191,20 +226,19 @@ const styles = StyleSheet.create({
     },
     inputAreaCor: {
         width: '90%',
-        margin:20,
+        margin: 20,
     },
     textInput: {
         color: '#ffffff',
         marginLeft: 15,
-        marginBottom: 5
     },
-    buttonDate:{
+    buttonDate: {
         height: 40,
         backgroundColor: '#393939',
         borderRadius: 20,
-        justifyContent: 'center',    
+        justifyContent: 'center',
     },
-    textButtonDate:{
+    textButtonDate: {
         color: '#ffffff',
     },
     button: {
@@ -215,7 +249,6 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'center',
         borderRadius: 15,
-        marginTop: 20
     },
     textButton: {
         fontSize: 20,
