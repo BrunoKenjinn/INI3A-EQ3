@@ -102,27 +102,31 @@ export default function TelaTransacoes() {
       />
 
       <View style={styles.filtersContainer}>
+        <View style={styles.pickerWrapper}>
         <Picker
-          selectedValue={filtroPeriodo}
-          onValueChange={(itemValue) => setFiltroPeriodo(itemValue)}
-          style={styles.picker}
-          dropdownIconColor="#f1c40f"
+            selectedValue={filtroPeriodo}
+            onValueChange={(itemValue) => setFiltroPeriodo(itemValue)}
+            style={styles.picker} 
+            dropdownIconColor="#f1c40f"
         >
-          <Picker.Item label="Esta Semana" value="semana" />
-          <Picker.Item label="Este Mês" value="mes" />
+            <Picker.Item label="Esta Semana" value="semana" />
+            <Picker.Item label="Este Mês" value="mes" />
         </Picker>
+    </View>
 
+    <View style={styles.pickerWrapper}>
         <Picker
-          selectedValue={filtroTipo}
-          onValueChange={(itemValue) => setFiltroTipo(itemValue)}
-          style={styles.picker}
-          dropdownIconColor="#f1c40f"
+            selectedValue={filtroTipo}
+            onValueChange={(itemValue) => setFiltroTipo(itemValue)}
+            style={styles.picker} // O estilo do picker em si
+            dropdownIconColor="#f1c40f"
         >
-          <Picker.Item label="Todos" value="todos" />
-          <Picker.Item label="Entradas" value="entrada" />
-          <Picker.Item label="Saídas" value="saida" />
-          <Picker.Item label="Recorrente" value="recorrente"/>
+            <Picker.Item label="Todos" value="todos" />
+            <Picker.Item label="Entradas" value="entrada" />
+            <Picker.Item label="Saídas" value="saida" />
+            <Picker.Item label="Recorrente" value="recorrente"/>
         </Picker>
+    </View>
       </View>
 
       {loading ? (
@@ -164,15 +168,16 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     columnGap: 15,
   },
+   pickerWrapper: {
+        flex: 1, 
+        backgroundColor: '#393939',
+        borderRadius: 8,
+        height: 50, 
+        justifyContent: 'center', 
+        marginHorizontal: 5,
+    },
   picker: {
-    flex: 1,
     color: '#f1c40f',
-    backgroundColor: '#393939',
-    borderRadius: 8,
-    marginHorizontal: 5,
-    height: 40,
-    fontSize: 15,
-    fontWeight: 'bold',
   },
   sectionHeader: {
     color: "#f1c40f",

@@ -5,6 +5,8 @@ import { MaskedTextInput } from "react-native-mask-text";
 import useApi from "../hooks/useApi";
 
 export default function TelaCadastro({ navigation }) {
+
+    //pedro esteve aqui
     const [nome, setNome] = useState('');
     const [email, setEmail] = useState('');
     const [cpf, setCpf] = useState('');

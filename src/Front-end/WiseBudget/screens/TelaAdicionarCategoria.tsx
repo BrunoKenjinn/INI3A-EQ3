@@ -10,7 +10,7 @@ import useApi from "../hooks/useApi";
 
 
 
-
+//aqui nem se fala, esteve um milhao de vezes
 export default function TelaAdicionarCategoria({navigation}) {
 
     const [selectedValue, setSelectedValue] = useState('cutlery');

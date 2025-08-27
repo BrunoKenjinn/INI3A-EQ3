@@ -14,7 +14,7 @@ export default function TelaEditarCategoria({ navigation , route} ) {;
     const [title, setTitle] = useState(categoria.nome);
     const [corSelecionada, setCorSelecionada] = useState(categoria.cor || '#FF6384');
 
-    
+//pedro esteve aqui mais de uma vez  
 
     const handleUpdate = async () => {
         try {

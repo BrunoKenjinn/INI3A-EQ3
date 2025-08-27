@@ -21,7 +21,7 @@ export default function TelaDefinirSaldoInicial({ navigation }) {
             console.error(error.response?.data || error.message);
         }
     };
-
+//aqui tbm (o pedro esteve no caso)
     return (
         <SafeAreaView style={styles.container}>
             <Text style={styles.title}>Defina seu saldo inicial</Text>

@@ -1,4 +1,4 @@
-import { View, Text, Image, StyleSheet, Pressable, TextInput, SafeAreaView, FlatList, ScrollView, Alert } from "react-native";
+import { View, Text, Image, StyleSheet, Pressable, TextInput, SafeAreaView, FlatList, ScrollView, Alert, SectionList } from "react-native";
 import { Header } from "../components/header";
 import { Balanço } from "../components/balanco";
 import { Categoria } from "../components/categoria";
@@ -22,7 +22,7 @@ interface BalancoData {
 export default function TelaCategorias({ navigation }) {
     const [categorias, setCategorias] = useState([]);
     const categoriasComAdicionar = [...categorias, { id: 'adicionar', nome: 'Adicionar', icone: 'plus' }];
-    const [isLoading, setIsLoading] = useState(true); // Estado para o carregamento
+    const [isLoading, setIsLoading] = useState(true); 
     const [balanco, setBalanco] = useState<BalancoData>({
         credito_mes: 0,
         debito_mes: 0,
@@ -91,37 +91,36 @@ export default function TelaCategorias({ navigation }) {
                 rightIconSize={24}
                 rightIconColor="#f1c40f"
                 title="Categorias" />
+            <FlatList
+                data={categoriasComAdicionar}
+                keyExtractor={(item, index) => index.toString()}
+                numColumns={3}
+                ListHeaderComponent={
+                    <Balanço
+                        credito={balanco.credito_mes.toString()}
+                        debito={balanco.debito_mes.toString()}
+                        saldo={balanco.saldo_total.toString()}
+                    />
+                }
+                renderItem={({ item }) => (
+                    <View style={styles.categoriaWrapper}>
+                        <Categoria
+                            iconName={item.icone}
+                            text={item.nome}
+                            onPress={() => {
+                                if (item.id === 'adicionar') {
+                                    navigation.navigate('TelaAdicionarCategoria');
+                                } else {
+                                    navigation.navigate('TelaEditarCategoria', { categoria: item });
+                                }
+                            }}
+                        />
+                    </View>
+                )}
+            />
 
-            <ScrollView contentContainerStyle={{ padding: 20 }}>
-                <Balanço
-                    credito={balanco.credito_mes.toString()}
-                    debito={balanco.debito_mes.toString()}
-                    saldo={balanco.saldo_total.toString()}
-                />
-                <FlatList
-                    data={categoriasComAdicionar}
-                    keyExtractor={(item, index) => index.toString()}
-                    numColumns={3}
-                    renderItem={({ item }) => (
-                        <View style={styles.categoriaWrapper}>
-                            <Categoria
-                                iconName={item.icone}
-                                text={item.nome}
-                                onPress={() => {
-                                    if (item.id === 'adicionar') {
-                                        navigation.navigate('TelaAdicionarCategoria');
-                                    } else {
-                                        navigation.navigate('TelaEditarCategoria', { categoria: item });
-                                    }
-                                }}
-                            />
-                        </View>
-                    )}
-                />
 
-
-            </ScrollView>
-        </SafeAreaView>
+        </SafeAreaView >
     </>
 }
 
@@ -129,7 +128,8 @@ const styles = StyleSheet.create({
     container: {
         backgroundColor: '#2c2c2c',
         height: '100%',
-        padding: 20
+        flex: 1,
+        paddingHorizontal: 20
     },
     categoriaWrapper: {
         width: '33.33%',   // sempre ocupa 1/3 da tela
@@ -137,5 +137,5 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         marginVertical: 15,
     }
-
+//pedro esteve aqui tbm
 });
