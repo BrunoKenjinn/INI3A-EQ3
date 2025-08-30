@@ -52,7 +52,7 @@ export function Balanço({ debito, credito, saldo }: Props) {
                     <Text style={styles.text1}>Débito</Text>
                     <Text style={styles.text2}>{mostrarValores ? formatar(debito) : valorMascarado(debito)}</Text>
                 </View>
-                <Text style={styles.border}>|</Text>
+        
                 <View style={styles.bottom2}>
                     <Text style={styles.text1}>Crédito</Text>
                     <Text style={styles.text2}>{mostrarValores ? formatar(credito) : valorMascarado(credito)}</Text>
