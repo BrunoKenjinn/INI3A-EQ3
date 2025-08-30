@@ -24,6 +24,7 @@ export default function TelaDefinirSaldoInicial({ navigation }) {
     };
     return (
         
+        
         <SafeAreaView style={styles.container}>
             <Text style={styles.title}>Defina seu saldo inicial</Text>
             <TextInput
