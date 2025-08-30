@@ -15,6 +15,7 @@ return new class extends Migration
             $table->increments('id');
             $table->string('nome');
             $table->string('email')->unique();
+            $table->string('foto')->nullable()->after('email');
             $table->string('cpf')->unique();
             $table->string('celular')->nullable();
             $table->date('data_nascimento')->nullable();

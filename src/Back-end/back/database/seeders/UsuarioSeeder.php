@@ -20,6 +20,7 @@ class UsuarioSeeder extends Seeder
                 'celular'=>"99299",
                 'data_nascimento'=>'2012-12-12', // Formato YYYY-MM-DD
                 'password'=>bcrypt("123"),
+                'foto'=>"",
             ];
         User::create($dados);
     }

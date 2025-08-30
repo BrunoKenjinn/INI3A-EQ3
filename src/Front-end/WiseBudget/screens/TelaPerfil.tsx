@@ -41,6 +41,7 @@ export default function TelaPerfil({navigation}) {
     );
 
     const { signOut } = useAuth();
+    let {url} = useApi();
 
     if(isLoading)
         return <Loading />
@@ -58,9 +59,10 @@ export default function TelaPerfil({navigation}) {
                     rightIconColor="#f1c40f"
                     rightIconSize={24}
                     rightIconComponent={FontAwesome5}
+                    infoUser={infoUser}
                 />
 
-                <Image style={{width:'100%'}} source={require('../assets/images/FotoPerfil.png')} />
+                <Image style={{width:'100%'}} source={infoUser?.foto ? { uri: url + `/storage/img/fotos_usuarios${infoUser.foto}` } : require('../assets/images/FotoPerfil.png')} />
 
                 <View style={{ position: 'absolute', bottom: 0, left: 0, right: 0, backgroundColor: '#2c2c2c', borderTopLeftRadius: 30, borderTopRightRadius: 30, zIndex: 99, height: 530, padding: 20 }}>
                     <View style={{ display: 'flex', justifyContent: 'space-between', flexDirection: 'row', marginTop: 20 }}>
