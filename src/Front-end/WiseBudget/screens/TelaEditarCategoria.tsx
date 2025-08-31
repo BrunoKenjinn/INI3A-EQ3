@@ -8,7 +8,8 @@ import WheelColorPicker from 'react-native-wheel-color-picker';
 import useApi from "../hooks/useApi";
 
 
-export default function TelaEditarCategoria({ navigation , route} ) {;
+export default function TelaEditarCategoria({ navigation, route }) {
+    ;
     const { categoria } = route.params;
     const [selectedValue, setSelectedValue] = useState(categoria.icone);
     const [title, setTitle] = useState(categoria.nome);
@@ -17,20 +18,20 @@ export default function TelaEditarCategoria({ navigation , route} ) {;
 
     const handleUpdate = async () => {
         try {
-            let {url} = useApi();
+            let { url } = useApi();
             const token = await AsyncStorage.getItem('auth_token');
             const response = await axios.put(url + `/api/categorias/${categoria.id}`, {
-            nome: title,
-            icone: selectedValue,
-            cor: corSelecionada,
+                nome: title,
+                icone: selectedValue,
+                cor: corSelecionada,
             }, {
-            headers: {
-                Authorization: `Bearer ${token}`
-            }
-        });
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            });
 
             Alert.alert('Sucesso', 'Categoria atualizada com sucesso!');
-            navigation.navigate('TelaCategorias');
+            navigation.goBack();
         } catch (error) {
             if (error.response) {
                 Alert.alert('Erro', error.response.data.message || 'Erro ao atualizar');
@@ -42,14 +43,15 @@ export default function TelaEditarCategoria({ navigation , route} ) {;
 
     const handleDelete = async () => {
         try {
-            let {url} = useApi();
+            let { url } = useApi();
             const token = await AsyncStorage.getItem('auth_token');
 
             await axios.delete(url + `/api/categorias/${categoria.id}`, {
                 headers: {
-                Authorization: `Bearer ${token}`
-            }});
-            navigation.navigate('TelaCategorias');
+                    Authorization: `Bearer ${token}`
+                }
+            });
+            navigation.goBack();
         } catch (error) {
             if (error.response) {
                 console.log("Erro ao exclur", error.response.data.message);
@@ -71,28 +73,27 @@ export default function TelaEditarCategoria({ navigation , route} ) {;
                 rightIconName="bells"
                 rightIconSize={24}
                 rightIconColor="#f1c40f"
-                title="Categorias"
+                title="Editar Categoria"
             />
 
-            <View style={styles.main}>
-                <Text style={styles.h1}>Editar Categoria</Text>
 
-                <View style={styles.inputArea}>
-                    <Text style={styles.textInput}>Digite o nome</Text>
-                    <TextInput
-                        placeholder={categoria.nome}
-                        style={styles.input}
-                        value={title}
-                        onChangeText={setTitle}
-                    />
-                </View>
+            <View style={styles.inputArea}>
+                <Text style={styles.textInput}>Digite o nome</Text>
+                <TextInput
+                    placeholder={categoria.nome}
+                    style={styles.input}
+                    value={title}
+                    onChangeText={setTitle}
+                />
+            </View>
 
-                <View style={styles.inputArea}>
-                    <Text style={styles.textInput}>Selecione o ícone</Text>
+            <View style={styles.inputArea}>
+                <Text style={styles.textInput}>Selecione o ícone</Text>
+                <View style={styles.pickerContainer}>
                     <Picker
                         selectedValue={selectedValue}
                         onValueChange={(itemValue) => setSelectedValue(itemValue)}
-                        style={{ height: 40, backgroundColor: '#393939', borderRadius: 20, color: '#ffffff' }}
+                        style={styles.picker}
                     >
                         <Picker.Item label="Alimentação" value="cutlery" />
                         <Picker.Item label="Transporte" value="bus" />
@@ -108,38 +109,40 @@ export default function TelaEditarCategoria({ navigation , route} ) {;
                     </Picker>
                 </View>
 
-                <View style={styles.inputArea}>
-                    <Text style={styles.textInput}>Selecione a cor</Text>
-                    <View style={styles.inputAreaCor}>
-                        <View style={{ height: 200 }}>
-                            <WheelColorPicker
-                                color={corSelecionada}
-                                onColorChangeComplete={setCorSelecionada}
-                                thumbSize={20}
-                                sliderSize={20}
-                                noSnap={true}
-                                row={false}
-                            />
-                        </View>
-
-                        <View style={{
-                            backgroundColor: corSelecionada,
-                            width: 30,
-                            height: 30,
-                            borderRadius: 25,
-                            marginTop: 10
-                        }} />
-                    </View>
-                </View>
-
-                <TouchableOpacity style={styles.button} onPress={handleUpdate}>
-                    <Text style={styles.textButton}>Editar</Text>
-                </TouchableOpacity>
-
-                <TouchableOpacity style={styles.button} onPress={handleDelete}>
-                    <Text style={styles.textButton}>Excluir</Text>
-                </TouchableOpacity>
             </View>
+
+            <View style={styles.inputArea}>
+                <Text style={styles.textInput}>Selecione a cor</Text>
+                <View style={styles.inputAreaCor}>
+                    <View style={{ height: 200 }}>
+                        <WheelColorPicker
+                            color={corSelecionada}
+                            onColorChangeComplete={setCorSelecionada}
+                            thumbSize={20}
+                            sliderSize={20}
+                            noSnap={true}
+                            row={false}
+                        />
+                    </View>
+
+                    <View style={{
+                        backgroundColor: corSelecionada,
+                        width: 30,
+                        height: 30,
+                        borderRadius: 25,
+                        marginTop: 10
+                    }} />
+                </View>
+            </View>
+
+            <TouchableOpacity style={styles.button} onPress={handleUpdate}>
+                <Text style={styles.textButton}>Editar</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity style={styles.button} onPress={handleDelete}>
+                <Text style={styles.textButton}>Excluir</Text>
+            </TouchableOpacity>
+
         </SafeAreaView>
     );
 }
@@ -148,13 +151,9 @@ const styles = StyleSheet.create({
     container: {
         backgroundColor: '#2c2c2c',
         height: '100%',
-        padding: 20,
-    },
-    main: {
-        display: 'flex',
         alignItems: 'center',
-        paddingBottom: 50,
     },
+
     h1: {
         fontSize: 30,
         fontWeight: 'bold',
@@ -174,9 +173,10 @@ const styles = StyleSheet.create({
     input: {
         backgroundColor: '#393939',
         padding: 10,
-        borderRadius: 20,
+        borderRadius: 10,
         width: '100%',
-        color: '#ffffff'
+        color: '#ffffff',
+        height: 50,
     },
     textInput: {
         color: '#ffffff',
@@ -196,5 +196,19 @@ const styles = StyleSheet.create({
     textButton: {
         fontSize: 20,
         fontWeight: 'bold'
-    }
+    },
+    picker: {
+        height: 50,
+        width: '100%',
+        color: '#ffffff',
+    },
+    pickerContainer: {
+        backgroundColor: '#393939',
+        borderRadius: 10,
+        height: 50,
+        justifyContent: 'center',
+        marginTop: 8,
+        marginBottom: 20,
+        width: '100%',
+    },
 });

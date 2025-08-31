@@ -10,15 +10,14 @@ import useApi from "../hooks/useApi";
 
 
 
-//aqui nem se fala, esteve um milhao de vezes
-export default function TelaAdicionarCategoria({navigation}) {
+export default function TelaAdicionarCategoria({ navigation }) {
 
     const [selectedValue, setSelectedValue] = useState('cutlery');
     const [title, setTitle] = useState('');
     const [corSelecionada, setCorSelecionada] = useState('#FF6384');
 
     const handleSave = async () => {
-        let {url} = useApi();
+        let { url } = useApi();
         try {
             const token = await AsyncStorage.getItem('auth_token');
 
@@ -34,43 +33,41 @@ export default function TelaAdicionarCategoria({navigation}) {
             });
 
             console.log('Categoria criada:', response.data);
-            navigation.navigate('TelaCategorias');
-
+            navigation.goBack();
         } catch (error) {
             console.error('Erro ao salvar categoria:', error.response?.data || error.message);
-            Alert.alert('Erro','Erro ao salvar categoria');
+            Alert.alert('Erro', 'Erro ao salvar categoria');
         }
     }
 
     return <>
         <SafeAreaView style={styles.container}>
             <Header leftIconName="arrowleft"
-                                    leftIconSize={24}
-                                    leftIconColor="#f1c40f"
-                                    rightIconName="bells"
-                                    rightIconSize={24}
-                                    rightIconColor="#f1c40f"
-                                    title="Categorias"/>
+                leftIconSize={24}
+                leftIconColor="#f1c40f"
+                rightIconName="bells"
+                rightIconSize={24}
+                rightIconColor="#f1c40f"
+                title="Adicionar Categoria" />
 
-            <View style={styles.main}>
-                <Text style={styles.h1}>Adicionar Categoria</Text>
+            <View style={styles.inputArea}>
+                <Text style={styles.textInput}>Digite o nome</Text>
+                <TextInput
+                    placeholder='Nome da Categoria'
+                    placeholderTextColor="#ccc"
+                    style={styles.input}
+                    value={title}
+                    onChangeText={text => setTitle(text)}
+                />
+            </View>
 
-                <View style={styles.inputArea}>
-                    <Text style={styles.textInput}>Digite o nome</Text>
-                    <TextInput
-                        placeholder='Nome da Categoria'
-                        style={styles.input}
-                        value={title}
-                        onChangeText={text => setTitle(text)}
-                    />
-                </View>
-
-                <View style={styles.inputArea}>
-                    <Text style={styles.textInput}>Selecione o icone</Text>
+            <View style={styles.inputArea}>
+                <Text style={styles.textInput}>Selecione o icone</Text>
+                <View style={styles.pickerContainer}>
                     <Picker
                         selectedValue={selectedValue}
                         onValueChange={(itemValue, itemIndex) => setSelectedValue(itemValue)}
-                        style={{ height: 40, backgroundColor: '#393939', borderRadius: 20, color: '#ffffff' }}
+                        style={styles.picker}
                     >
                         <Picker.Item label="Alimentação" value="cutlery" />
                         <Picker.Item label="Transporte" value="bus" />
@@ -86,34 +83,35 @@ export default function TelaAdicionarCategoria({navigation}) {
                     </Picker>
                 </View>
 
-                <View style={styles.inputArea}>
-                    <Text style={styles.textInput}>Selecione a cor</Text>
-                    <View style={styles.inputAreaCor}>
-                            <View style={{ height: 200 }}>
-                                <WheelColorPicker
-                                    color={corSelecionada}
-                                    onColorChangeComplete={setCorSelecionada}
-                                    thumbSize={20}
-                                    sliderSize={20}
-                                    noSnap={true}
-                                    row={false}
-                                />
-                            </View>
+            </View>
 
-                            <View style={{
-                                backgroundColor: corSelecionada,
-                                width: 30,
-                                height: 30,
-                                borderRadius: 25,
-                                marginTop: 10
-                            }} />
-                            </View>
+            <View style={styles.inputArea}>
+                <Text style={styles.textInput}>Selecione a cor</Text>
+                <View style={styles.inputAreaCor}>
+                    <View style={{ height: 200 }}>
+                        <WheelColorPicker
+                            color={corSelecionada}
+                            onColorChangeComplete={setCorSelecionada}
+                            thumbSize={20}
+                            sliderSize={20}
+                            noSnap={true}
+                            row={false}
+                        />
                     </View>
-                    <TouchableOpacity style={styles.button} onPress={handleSave}>
-                        <Text style={styles.textButton}>Salvar</Text>
-                    </TouchableOpacity>
+
+                    <View style={{
+                        backgroundColor: corSelecionada,
+                        width: 30,
+                        height: 30,
+                        borderRadius: 25,
+                        marginTop: 10
+                    }} />
                 </View>
-                
+            </View>
+            <TouchableOpacity style={styles.button} onPress={handleSave}>
+                <Text style={styles.textButton}>Salvar</Text>
+            </TouchableOpacity>
+
         </SafeAreaView>
     </>
 }
@@ -122,12 +120,7 @@ const styles = StyleSheet.create({
     container: {
         backgroundColor: '#2c2c2c',
         height: '100%',
-        padding: 20,
-    },
-    main: {
-        display: 'flex',
         alignItems: 'center',
-        paddingBottom: 50,
     },
     h1: {
         fontSize: 30,
@@ -141,14 +134,15 @@ const styles = StyleSheet.create({
     },
     inputAreaCor: {
         width: '80%',
-        margin:20,
-        marginLeft:40,
+        margin: 20,
+        marginLeft: 40,
         marginBottom: 40,
     },
     input: {
         backgroundColor: '#393939',
         padding: 10,
-        borderRadius: 20,
+        borderRadius: 10,
+        height: 50,
         width: '100%',
         color: '#ffffff'
     },
@@ -170,5 +164,19 @@ const styles = StyleSheet.create({
     textButton: {
         fontSize: 20,
         fontWeight: 'bold'
-    }
+    },
+    picker: {
+        height: 50,
+        width: '100%',
+        color: '#ffffff',
+    },
+    pickerContainer: {
+        backgroundColor: '#393939',
+        borderRadius: 10,
+        height: 50,
+        justifyContent: 'center',
+        marginTop: 8,
+        marginBottom: 20,
+        width: '100%',
+    },
 });

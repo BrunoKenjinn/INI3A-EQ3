@@ -30,7 +30,7 @@ const styles = StyleSheet.create({
   },
   atalhoText: {
     color: 'white',
-    fontSize: 14,
+    fontSize: 12,
     fontFamily: 'Poppins-Regular',
     marginTop: 8,
     textAlign: 'center',

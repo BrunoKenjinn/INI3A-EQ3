@@ -150,6 +150,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         paddingVertical: 20,
         paddingHorizontal:30,
+        height: '100%',
     },
     logo: {
         width: 150,
