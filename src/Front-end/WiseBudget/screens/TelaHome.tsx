@@ -1,21 +1,31 @@
-import { StyleSheet, SafeAreaView, View, Text, FlatList, TouchableOpacity, Alert } from "react-native";
+import {
+  StyleSheet,
+  SafeAreaView,
+  View,
+  Text,
+  FlatList,
+  TouchableOpacity,
+  Alert,
+} from "react-native";
 import { Header } from "../components/header";
-import FontAwesome5 from '@expo/vector-icons/FontAwesome5';
-import FontAwesome from '@expo/vector-icons/FontAwesome';
+import FontAwesome5 from "@expo/vector-icons/FontAwesome5";
+import FontAwesome from "@expo/vector-icons/FontAwesome";
 import CustomBottomTab from "../components/CustomBottomTab";
 import { Balanço } from "../components/balanco";
-import { PieChart } from 'react-native-chart-kit'
-import { ComponentType, useCallback, useState } from 'react';
-import { IconProps } from '@expo/vector-icons/build/createIconSet';
+import { PieChart } from "react-native-chart-kit";
+import { ComponentType, useCallback, useState } from "react";
+import { IconProps } from "@expo/vector-icons/build/createIconSet";
 import { Atalho } from "../components/atalho";
 import { TransacaoCard } from "../components/transacaoCard";
 import { useFocusEffect } from "@react-navigation/native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { Loading } from '../components/loading';
+import { Loading } from "../components/loading";
 import axios from "axios";
 import useApi from "../hooks/useApi";
 
-type IconComponentType = ComponentType<IconProps<keyof typeof FontAwesome.glyphMap>>;
+type IconComponentType = ComponentType<
+  IconProps<keyof typeof FontAwesome.glyphMap>
+>;
 interface ChartDataItem {
   name: string;
   population: number;
@@ -36,7 +46,7 @@ interface Entrada {
   descricao: string;
   valor: number;
   data: string;
-  icone: React.ComponentProps<typeof FontAwesome>['name'];
+  icone: React.ComponentProps<typeof FontAwesome>["name"];
   cor: string;
 }
 
@@ -49,11 +59,14 @@ export default function TelaHome({ navigation }) {
       population: 100,
       color: "#5A5A5A",
       legendFontColor: "#7F7F7F",
-      legendFontSize: 15
-    }
+      legendFontSize: 15,
+    },
   ]);
-  const [title, setTitle] = useState('');
-  const atalhosComAdicionar = [...atalhos, { id: 0, nome: 'Adicionar', icone: 'plus', rota: 'TelaAdicionarAtalho' }];
+  const [title, setTitle] = useState("");
+  const atalhosComAdicionar = [
+    ...atalhos,
+    { id: 0, nome: "Adicionar", icone: "plus", rota: "TelaAdicionarAtalho" },
+  ];
   const [balanco, setBalanco] = useState<BalancoData>({
     credito_mes: 0,
     debito_mes: 0,
@@ -62,7 +75,6 @@ export default function TelaHome({ navigation }) {
   });
 
   const [entradasHoje, setEntradasHoje] = useState<Entrada[]>([]);
-
 
   useFocusEffect(
     useCallback(() => {
@@ -75,7 +87,10 @@ export default function TelaHome({ navigation }) {
           await carregarBalanco();
         } catch (error) {
           console.error("Erro ao carregar dados da Tela Home:", error);
-          Alert.alert("Erro", "Não foi possível carregar os dados. Tente novamente.");
+          Alert.alert(
+            "Erro",
+            "Não foi possível carregar os dados. Tente novamente."
+          );
         } finally {
           setIsLoading(false);
         }
@@ -83,26 +98,32 @@ export default function TelaHome({ navigation }) {
       const carregarAtalhos = async () => {
         try {
           let { url } = useApi();
-          const token = await AsyncStorage.getItem('auth_token');
-          const response = await axios.get(url + '/api/atalhos', {
+          const token = await AsyncStorage.getItem("auth_token");
+          const response = await axios.get(url + "/api/atalhos", {
             headers: {
-              Authorization: `Bearer ${token}`
-            }
+              Authorization: `Bearer ${token}`,
+            },
           });
 
           setAtalhos(response.data);
         } catch (error) {
-          console.error('Erro ao buscar atalhos:', error.response?.data || error.message);
+          console.error(
+            "Erro ao buscar atalhos:",
+            error.response?.data || error.message
+          );
         }
       };
 
       const carregarDadosGrafico = async () => {
         try {
           let { url } = useApi();
-          const token = await AsyncStorage.getItem('auth_token');
-          const response = await axios.get(url + '/api/gastos-por-categoria?periodo=hoje', {
-            headers: { Authorization: `Bearer ${token}` }
-          });
+          const token = await AsyncStorage.getItem("auth_token");
+          const response = await axios.get(
+            url + "/api/gastos-por-categoria?periodo=hoje",
+            {
+              headers: { Authorization: `Bearer ${token}` },
+            }
+          );
 
           if (response.data && response.data.length > 0) {
             setChartData(response.data);
@@ -113,75 +134,82 @@ export default function TelaHome({ navigation }) {
                 population: 100,
                 color: "#5A5A5A",
                 legendFontColor: "#7F7F7F",
-                legendFontSize: 15
-              }
+                legendFontSize: 15,
+              },
             ]);
           }
-
         } catch (error) {
-          console.error('Erro ao buscar dados do gráfico:', error.response?.data || error.message);
+          console.error(
+            "Erro ao buscar dados do gráfico:",
+            error.response?.data || error.message
+          );
         }
       };
 
       const carregarEntradas = async () => {
         try {
           let { url } = useApi();
-          const token = await AsyncStorage.getItem('auth_token');
-          const response = await axios.get(url + '/api/entradas-hoje', {
-            headers: { Authorization: `Bearer ${token}` }
+          const token = await AsyncStorage.getItem("auth_token");
+          const response = await axios.get(url + "/api/entradas-hoje", {
+            headers: { Authorization: `Bearer ${token}` },
           });
           setEntradasHoje(response.data);
         } catch (error) {
-          console.error('Erro ao buscar entradas:', error.response?.data || error.message);
+          console.error(
+            "Erro ao buscar entradas:",
+            error.response?.data || error.message
+          );
         }
       };
 
       const carregarBalanco = async () => {
         try {
           let { url } = useApi();
-          const token = await AsyncStorage.getItem('auth_token');
-          const response = await axios.get(url + '/api/balanco', {
-            headers: { Authorization: `Bearer ${token}` }
+          const token = await AsyncStorage.getItem("auth_token");
+          const response = await axios.get(url + "/api/balanco", {
+            headers: { Authorization: `Bearer ${token}` },
           });
           setBalanco(response.data);
         } catch (error) {
-          console.error("Erro ao buscar balanço:", error.response?.data || error.message);
-        } 
+          console.error(
+            "Erro ao buscar balanço:",
+            error.response?.data || error.message
+          );
+        }
       };
 
       carregarTudo();
 
-      return () => { };
+      return () => {};
     }, [])
   );
 
   const handleDelete = async (id: number) => {
-    Alert.alert(
-      "Excluir Flho",
-      "Tem certeza que deseja excluir este atalho?",
-      [
-        { text: "Cancelar", style: "cancel" },
-        {
-          text: "Excluir",
-          onPress: async () => {
-            try {
-              let { url } = useApi();
-              const token = await AsyncStorage.getItem("auth_token");
-              await axios.delete(url + `/api/atalhos/${id}`, {
-                headers: {
-                  Authorization: `Bearer ${token}`,
-                },
-              });
-            } catch (error) {
-              console.error("Erro ao excluir atalho:", error.response?.data || error.message);
-            }
-          },
-          style: "destructive",
+    Alert.alert("Excluir Flho", "Tem certeza que deseja excluir este atalho?", [
+      { text: "Cancelar", style: "cancel" },
+      {
+        text: "Excluir",
+        onPress: async () => {
+          try {
+            let { url } = useApi();
+            const token = await AsyncStorage.getItem("auth_token");
+            await axios.delete(url + `/api/atalhos/${id}`, {
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
+            });
+            setAtalhos((prev) => prev.filter((a) => a.id !== id));
+          } catch (error) {
+            console.error(
+              "Erro ao excluir atalho:",
+              error.response?.data || error.message
+            );
+          }
         },
-      ]
-    );
+        style: "destructive",
+      },
+    ]);
   };
-
 
   const chartConfig = {
     backgroundGradientFrom: "#1E2923",
@@ -191,11 +219,11 @@ export default function TelaHome({ navigation }) {
     color: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
     strokeWidth: 2,
     barPercentage: 0.5,
-    useShadowColorFromDataset: false
+    useShadowColorFromDataset: false,
   };
 
-  if(isLoading){
-    return <Loading />
+  if (isLoading) {
+    return <Loading />;
   }
 
   return (
@@ -218,11 +246,19 @@ export default function TelaHome({ navigation }) {
           saldo={balanco.saldo_total.toString()}
         />
 
-        <View style={{ width: '100%' }}>
-          <Text style={{ color: 'white', fontFamily: 'Poppins-Regular' }}>
+        <View style={{ width: "100%" }}>
+          <Text style={{ color: "white", fontFamily: "Poppins-Regular" }}>
             Gráfico de Setores
           </Text>
-          <View style={{ width: '100%', backgroundColor: '#393939', borderRadius: 20, marginTop: 10, alignItems: "center" }}>
+          <View
+            style={{
+              width: "100%",
+              backgroundColor: "#393939",
+              borderRadius: 20,
+              marginTop: 10,
+              alignItems: "center",
+            }}
+          >
             <PieChart
               data={chartData}
               width={400}
@@ -236,8 +272,8 @@ export default function TelaHome({ navigation }) {
           </View>
         </View>
 
-        <View style={{ width: '100%', marginTop: 20 }}>
-          <Text style={{ color: 'white', fontFamily: 'Poppins-Regular' }}>
+        <View style={{ width: "100%", marginTop: 20 }}>
+          <Text style={{ color: "white", fontFamily: "Poppins-Regular" }}>
             Sua carteira
           </Text>
 
@@ -250,7 +286,10 @@ export default function TelaHome({ navigation }) {
               <TransacaoCard
                 descricao={item.descricao}
                 valor={item.valor}
-                hora={new Date(item.data).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                hora={new Date(item.data).toLocaleTimeString([], {
+                  hour: "2-digit",
+                  minute: "2-digit",
+                })}
                 icone={item.icone}
                 cor={item.cor}
               />
@@ -258,8 +297,8 @@ export default function TelaHome({ navigation }) {
           />
         </View>
 
-        <View style={{ width: '100%', marginTop: 20 }}>
-          <Text style={{ color: 'white', fontFamily: 'Poppins-Regular' }}>
+        <View style={{ width: "100%", marginTop: 20 }}>
+          <Text style={{ color: "white", fontFamily: "Poppins-Regular" }}>
             Atalhos
           </Text>
 
@@ -267,7 +306,6 @@ export default function TelaHome({ navigation }) {
             data={atalhosComAdicionar}
             keyExtractor={(item) => item.id.toString()}
             horizontal={true}
-
             renderItem={({ item }) => (
               <View style={{ marginRight: 12 }}>
                 <Atalho
@@ -290,9 +328,7 @@ export default function TelaHome({ navigation }) {
         </View>
       </View>
 
-      <View style={styles.tabContainer}>
-        <CustomBottomTab />
-      </View>
+      <CustomBottomTab />
     </SafeAreaView>
   );
 }
@@ -300,16 +336,10 @@ export default function TelaHome({ navigation }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#2c2c2c',
+    backgroundColor: "#2c2c2c",
   },
   content: {
     flex: 1,
     padding: 20,
-  },
-  tabContainer: {
-    position: 'absolute',
-    bottom: 0,
-    left: 0,
-    right: 0,
   },
 });
