@@ -180,7 +180,7 @@ export default function TelaHome({ navigation }) {
 
       carregarTudo();
 
-      return () => {};
+      return () => { };
     }, [])
   );
 
@@ -247,9 +247,15 @@ export default function TelaHome({ navigation }) {
         />
 
         <View style={{ width: "100%" }}>
-          <Text style={{ color: "white", fontFamily: "Poppins-Regular" }}>
-            Gráfico de Setores
-          </Text>
+          <View style={{ flexDirection: "row", justifyContent: "space-between", marginRight: 10}}>
+            <Text style={{ color: "white", fontFamily: "Poppins-Regular" }}>
+              Gráfico de Setores
+            </Text>
+            <Text style={{ color: "white", fontFamily: "Poppins-Regular" }}>
+              Saídas
+            </Text>
+          </View>
+
           <View
             style={{
               width: "100%",
@@ -273,10 +279,14 @@ export default function TelaHome({ navigation }) {
         </View>
 
         <View style={{ width: "100%", marginTop: 20 }}>
-          <Text style={{ color: "white", fontFamily: "Poppins-Regular" }}>
-            Sua carteira
-          </Text>
-
+          <View style={{ flexDirection: "row", justifyContent: "space-between", marginRight: 10}}>
+            <Text style={{ color: "white", fontFamily: "Poppins-Regular" }}>
+              Sua Carteira
+            </Text>
+            <Text style={{ color: "white", fontFamily: "Poppins-Regular" }}>
+              Entradas
+            </Text>
+          </View>
           <FlatList
             data={entradasHoje}
             keyExtractor={(item) => item.id.toString()}
