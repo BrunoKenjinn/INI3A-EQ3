@@ -28,6 +28,7 @@ import { Loading } from './components/loading';
 const Stack = createNativeStackNavigator();
 const AuthContext = createContext({
   userToken: null,
+  user: null,
   hasSeenOrientations: false,
   orientationsDismissed: false,
   needSaldoInicial: false,
@@ -79,6 +80,7 @@ function OnboardingStack() {
 
 function AuthProvider({ children }) {
   const [userToken, setUserToken] = useState(null);
+  const [user, setUser] = useState(null);
   const [hasSeenOrientations, setHasSeenOrientations] = useState(false);
   const [orientationsDismissed, setOrientationsDismissed] = useState(false);
   const [needSaldoInicial, setNeedSaldoInicial] = useState(false);
@@ -93,6 +95,7 @@ function AuthProvider({ children }) {
       try {
         let {url} = useApi();
         const res = await axios.get(url + "/api/user");
+        setUser(res.data);
         setNeedSaldoInicial(res.data?.saldo_inicial === null);
       } catch (e) {
         console.error("Falha ao buscar usuário após login", e.response?.data || e.message);
@@ -107,6 +110,7 @@ function AuthProvider({ children }) {
       await AsyncStorage.removeItem('auth_token');
       delete axios.defaults.headers.common['Authorization'];
       setUserToken(null);
+      setUser(null);
     } catch (e) {
       console.error("Erro ao remover token", e);
     }
@@ -132,6 +136,7 @@ function AuthProvider({ children }) {
           try {
             let { url } = useApi();
             const res = await axios.get(url + "/api/user");
+            setUser(res.data);
             setUserToken(token);
             setNeedSaldoInicial(res.data?.saldo_inicial === null);
           } catch (e) {
@@ -156,7 +161,7 @@ function AuthProvider({ children }) {
   }
 
   return (
-    <AuthContext.Provider value={{ userToken, hasSeenOrientations, orientationsDismissed, needSaldoInicial, signIn, signOut, markOrientationsAsSeen, dismissOrientations, setNeedSaldoInicial }}>
+    <AuthContext.Provider value={{ userToken, user, hasSeenOrientations, orientationsDismissed, needSaldoInicial, signIn, signOut, markOrientationsAsSeen, dismissOrientations, setNeedSaldoInicial }}>
       {children}
     </AuthContext.Provider>
   );

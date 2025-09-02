@@ -34,38 +34,31 @@ export default function TelaEditarPerfil({ navigation, route }) {
       allowsEditing: true,
       aspect: [1, 1],
       quality: 0.7,
+      base64: true,
     });
 
     if (!result.canceled) {
-      setFoto(result.assets[0].uri);
+      setFoto("data:image/jpeg;base64," + result.assets[0].base64);
     }
   };
 
   const handleUpdate = async () => {
-    const dadosParaEnviar = new FormData();
-    dadosParaEnviar.append("nome", nome);
-    dadosParaEnviar.append("email", email);
-    dadosParaEnviar.append("cpf", String(cpf).replace(/\D/g, ""));
-    dadosParaEnviar.append("celular", String(celular).replace(/\D/g, ""));
-    dadosParaEnviar.append("data_nascimento", dataNascimento);
-
+    const dadosParaEnviar: any = {
+      nome,
+      email,
+      cpf: cpf.replace(/\D/g, ""),
+      celular: celular.replace(/\D/g, ""),
+      data_nascimento: dataNascimento,
+    };
     if (foto && !foto.startsWith("http")) {
-      let filename = foto.split("/").pop();
-      let match = /\.(\w+)$/.exec(filename);
-      let type = match ? `image/${match[1]}` : `image`;
-
-      dadosParaEnviar.append("foto", {
-        uri: foto,
-        name: filename,
-        type,
-      } as any);
+      dadosParaEnviar.foto = foto; 
     }
 
     try {
       let { url } = useApi();
       await axios.put(url + `/api/usuario`, dadosParaEnviar, {
         headers: {
-          Accept: "application/json", "Content-Type": "multipart/form-data",
+          Accept: "application/json",
         },
       });
 
@@ -123,8 +116,8 @@ export default function TelaEditarPerfil({ navigation, route }) {
       <TouchableOpacity style={styles.avatarContainer} onPress={pickImage}>
         <Image
           source={
-            usuario && usuario.foto
-              ? { uri: usuario.foto }
+            foto
+              ? { uri: foto }
               : require("../assets/images/FotoPerfil.png")
           }
           style={styles.avatar}

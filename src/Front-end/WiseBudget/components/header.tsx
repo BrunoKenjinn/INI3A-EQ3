@@ -26,11 +26,11 @@ type Props = {
 export function Header({
   title,
   leftIconName,
-  leftIconSize = 24,
+  leftIconSize = 30,
   leftIconColor = "#fff",
   leftIconComponent: LeftIcon = AntDesign,
   rightIconName,
-  rightIconSize = 24,
+  rightIconSize = 30,
   rightIconColor = "#fff",
   rightIconComponent: RightIcon = AntDesign,
   infoUser,
@@ -57,9 +57,9 @@ export function Header({
         <TouchableOpacity onPress={() => navigation.navigate("TelaPerfil")}>
           {infoUser?.foto ? (
             <Image
-              style={{ width: 30, height: 30, borderRadius: 15 }}
+              style={{ width: 50, height: 50, borderRadius: 30 }}
               source={{
-                uri: url+ `/storage/img/fotos_usuarios${infoUser.foto}`,
+                uri: infoUser.foto
               }}
             />
           ) : (
@@ -83,7 +83,8 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    padding: 20,
+    padding: 10,
+    zIndex: 10,
   },
   title: {
     color: "#f1c40f",

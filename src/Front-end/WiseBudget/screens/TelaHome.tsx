@@ -22,6 +22,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Loading } from "../components/loading";
 import axios from "axios";
 import useApi from "../hooks/useApi";
+import { useAuth } from "../App";
 
 type IconComponentType = ComponentType<
   IconProps<keyof typeof FontAwesome.glyphMap>
@@ -46,11 +47,13 @@ interface Entrada {
   descricao: string;
   valor: number;
   data: string;
+  created_at: string;
   icone: React.ComponentProps<typeof FontAwesome>["name"];
   cor: string;
 }
 
 export default function TelaHome({ navigation }) {
+  const { user } = useAuth()
   const [atalhos, setAtalhos] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [chartData, setChartData] = useState<ChartDataItem[]>([
@@ -239,6 +242,7 @@ export default function TelaHome({ navigation }) {
           rightIconColor="#f1c40f"
           rightIconSize={24}
           rightIconComponent={FontAwesome5}
+          infoUser={user}
         />
         <Balanço
           credito={balanco.credito_mes.toString()}
@@ -286,10 +290,10 @@ export default function TelaHome({ navigation }) {
               <TransacaoCard
                 descricao={item.descricao}
                 valor={item.valor}
-                hora={new Date(item.data).toLocaleTimeString([], {
-                  hour: "2-digit",
-                  minute: "2-digit",
-                })}
+                hora={new Date(item.created_at).toLocaleTimeString([], {
+                hour: "2-digit",
+                minute: "2-digit",
+              })}
                 icone={item.icone}
                 cor={item.cor}
               />

@@ -201,6 +201,7 @@ const styles = StyleSheet.create({
         height: 50,
         width: '100%',
         color: '#ffffff',
+        backgroundColor: "#393939",
     },
     pickerContainer: {
         backgroundColor: '#393939',

@@ -24,6 +24,8 @@ interface Transacao {
   valor: number;
   data: string;
   tipo: "entrada" | "saida";
+  recorrente: boolean;
+  created_at: string;
   icone: React.ComponentProps<typeof FontAwesome5>["name"];
   cor: string;
 }
@@ -34,13 +36,10 @@ export default function TelaTransacoes() {
 
   const [filtroPeriodo, setFiltroPeriodo] = useState("semana");
   const [filtroTipo, setFiltroTipo] = useState("todos");
-  const parseDateStringAsLocal = (dateString) => {
-    const [datePart, timePart] = dateString.split(" ");
-    const [year, month, day] = datePart.split("-").map(Number);
-    const [hour, minute, second] = timePart.split(":").map(Number);
-    return new Date(year, month - 1, day, hour, minute, second);
+  const parseDateYMD = (dateString: string) => {
+    const [year, month, day] = dateString.split("-").map(Number);
+    return new Date(year, month - 1, day);
   };
-
   useFocusEffect(
     useCallback(() => {
       const carregarTransacoes = async () => {
@@ -86,8 +85,7 @@ export default function TelaTransacoes() {
     ontem.setDate(hoje.getDate() - 1);
 
     transacoes.forEach((transacao) => {
-      const dataTransacao = parseDateStringAsLocal(transacao.data);
-
+      const dataTransacao = parseDateYMD(transacao.data);
       if (dataTransacao.toDateString() === hoje.toDateString()) {
         grupos["Hoje"].push(transacao);
       } else if (dataTransacao.toDateString() === ontem.toDateString()) {
@@ -164,7 +162,7 @@ export default function TelaTransacoes() {
           renderItem={({ item }) => (
             <TransacaoCard
               descricao={item.descricao}
-              hora={parseDateStringAsLocal(item.data).toLocaleTimeString([], {
+              hora={new Date(item.created_at).toLocaleTimeString([], {
                 hour: "2-digit",
                 minute: "2-digit",
               })}
@@ -209,6 +207,7 @@ const styles = StyleSheet.create({
   },
   picker: {
     color: "#f1c40f",
+    backgroundColor: "#393939",
   },
   sectionHeader: {
     color: "#f1c40f",
