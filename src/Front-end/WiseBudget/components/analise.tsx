@@ -15,13 +15,14 @@ export function Analise({ total, economia, maiorGasto, iconeMaiorGasto, corMaior
 
     const formatar = (value: string) => {
         const numberValue = parseFloat(value);
-        if (isNaN(numberValue)) {
-            return 'R$ 0,00';
-        }
-        return numberValue.toLocaleString('pt-BR', {
+        if (isNaN(numberValue)) return 'R$ 0,00';
+
+        const abs = Math.abs(numberValue).toLocaleString('pt-BR', {
             style: 'currency',
             currency: 'BRL',
         });
+
+        return numberValue < 0 ? `R$ -${abs.replace('R$', '').trim()}` : abs;
     };
 
     const valorMascarado = (valor: string) => {

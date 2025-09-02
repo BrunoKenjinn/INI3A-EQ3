@@ -7,6 +7,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Atalho } from "../components/atalho";
 import useApi from "../hooks/useApi";
 import { Loading } from "../components/loading";
+import CustomBottomTab from "../components/CustomBottomTab";
 
 interface BalancoData {
     credito_mes: number;
@@ -18,12 +19,12 @@ interface BalancoData {
 
 export default function TelaAdicionarAtalhos({ navigation }) {
     const [balanco, setBalanco] = useState<BalancoData>({
-            credito_mes: 0,
-            debito_mes: 0,
-            saldo_total: 0,
-            saldo_inicial: 0,
-        });
-    const [isLoading, setIsLoading] = useState(true); 
+        credito_mes: 0,
+        debito_mes: 0,
+        saldo_total: 0,
+        saldo_inicial: 0,
+    });
+    const [isLoading, setIsLoading] = useState(true);
     const handleSave = async (nome: string, icone: string, rota: string) => {
         const jaExiste = atalhos.some((a) => a.rota === rota || a.nome === nome);
         if (jaExiste) {
@@ -52,23 +53,23 @@ export default function TelaAdicionarAtalhos({ navigation }) {
 
         } catch (error) {
             console.error('Erro ao salvar atalho:', error.response?.data || error.message);
-            Alert.alert('Erro','Erro ao salvar atalho');
+            Alert.alert('Erro', 'Erro ao salvar atalho');
         }
     };
 
     useEffect(() => {
         const carregarTudo = async () => {
-                        setIsLoading(true);
-                        try {
-                            await carregarAtalhos();
-                            await carregarBalanco();
-                        } catch (error) {
-                            console.error("Erro ao carregar dados da Tela de Adicionar Atalhos:", error);
-                            Alert.alert("Erro", "Não foi possível carregar os dados. Tente novamente.");
-                        } finally {
-                            setIsLoading(false);
-                        }
-                    };
+            setIsLoading(true);
+            try {
+                await carregarAtalhos();
+                await carregarBalanco();
+            } catch (error) {
+                console.error("Erro ao carregar dados da Tela de Adicionar Atalhos:", error);
+                Alert.alert("Erro", "Não foi possível carregar os dados. Tente novamente.");
+            } finally {
+                setIsLoading(false);
+            }
+        };
         const carregarAtalhos = async () => {
             try {
                 let { url } = useApi();
@@ -79,23 +80,23 @@ export default function TelaAdicionarAtalhos({ navigation }) {
                 setAtalhos(response.data);
             } catch (error) {
                 console.error("Erro ao carregar atalhos:", error.response?.data || error.message);
-                Alert.alert('Erro','Errro ao carregar');
+                Alert.alert('Erro', 'Errro ao carregar');
             }
         };
 
         const carregarBalanco = async () => {
-                try {
-                    let { url } = useApi();
-                    const token = await AsyncStorage.getItem('auth_token');
-                    const response = await axios.get(url + '/api/balanco', {
-                        headers: { Authorization: `Bearer ${token}` }
-                    });
-                    setBalanco(response.data);
-                } catch (error) {
-                    console.error("Erro ao buscar balanço:", error.response?.data || error.message);
-                    Alert.alert('Erro','Erro ao buscar balnço')
-                }
-            };
+            try {
+                let { url } = useApi();
+                const token = await AsyncStorage.getItem('auth_token');
+                const response = await axios.get(url + '/api/balanco', {
+                    headers: { Authorization: `Bearer ${token}` }
+                });
+                setBalanco(response.data);
+            } catch (error) {
+                console.error("Erro ao buscar balanço:", error.response?.data || error.message);
+                Alert.alert('Erro', 'Erro ao buscar balnço')
+            }
+        };
 
         carregarTudo();
     }, []);
@@ -152,6 +153,9 @@ export default function TelaAdicionarAtalhos({ navigation }) {
                 contentContainerStyle={{ paddingVertical: 10 }}
                 columnWrapperStyle={{ justifyContent: 'space-between' }}
             />
+            <View style={styles.tabContainer}>
+                <CustomBottomTab />
+            </View>
         </SafeAreaView>
     </>
 }
@@ -172,5 +176,11 @@ const styles = StyleSheet.create({
         borderRadius: 12,
         minHeight: 100,
         maxWidth: '30%',
+    },
+    tabContainer: {
+        position: 'absolute',
+        bottom: 0,
+        left: 0,
+        right: 0,
     },
 });

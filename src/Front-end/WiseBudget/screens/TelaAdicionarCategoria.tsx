@@ -6,6 +6,7 @@ import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import WheelColorPicker from 'react-native-wheel-color-picker';
 import useApi from "../hooks/useApi";
+import CustomBottomTab from '../components/CustomBottomTab';
 
 
 
