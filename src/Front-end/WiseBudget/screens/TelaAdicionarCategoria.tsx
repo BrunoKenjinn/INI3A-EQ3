@@ -6,6 +6,7 @@ import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import WheelColorPicker from 'react-native-wheel-color-picker';
 import useApi from "../hooks/useApi";
+import CustomBottomTab from '../components/CustomBottomTab';
 
 
 
@@ -169,7 +170,7 @@ const styles = StyleSheet.create({
         height: 50,
         width: '100%',
         color: '#ffffff',
-        backgroundColor: '#393939',
+        backgroundColor: "#393939",
     },
     pickerContainer: {
         backgroundColor: '#393939',

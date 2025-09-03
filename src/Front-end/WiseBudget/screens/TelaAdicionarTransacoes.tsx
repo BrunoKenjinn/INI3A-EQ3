@@ -146,7 +146,7 @@ export default function TelaAdicionarTransacoes({ navigation }) {
           >
             Qual o valor da transação?
           </Text>
-          <View style={{ flexDirection: "row", alignItems: "center" }}>
+          <View style={{ flexDirection: "row", alignItems: "center", width: '100%' }}>
             <Text
               style={{
                 color: "#fdfdfd",
@@ -160,7 +160,7 @@ export default function TelaAdicionarTransacoes({ navigation }) {
             </Text>
             <TextInput
               placeholder="0,00"
-              placeholderTextColor={"#393939"}
+              placeholderTextColor={"#fdfdfd"}
               style={{
                 height: 150,
                 fontSize: 80,

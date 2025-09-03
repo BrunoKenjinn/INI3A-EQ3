@@ -8,6 +8,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useFocusEffect } from "@react-navigation/native";
 import useApi from "../hooks/useApi";
 import { Loading } from "../components/loading";
+import CustomBottomTab from "../components/CustomBottomTab";
 
 interface BalancoData {
     credito_mes: number;
@@ -22,7 +23,7 @@ interface BalancoData {
 export default function TelaCategorias({ navigation }) {
     const [categorias, setCategorias] = useState([]);
     const categoriasComAdicionar = [...categorias, { id: 'adicionar', nome: 'Adicionar', icone: 'plus' }];
-    const [isLoading, setIsLoading] = useState(true); 
+    const [isLoading, setIsLoading] = useState(true);
     const [balanco, setBalanco] = useState<BalancoData>({
         credito_mes: 0,
         debito_mes: 0,
@@ -120,7 +121,9 @@ export default function TelaCategorias({ navigation }) {
                     </View>
                 )}
             />
-
+            <View style={styles.tabContainer}>
+                <CustomBottomTab />
+            </View>
 
         </SafeAreaView >
     </>
@@ -138,6 +141,11 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'center',
         marginVertical: 15,
-    }
-//pedro esteve aqui tbm
+    },
+    tabContainer: {
+        position: 'absolute',
+        bottom: 0,
+        left: 0,
+        right: 0,
+    },
 });
