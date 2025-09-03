@@ -36,14 +36,10 @@ export default function TelaTransacoes() {
 
   const [filtroPeriodo, setFiltroPeriodo] = useState("semana");
   const [filtroTipo, setFiltroTipo] = useState("todos");
-<<<<<<< HEAD
-
-=======
   const parseDateYMD = (dateString: string) => {
     const [year, month, day] = dateString.split("-").map(Number);
     return new Date(year, month - 1, day);
   };
->>>>>>> 6239c343325bea9c12bc5f0f23d257e76f72289f
   useFocusEffect(
     useCallback(() => {
       const carregarTransacoes = async () => {
@@ -89,12 +85,7 @@ export default function TelaTransacoes() {
     ontem.setDate(hoje.getDate() - 1);
 
     transacoes.forEach((transacao) => {
-<<<<<<< HEAD
-      const dataTransacao = new Date(transacao.data);
-
-=======
       const dataTransacao = parseDateYMD(transacao.data);
->>>>>>> 6239c343325bea9c12bc5f0f23d257e76f72289f
       if (dataTransacao.toDateString() === hoje.toDateString()) {
         grupos["Hoje"].push(transacao);
       } else if (dataTransacao.toDateString() === ontem.toDateString()) {
