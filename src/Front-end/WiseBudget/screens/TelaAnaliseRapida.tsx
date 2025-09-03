@@ -284,7 +284,10 @@ export default function TelaCadastro({ navigation }) {
                                 <TransacaoCard
                                     descricao={item.descricao}
                                     valor={item.valor}
-                                    hora={new Date(item.data).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                                    hora={new Date(item.created_at).toLocaleTimeString([], {
+                                        hour: "2-digit",
+                                        minute: "2-digit",
+                                    })}
                                     icone={item.icone}
                                     cor={item.cor}
                                 />
