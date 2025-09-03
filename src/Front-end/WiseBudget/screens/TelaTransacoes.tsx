@@ -34,12 +34,6 @@ export default function TelaTransacoes() {
 
   const [filtroPeriodo, setFiltroPeriodo] = useState("semana");
   const [filtroTipo, setFiltroTipo] = useState("todos");
-  const parseDateStringAsLocal = (dateString) => {
-    const [datePart, timePart] = dateString.split(" ");
-    const [year, month, day] = datePart.split("-").map(Number);
-    const [hour, minute, second] = timePart.split(":").map(Number);
-    return new Date(year, month - 1, day, hour, minute, second);
-  };
 
   useFocusEffect(
     useCallback(() => {
@@ -86,7 +80,7 @@ export default function TelaTransacoes() {
     ontem.setDate(hoje.getDate() - 1);
 
     transacoes.forEach((transacao) => {
-      const dataTransacao = parseDateStringAsLocal(transacao.data);
+      const dataTransacao = new Date(transacao.data);
 
       if (dataTransacao.toDateString() === hoje.toDateString()) {
         grupos["Hoje"].push(transacao);
@@ -144,7 +138,7 @@ export default function TelaTransacoes() {
           <Picker
             selectedValue={filtroTipo}
             onValueChange={(itemValue) => setFiltroTipo(itemValue)}
-            style={styles.picker} // O estilo do picker em si
+            style={styles.picker} 
             dropdownIconColor="#f1c40f"
           >
             <Picker.Item label="Todos" value="todos" />
@@ -164,7 +158,7 @@ export default function TelaTransacoes() {
           renderItem={({ item }) => (
             <TransacaoCard
               descricao={item.descricao}
-              hora={parseDateStringAsLocal(item.data).toLocaleTimeString([], {
+              hora={new Date(item.data).toLocaleTimeString([], {
                 hour: "2-digit",
                 minute: "2-digit",
               })}
@@ -209,6 +203,7 @@ const styles = StyleSheet.create({
   },
   picker: {
     color: "#f1c40f",
+    backgroundColor: "#393939",
   },
   sectionHeader: {
     color: "#f1c40f",

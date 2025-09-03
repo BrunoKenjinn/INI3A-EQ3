@@ -216,7 +216,6 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     paddingHorizontal: 40,
     paddingBottom: 30,
-    height: 100, 
     alignItems: 'center',
   },
   arrow: {
@@ -230,7 +229,6 @@ const styles = StyleSheet.create({
   buttonContainer: {
     paddingHorizontal: 40,
     paddingBottom: 30,
-    height: 100, 
     justifyContent: 'center',
     alignItems: 'center',
   },
