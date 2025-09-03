@@ -142,7 +142,7 @@ export default function TelaTransacoes() {
           <Picker
             selectedValue={filtroTipo}
             onValueChange={(itemValue) => setFiltroTipo(itemValue)}
-            style={styles.picker} // O estilo do picker em si
+            style={styles.picker} 
             dropdownIconColor="#f1c40f"
           >
             <Picker.Item label="Todos" value="todos" />
