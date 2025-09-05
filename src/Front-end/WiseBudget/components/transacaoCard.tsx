@@ -1,5 +1,5 @@
-import { View, Text } from "react-native";
-import FontAwesome from '@expo/vector-icons/FontAwesome';
+import { View, Text, TouchableOpacity } from "react-native";
+import FontAwesome from "@expo/vector-icons/FontAwesome";
 
 type Props = {
   descricao: string;
@@ -8,47 +8,64 @@ type Props = {
   icone: string;
   cor: string;
   data?: string;
+  onPress?: () => void;
 };
 
-export function TransacaoCard({ descricao, valor, hora, icone, cor, data }: Props) {
+export function TransacaoCard({
+  descricao,
+  valor,
+  hora,
+  icone,
+  cor,
+  data,
+  onPress,
+}: Props) {
   const valorNumerico = parseFloat(String(valor)) || 0;
 
   return (
-    <View style={{
-      width: '100%',
-      backgroundColor: '#393939',
-      borderRadius: 20,
-      marginTop: 10,
-      flexDirection: 'row',
-      justifyContent: 'space-between',
-      alignItems: 'center',
-      padding: 20
-    }}>
-      <View style={{ flexDirection: 'row', gap: 10, alignItems: 'center' }}>
-        <View style={{
-          height: 50,
-          width: 50,
-          borderRadius: 10,
-          backgroundColor: '#393939',
-          justifyContent: 'center',
-          alignItems: 'center'
-        }}>
-          <FontAwesome name={icone} size={24} color={cor} />
-        </View>
-        <View>
-          <Text style={{ fontFamily: 'Poppins-Bold', color: '#ffffff' }}>{descricao}</Text>
-          <View style={{ flexDirection: 'row', gap: 5, alignItems: 'center' }}>
-            {data ? (
-              <>
-                <Text style={{ fontFamily: 'Poppins-Regular', color: '#ffffff' }}>{data}</Text>
-                <Text style={{ fontFamily: 'Poppins-Regular', color: '#ffffff' }}>•</Text>
-              </>
-            ) : null}
-            <Text style={{ fontFamily: 'Poppins-Regular', color: '#ffffff' }}>{hora}</Text>
+    <TouchableOpacity onPress={onPress}>
+      <View
+        style={{
+          width: "100%",
+          backgroundColor: "#393939",
+          borderRadius: 20,
+          marginTop: 10,
+          flexDirection: "row",
+          justifyContent: "space-between",
+          alignItems: "center",
+          padding: 20,
+        }}
+      />
+        <View style={{ flexDirection: "row", gap: 10, alignItems: "center" }}>
+          <View
+            style={{
+              height: 50,
+              width: 50,
+              borderRadius: 10,
+              backgroundColor: "#393939",
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+          >
+            <FontAwesome name={icone} size={24} color={cor} />
           </View>
+          <View>
+            <Text style={{ fontFamily: 'Poppins-Bold', color: '#ffffff' }}>{descricao}</Text>
+            <View style={{ flexDirection: 'row', gap: 5, alignItems: 'center' }}>
+              {data ? (
+                <>
+                  <Text style={{ fontFamily: 'Poppins-Regular', color: '#ffffff' }}>{data}</Text>
+                  <Text style={{ fontFamily: 'Poppins-Regular', color: '#ffffff' }}>•</Text>
+                </>
+              ) : null}
+              <Text style={{ fontFamily: 'Poppins-Regular', color: '#ffffff' }}>{hora}</Text>
+            </View>
+          </View>
+          <Text style={{ fontFamily: "Poppins-Bold", color: "#ffffff" }}>
+            R${valorNumerico.toFixed(2).replace(".", ",")}
+          </Text>
         </View>
-      </View>
-      <Text style={{ fontFamily: 'Poppins-Bold', color: '#ffffff' }}>R${valorNumerico.toFixed(2).replace('.', ',')}</Text>
-    </View>
+    </TouchableOpacity>
   );
 }
+

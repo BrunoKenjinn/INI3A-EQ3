@@ -30,7 +30,7 @@ interface Transacao {
   cor: string;
 }
 
-export default function TelaTransacoes() {
+export default function TelaTransacoes({ navigation }) {
   const [transacoes, setTransacoes] = useState<Transacao[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -174,6 +174,9 @@ export default function TelaTransacoes() {
               valor={item.valor}
               icone={item.icone}
               cor={item.cor}
+              onPress={() =>
+                navigation.navigate("TelaEditarTransacoes", { transacao: item })
+              }
             />
           )}
           renderSectionHeader={({ section: { title } }) => (

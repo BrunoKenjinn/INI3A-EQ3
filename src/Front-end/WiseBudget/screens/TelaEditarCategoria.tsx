@@ -1,215 +1,224 @@
-import { Picker } from '@react-native-picker/picker';
-import { useState } from 'react';
-import { SafeAreaView, Text, View, StyleSheet, TextInput, TouchableOpacity, Alert } from 'react-native';
-import { Header } from '../components/header';
-import axios from 'axios';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import WheelColorPicker from 'react-native-wheel-color-picker';
+import { Picker } from "@react-native-picker/picker";
+import { useState } from "react";
+import {
+  SafeAreaView,
+  Text,
+  View,
+  StyleSheet,
+  TextInput,
+  TouchableOpacity,
+  Alert,
+} from "react-native";
+import { Header } from "../components/header";
+import axios from "axios";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import WheelColorPicker from "react-native-wheel-color-picker";
 import useApi from "../hooks/useApi";
 
-
 export default function TelaEditarCategoria({ navigation, route }) {
-    ;
-    const { categoria } = route.params;
-    const [selectedValue, setSelectedValue] = useState(categoria.icone);
-    const [title, setTitle] = useState(categoria.nome);
-    const [corSelecionada, setCorSelecionada] = useState(categoria.cor || '#FF6384');
+  const { categoria } = route.params;
+  const [selectedValue, setSelectedValue] = useState(categoria.icone);
+  const [title, setTitle] = useState(categoria.nome);
+  const [corSelecionada, setCorSelecionada] = useState(
+    categoria.cor || "#FF6384"
+  );
 
-
-    const handleUpdate = async () => {
-        try {
-            let { url } = useApi();
-            const token = await AsyncStorage.getItem('auth_token');
-            const response = await axios.put(url + `/api/categorias/${categoria.id}`, {
-                nome: title,
-                icone: selectedValue,
-                cor: corSelecionada,
-            }, {
-                headers: {
-                    Authorization: `Bearer ${token}`
-                }
-            });
-
-            Alert.alert('Sucesso', 'Categoria atualizada com sucesso!');
-            navigation.goBack();
-        } catch (error) {
-            if (error.response) {
-                Alert.alert('Erro', error.response.data.message || 'Erro ao atualizar');
-            } else {
-                Alert.alert('Erro', 'Erro de conexão.');
-            }
-        };
-    }
-
-    const handleDelete = async () => {
-        try {
-            let { url } = useApi();
-            const token = await AsyncStorage.getItem('auth_token');
-
-            await axios.delete(url + `/api/categorias/${categoria.id}`, {
-                headers: {
-                    Authorization: `Bearer ${token}`
-                }
-            });
-            navigation.goBack();
-        } catch (error) {
-            if (error.response) {
-                console.log("Erro ao exclur", error.response.data.message);
-                Alert.alert('Erro', 'Erro ao excluir.');
-            } else {
-                console.log("Erro de conexao")
-                Alert.alert('Erro', 'Erro de conexão.');
-            }
+  const handleUpdate = async () => {
+    try {
+      let { url } = useApi();
+      const token = await AsyncStorage.getItem("auth_token");
+      const response = await axios.put(
+        url + `/api/categorias/${categoria.id}`,
+        {
+          nome: title,
+          icone: selectedValue,
+          cor: corSelecionada,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
         }
-    };
+      );
 
+      Alert.alert("Sucesso", "Categoria atualizada com sucesso!");
+      navigation.goBack();
+    } catch (error) {
+      if (error.response) {
+        Alert.alert("Erro", error.response.data.message || "Erro ao atualizar");
+      } else {
+        Alert.alert("Erro", "Erro de conexão.");
+      }
+    }
+  };
 
-    return (
-        <SafeAreaView style={styles.container}>
-            <Header
-                leftIconName="arrowleft"
-                leftIconSize={24}
-                leftIconColor="#f1c40f"
-                rightIconName="bells"
-                rightIconSize={24}
-                rightIconColor="#f1c40f"
-                title="Editar Categoria"
+  const handleDelete = async () => {
+    try {
+      let { url } = useApi();
+      const token = await AsyncStorage.getItem("auth_token");
+
+      await axios.delete(url + `/api/categorias/${categoria.id}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      navigation.goBack();
+    } catch (error) {
+      if (error.response) {
+        console.log("Erro ao exclur", error.response.data.message);
+        Alert.alert("Erro", "Erro ao excluir.");
+      } else {
+        console.log("Erro de conexao");
+        Alert.alert("Erro", "Erro de conexão.");
+      }
+    }
+  };
+
+  return (
+    <SafeAreaView style={styles.container}>
+      <Header
+        leftIconName="arrowleft"
+        leftIconSize={24}
+        leftIconColor="#f1c40f"
+        rightIconName="bells"
+        rightIconSize={24}
+        rightIconColor="#f1c40f"
+        title="Editar Categoria"
+      />
+
+      <View style={styles.inputArea}>
+        <Text style={styles.textInput}>Digite o nome</Text>
+        <TextInput
+          placeholder={categoria.nome}
+          style={styles.input}
+          value={title}
+          onChangeText={setTitle}
+        />
+      </View>
+
+      <View style={styles.inputArea}>
+        <Text style={styles.textInput}>Selecione o ícone</Text>
+        <View style={styles.pickerContainer}>
+          <Picker
+            selectedValue={selectedValue}
+            onValueChange={(itemValue) => setSelectedValue(itemValue)}
+            style={styles.picker}
+          >
+            <Picker.Item label="Alimentação" value="cutlery" />
+            <Picker.Item label="Transporte" value="bus" />
+            <Picker.Item label="Saúde" value="heart" />
+            <Picker.Item label="Despesas" value="file-text" />
+            <Picker.Item label="Moradia" value="home" />
+            <Picker.Item label="Educação" value="graduation-cap" />
+            <Picker.Item label="Lazer" value="smile-o" />
+            <Picker.Item label="Investimentos" value="line-chart" />
+            <Picker.Item label="Cartão" value="credit-card" />
+            <Picker.Item label="Viagens" value="paper-plane" />
+            <Picker.Item label="PET" value="paw" />
+          </Picker>
+        </View>
+      </View>
+
+      <View style={styles.inputArea}>
+        <Text style={styles.textInput}>Selecione a cor</Text>
+        <View style={styles.inputAreaCor}>
+          <View style={{ height: 200 }}>
+            <WheelColorPicker
+              color={corSelecionada}
+              onColorChangeComplete={setCorSelecionada}
+              thumbSize={20}
+              sliderSize={20}
+              noSnap={true}
+              row={false}
             />
+          </View>
 
+          <View
+            style={{
+              backgroundColor: corSelecionada,
+              width: 30,
+              height: 30,
+              borderRadius: 25,
+              marginTop: 10,
+            }}
+          />
+        </View>
+      </View>
 
-            <View style={styles.inputArea}>
-                <Text style={styles.textInput}>Digite o nome</Text>
-                <TextInput
-                    placeholder={categoria.nome}
-                    style={styles.input}
-                    value={title}
-                    onChangeText={setTitle}
-                />
-            </View>
+      <TouchableOpacity style={styles.button} onPress={handleUpdate}>
+        <Text style={styles.textButton}>Editar</Text>
+      </TouchableOpacity>
 
-            <View style={styles.inputArea}>
-                <Text style={styles.textInput}>Selecione o ícone</Text>
-                <View style={styles.pickerContainer}>
-                    <Picker
-                        selectedValue={selectedValue}
-                        onValueChange={(itemValue) => setSelectedValue(itemValue)}
-                        style={styles.picker}
-                    >
-                        <Picker.Item label="Alimentação" value="cutlery" />
-                        <Picker.Item label="Transporte" value="bus" />
-                        <Picker.Item label="Saúde" value="heart" />
-                        <Picker.Item label="Despesas" value="file-text" />
-                        <Picker.Item label="Moradia" value="home" />
-                        <Picker.Item label="Educação" value="graduation-cap" />
-                        <Picker.Item label="Lazer" value="smile-o" />
-                        <Picker.Item label="Investimentos" value="line-chart" />
-                        <Picker.Item label="Cartão" value="credit-card" />
-                        <Picker.Item label="Viagens" value="paper-plane" />
-                        <Picker.Item label="PET" value="paw" />
-                    </Picker>
-                </View>
-
-            </View>
-
-            <View style={styles.inputArea}>
-                <Text style={styles.textInput}>Selecione a cor</Text>
-                <View style={styles.inputAreaCor}>
-                    <View style={{ height: 200 }}>
-                        <WheelColorPicker
-                            color={corSelecionada}
-                            onColorChangeComplete={setCorSelecionada}
-                            thumbSize={20}
-                            sliderSize={20}
-                            noSnap={true}
-                            row={false}
-                        />
-                    </View>
-
-                    <View style={{
-                        backgroundColor: corSelecionada,
-                        width: 30,
-                        height: 30,
-                        borderRadius: 25,
-                        marginTop: 10
-                    }} />
-                </View>
-            </View>
-
-            <TouchableOpacity style={styles.button} onPress={handleUpdate}>
-                <Text style={styles.textButton}>Editar</Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity style={styles.button} onPress={handleDelete}>
-                <Text style={styles.textButton}>Excluir</Text>
-            </TouchableOpacity>
-
-        </SafeAreaView>
-    );
+      <TouchableOpacity style={styles.button} onPress={handleDelete}>
+        <Text style={styles.textButton}>Excluir</Text>
+      </TouchableOpacity>
+    </SafeAreaView>
+  );
 }
 
 const styles = StyleSheet.create({
-    container: {
-        backgroundColor: '#2c2c2c',
-        height: '100%',
-        alignItems: 'center',
-    },
+  container: {
+    backgroundColor: "#2c2c2c",
+    height: "100%",
+    alignItems: "center",
+  },
 
-    h1: {
-        fontSize: 30,
-        fontWeight: 'bold',
-        color: '#f1c40f',
-        marginTop: 25
-    },
-    inputArea: {
-        width: '95%',
-        margin: 10
-    },
-    inputAreaCor: {
-        width: '80%',
-        margin: 20,
-        marginLeft: 40,
-        marginBottom: 40,
-    },
-    input: {
-        backgroundColor: '#393939',
-        padding: 10,
-        borderRadius: 10,
-        width: '100%',
-        color: '#ffffff',
-        height: 50,
-    },
-    textInput: {
-        color: '#ffffff',
-        marginLeft: 15,
-        marginBottom: 5
-    },
-    button: {
-        backgroundColor: '#f1c40f',
-        padding: 5,
-        width: 120,
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        borderRadius: 15,
-        marginTop: 20
-    },
-    textButton: {
-        fontSize: 20,
-        fontWeight: 'bold'
-    },
-    picker: {
-        height: 50,
-        width: '100%',
-        color: '#ffffff',
-        backgroundColor: '#393939',
-    },
-    pickerContainer: {
-        backgroundColor: '#393939',
-        borderRadius: 10,
-        height: 50,
-        justifyContent: 'center',
-        marginTop: 8,
-        marginBottom: 20,
-        width: '100%',
-    },
+  h1: {
+    fontSize: 30,
+    fontWeight: "bold",
+    color: "#f1c40f",
+    marginTop: 25,
+  },
+  inputArea: {
+    width: "95%",
+    margin: 10,
+  },
+  inputAreaCor: {
+    width: "80%",
+    margin: 20,
+    marginLeft: 40,
+    marginBottom: 40,
+  },
+  input: {
+    backgroundColor: "#393939",
+    padding: 10,
+    borderRadius: 10,
+    width: "100%",
+    color: "#ffffff",
+    height: 50,
+  },
+  textInput: {
+    color: "#ffffff",
+    marginLeft: 15,
+    marginBottom: 5,
+  },
+  button: {
+    backgroundColor: "#f1c40f",
+    padding: 5,
+    width: 120,
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    borderRadius: 15,
+    marginTop: 20,
+  },
+  textButton: {
+    fontSize: 20,
+    fontWeight: "bold",
+  },
+  picker: {
+    height: 50,
+    width: "100%",
+    color: "#ffffff",
+    backgroundColor: "#393939",
+  },
+  pickerContainer: {
+    backgroundColor: "#393939",
+    borderRadius: 10,
+    height: 50,
+    justifyContent: "center",
+    marginTop: 8,
+    marginBottom: 20,
+    width: "100%",
+  },
 });
