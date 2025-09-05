@@ -22,6 +22,7 @@ import TelaDefinirSaldoInicial from './screens/TelaDefinirSaldoInicial';
 import { createContext, useContext, useEffect, useState } from 'react';
 import axios from 'axios';
 import TelaAdicionarTransacoes from './screens/TelaAdicionarTransacoes';
+import TelaEditarTransacoes from './screens/TelaEditarTransacoes';
 import useApi from './hooks/useApi';
 import { Loading } from './components/loading';
 
@@ -65,6 +66,7 @@ function AppStack() {
       <Stack.Screen name="TelaEditarPerfil" component={TelaEditarPerfil} />
       <Stack.Screen name="TelaTransacoes" component={TelaTransacoes} />
       <Stack.Screen name="TelaAdicionarTransacoes" component={TelaAdicionarTransacoes} />
+      <Stack.Screen name="TelaEditarTransacoes" component={TelaEditarTransacoes} />
     </Stack.Navigator>
   );
 }

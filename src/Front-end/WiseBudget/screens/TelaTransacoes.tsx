@@ -30,7 +30,7 @@ interface Transacao {
   cor: string;
 }
 
-export default function TelaTransacoes() {
+export default function TelaTransacoes({ navigation }) {
   const [transacoes, setTransacoes] = useState<Transacao[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -142,7 +142,7 @@ export default function TelaTransacoes() {
           <Picker
             selectedValue={filtroTipo}
             onValueChange={(itemValue) => setFiltroTipo(itemValue)}
-            style={styles.picker} 
+            style={styles.picker}
             dropdownIconColor="#f1c40f"
           >
             <Picker.Item label="Todos" value="todos" />
@@ -169,6 +169,9 @@ export default function TelaTransacoes() {
               valor={item.valor}
               icone={item.icone}
               cor={item.cor}
+              onPress={() =>
+                navigation.navigate("TelaEditarTransacoes", { transacao: item })
+              }
             />
           )}
           renderSectionHeader={({ section: { title } }) => (
