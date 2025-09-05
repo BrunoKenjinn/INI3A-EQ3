@@ -27,19 +27,28 @@ import useApi from './hooks/useApi';
 import { Loading } from './components/loading';
 
 const Stack = createNativeStackNavigator();
-const AuthContext = createContext({
-  userToken: null,
-  user: null,
-  hasSeenOrientations: false,
-  orientationsDismissed: false,
-  needSaldoInicial: false,
-  signIn: (token: string) => { },
-  signOut: () => { },
-  markOrientationsAsSeen: () => { },
-  dismissOrientations: () => { },
-  setNeedSaldoInicial: (v: boolean) => { },
-});
-export const useAuth = () => useContext(AuthContext);
+type AuthContextType = {
+  userToken: string | null;
+  user: any;
+  setUser: React.Dispatch<React.SetStateAction<any>>;
+  hasSeenOrientations: boolean;
+  orientationsDismissed: boolean;
+  needSaldoInicial: boolean;
+  signIn: (token: string) => void;
+  signOut: () => void;
+  markOrientationsAsSeen: () => void;
+  dismissOrientations: () => void;
+  setNeedSaldoInicial: (v: boolean) => void;
+};
+
+const AuthContext = createContext<AuthContextType | undefined>(undefined);
+export const useAuth = () => {
+  const context = useContext(AuthContext);
+  if (!context) {
+    throw new Error("useAuth deve ser usado dentro de um AuthProvider");
+  }
+  return context;
+};
 
 function AuthStack() {
   return (
@@ -95,7 +104,7 @@ function AuthProvider({ children }) {
       setUserToken(token);
 
       try {
-        let {url} = useApi();
+        let { url } = useApi();
         const res = await axios.get(url + "/api/user");
         setUser(res.data);
         setNeedSaldoInicial(res.data?.saldo_inicial === null);
@@ -152,18 +161,18 @@ function AuthProvider({ children }) {
       } catch (e) {
         console.error("Erro ao buscar estado inicial", e);
       } finally {
-        setLoadingAuthState(false); 
+        setLoadingAuthState(false);
       }
     };
     checkInitialState();
   }, []);
 
-    if (loadingAuthState) {
+  if (loadingAuthState) {
     return <Loading />;
   }
 
   return (
-    <AuthContext.Provider value={{ userToken, user, hasSeenOrientations, orientationsDismissed, needSaldoInicial, signIn, signOut, markOrientationsAsSeen, dismissOrientations, setNeedSaldoInicial }}>
+    <AuthContext.Provider value={{ userToken, user, setUser, hasSeenOrientations, orientationsDismissed, needSaldoInicial, signIn, signOut, markOrientationsAsSeen, dismissOrientations, setNeedSaldoInicial }}>
       {children}
     </AuthContext.Provider>
   );

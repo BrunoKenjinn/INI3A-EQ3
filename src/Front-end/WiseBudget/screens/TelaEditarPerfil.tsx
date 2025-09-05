@@ -18,15 +18,22 @@ import * as ImagePicker from "expo-image-picker";
 
 export default function TelaEditarPerfil({ navigation, route }) {
   const { usuario } = route.params;
-  const { signOut } = useAuth();
+  const { signOut, setUser } = useAuth();
   const [foto, setFoto] = useState(usuario?.foto || null);
   const [nome, setNome] = useState(usuario?.nome || "");
   const [email, setEmail] = useState(usuario?.email || "");
   const [cpf, setCpf] = useState(usuario?.cpf || "");
   const [celular, setCelular] = useState(usuario?.celular || "");
+  const formatarDataParaInput = (data?: string) => {
+    if (!data) return "";
+    const [ano, mes, dia] = data.split("-");
+    return `${dia}/${mes}/${ano}`;
+  };
   const [dataNascimento, setDataNascimento] = useState(
-    usuario?.data_nascimento || ""
+    formatarDataParaInput(usuario?.data_nascimento)
   );
+
+
 
   const pickImage = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
@@ -51,16 +58,18 @@ export default function TelaEditarPerfil({ navigation, route }) {
       data_nascimento: dataNascimento,
     };
     if (foto && !foto.startsWith("http")) {
-      dadosParaEnviar.foto = foto; 
+      dadosParaEnviar.foto = foto;
     }
 
     try {
       let { url } = useApi();
-      await axios.put(url + `/api/usuario`, dadosParaEnviar, {
+      const response = await axios.put(url + `/api/usuario`, dadosParaEnviar, {
         headers: {
           Accept: "application/json",
         },
       });
+
+      setUser(response.data);
 
       Alert.alert("Sucesso", "Perfil atualizado com sucesso.");
       navigation.goBack();
