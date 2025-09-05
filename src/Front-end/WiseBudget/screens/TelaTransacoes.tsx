@@ -111,6 +111,7 @@ export default function TelaTransacoes() {
 
   const dadosAgrupados = agruparTransacoes();
 
+
   return (
     <SafeAreaView style={styles.container}>
       <Header
@@ -142,7 +143,7 @@ export default function TelaTransacoes() {
           <Picker
             selectedValue={filtroTipo}
             onValueChange={(itemValue) => setFiltroTipo(itemValue)}
-            style={styles.picker} 
+            style={styles.picker}
             dropdownIconColor="#f1c40f"
           >
             <Picker.Item label="Todos" value="todos" />
@@ -162,6 +163,10 @@ export default function TelaTransacoes() {
           renderItem={({ item }) => (
             <TransacaoCard
               descricao={item.descricao}
+              data={new Date(item.data).toLocaleDateString('pt-BR', {
+                day: '2-digit',
+                month: '2-digit'
+              })}
               hora={new Date(item.created_at).toLocaleTimeString([], {
                 hour: "2-digit",
                 minute: "2-digit",

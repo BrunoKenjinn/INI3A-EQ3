@@ -3,13 +3,14 @@ import FontAwesome from '@expo/vector-icons/FontAwesome';
 
 type Props = {
   descricao: string;
-  valor: number | string; 
+  valor: number | string;
   hora: string;
   icone: string;
   cor: string;
+  data?: string;
 };
 
-export function TransacaoCard({ descricao, valor, hora, icone,  cor}: Props) {
+export function TransacaoCard({ descricao, valor, hora, icone, cor, data }: Props) {
   const valorNumerico = parseFloat(String(valor)) || 0;
 
   return (
@@ -24,19 +25,27 @@ export function TransacaoCard({ descricao, valor, hora, icone,  cor}: Props) {
       padding: 20
     }}>
       <View style={{ flexDirection: 'row', gap: 10, alignItems: 'center' }}>
-        <View style={{ 
-            height: 50, 
-            width: 50, 
-            borderRadius: 10, 
-            backgroundColor: '#393939',
-            justifyContent: 'center',
-            alignItems: 'center'
+        <View style={{
+          height: 50,
+          width: 50,
+          borderRadius: 10,
+          backgroundColor: '#393939',
+          justifyContent: 'center',
+          alignItems: 'center'
         }}>
-            <FontAwesome name={icone} size={24} color={cor} />
+          <FontAwesome name={icone} size={24} color={cor} />
         </View>
         <View>
           <Text style={{ fontFamily: 'Poppins-Bold', color: '#ffffff' }}>{descricao}</Text>
-          <Text style={{ fontFamily: 'Poppins-Regular', color: '#ffffff' }}>{hora}</Text>
+          <View style={{ flexDirection: 'row', gap: 5, alignItems: 'center' }}>
+            {data ? (
+              <>
+                <Text style={{ fontFamily: 'Poppins-Regular', color: '#ffffff' }}>{data}</Text>
+                <Text style={{ fontFamily: 'Poppins-Regular', color: '#ffffff' }}>•</Text>
+              </>
+            ) : null}
+            <Text style={{ fontFamily: 'Poppins-Regular', color: '#ffffff' }}>{hora}</Text>
+          </View>
         </View>
       </View>
       <Text style={{ fontFamily: 'Poppins-Bold', color: '#ffffff' }}>R${valorNumerico.toFixed(2).replace('.', ',')}</Text>

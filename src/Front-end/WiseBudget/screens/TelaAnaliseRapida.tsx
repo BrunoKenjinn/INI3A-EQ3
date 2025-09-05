@@ -21,6 +21,15 @@ interface ChartDataItem {
     legendFontColor: string;
     legendFontSize: number;
 }
+interface StackItem {
+    value: number;
+    color?: string;
+}
+
+interface StackDataItem {
+    label: string;
+    stacks: StackItem[];
+}
 
 interface AnaliseData {
     credito_mes: number;
@@ -64,7 +73,17 @@ export default function TelaCadastro({ navigation }) {
     };
     const [isLoading, setIsLoading] = useState(true);
     const [tipoSelecionado, setTipoSelecionado] = useState<"credito" | "debito">("credito");
+    const [dadosBarras, setDadosBarras] = useState<StackDataItem[]>([
+        { label: "Dom", stacks: [{ value: 0, color: "#5A5A5A" }] },
+        { label: "Seg", stacks: [{ value: 0, color: "#5A5A5A" }] },
+        { label: "Ter", stacks: [{ value: 0, color: "#5A5A5A" }] },
+        { label: "Qua", stacks: [{ value: 0, color: "#5A5A5A" }] },
+        { label: "Qui", stacks: [{ value: 0, color: "#5A5A5A" }] },
+        { label: "Sex", stacks: [{ value: 0, color: "#5A5A5A" }] },
+        { label: "Sáb", stacks: [{ value: 0, color: "#5A5A5A" }] },
+    ]);
     const [principaisTransacoes, setPrincipaisTransacoes] = useState<any[]>([]);
+
 
     useEffect(() => {
         const carregarTudo = async () => {
@@ -73,6 +92,7 @@ export default function TelaCadastro({ navigation }) {
                 await carregarAnalise();
                 await carregarDadosGraficoDeSetores();
                 await carregarPrincipaisTransacoes();
+                await carregarGraficoDeBarras();
             } catch (error) {
                 console.error("Erro ao carregar dados da Tela de Adicionar Atalhos:", error);
                 Alert.alert("Erro", "Não foi possível carregar os dados. Tente novamente.");
@@ -119,6 +139,45 @@ export default function TelaCadastro({ navigation }) {
                 console.error("Erro ao buscar dados do gráfico:", error.response?.data || error.message);
             }
         };
+        const carregarGraficoDeBarras = async () => {
+            try {
+                let { url } = useApi();
+                const token = await AsyncStorage.getItem("auth_token");
+                const tipoBackend = tipoSelecionado === "credito" ? "entrada" : "saida";
+
+                const response = await axios.get(
+                    url + `/api/gastos-por-dia?tipo=${tipoBackend}&periodo=semana`,
+                    {
+                        headers: { Authorization: `Bearer ${token}` },
+                    }
+                );
+                const diasSemana = ["Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sáb"];
+                const dadosFormatados = diasSemana.map(dia => {
+                    const itemDoDia = response.data.find(i => i.dia === dia);
+
+                    if (!itemDoDia || !itemDoDia.categorias || itemDoDia.categorias.length === 0) {
+                        return {
+                            label: dia,
+                            stacks: [{ value: 0, color: "#5A5A5A" }]
+                        };
+                    }
+
+                    return {
+                        label: dia,
+                        stacks: itemDoDia.categorias.map((cat) => ({
+                            value: Number(cat.valor) || 0,
+                            color: cat.cor || "#5A5A5A",
+                        })),
+                    };
+                });
+
+                console.log("DADOS FORMATADOS PARA BARCHART:", JSON.stringify(dadosFormatados, null, 2));
+                setDadosBarras(dadosFormatados);
+
+            } catch (error) {
+                console.error("Erro ao carregar gráfico de barras:", error.response?.data || error.message);
+            }
+        };
         const carregarPrincipaisTransacoes = async () => {
             try {
                 let { url } = useApi();
@@ -142,6 +201,31 @@ export default function TelaCadastro({ navigation }) {
     if (isLoading) {
         return <Loading />;
     }
+    const yAxisMaxValue = Math.max(
+        1,
+        ...dadosBarras.map(d =>
+            (d.stacks || []).reduce((sum, stack) => sum + (stack.value || 0), 0)
+        )
+    );
+    const todasAsCategorias = dadosBarras.flatMap(dia => dia.stacks);
+
+    // Cria um mapa para garantir que cada categoria apareça apenas uma vez
+    const categoriasUnicas = new Map();
+    todasAsCategorias.forEach(cat => {
+        // Usamos a cor como chave para garantir a unicidade
+        if (cat.value > 0 && !categoriasUnicas.has(cat.color)) {
+            categoriasUnicas.set(cat.color, {
+                // OBS: O nome da categoria não vem nos seus dados do gráfico.
+                // Você precisará buscar essa informação de algum lugar ou adaptar sua API.
+                // Por enquanto, usaremos a cor como um placeholder.
+                nome: `Cor ${cat.color}`, // <-- SUBSTITUIR PELA CATEGORIA REAL
+                cor: cat.color
+            });
+        }
+    });
+
+    // Converte o mapa para um array para renderizar
+    const legendaData = Array.from(categoriasUnicas.values());
 
     return (
         <SafeAreaView style={styles.body}>
@@ -236,36 +320,27 @@ export default function TelaCadastro({ navigation }) {
                             Grafico de Barras
                         </Text>
 
-                        <ScrollView
-                            horizontal
-                            showsHorizontalScrollIndicator={false}
-                            contentContainerStyle={{ paddingHorizontal: 10 }}
-                        >
+                        <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ paddingHorizontal: 10 }}>
                             <BarChart
-                                data={[
-                                    { value: 50, label: "Seg" },
-                                    { value: 80, label: "Ter" },
-                                    { value: 65, label: "Qua" },
-                                    { value: 70, label: "Qui" },
-                                    { value: 40, label: "Sex" },
-                                    { value: 90, label: "Sáb" },
-                                    { value: 30, label: "Dom" },
-                                ]}
-                                barWidth={10}
-                                spacing={30}
-                                hideRules
-                                frontColor="#f1c40f"
+                                width={480}
+                                stackData={dadosBarras}
+                                barWidth={30}
+                                spacing={40}
                                 xAxisLabelTextStyle={{ color: "white", fontFamily: "Poppins-Regular" }}
                                 yAxisTextStyle={{ color: "white" }}
-                                noOfSections={4}
-                                maxValue={100}
-                                roundedTop
-                                barBorderRadius={12}
+                                noOfSections={8}
+                                maxValue={yAxisMaxValue}
+                                barBorderRadius={0}
                                 yAxisThickness={0}
                                 xAxisThickness={0}
                                 backgroundColor="#393939"
+                                showValuesAsTopLabel={true}
+                                topLabelTextStyle={{ color: 'white', fontSize: 10 }}
+                                showXAxisIndices={true}
+                                yAxisLabelPrefix="R$ "
                             />
                         </ScrollView>
+
                     </View>
                     <View style={styles.separador}></View>
                     <Text
