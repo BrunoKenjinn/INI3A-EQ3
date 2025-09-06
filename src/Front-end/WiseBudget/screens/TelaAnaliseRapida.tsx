@@ -13,7 +13,6 @@ import {
   StyleSheet,
   TouchableOpacity,
   ScrollView,
-  FlatList,
 } from "react-native";
 import { Header } from "../components/header";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -62,7 +61,7 @@ interface BarDataPoint {
   topLabelComponent?: () => React.ReactNode;
 }
 
-export default function TelaCadastro({ navigation }) {
+export default function TelaAnaliseRapida({ navigation }) {
   const [analise, setAnalise] = useState<AnaliseData>({
     credito_mes: 0,
     debito_mes: 0,
@@ -94,6 +93,7 @@ export default function TelaCadastro({ navigation }) {
   };
   const [isLoading, setIsLoading] = useState(true);
   const [dadosAgrupados, setDadosAgrupados] = useState<BarDataPoint[]>([]);
+  const [chartWidthState, setChartWidthState] = useState<number>(480);
   const [tipoSelecionado, setTipoSelecionado] = useState<"credito" | "debito">(
     "credito"
   );
@@ -107,6 +107,10 @@ export default function TelaCadastro({ navigation }) {
     { label: "Sáb", stacks: [{ value: 0, color: "#5A5A5A" }] },
   ]);
   const [principaisTransacoes, setPrincipaisTransacoes] = useState<any[]>([]);
+  const BAR_WIDTH = 30;
+  const INNER_SPACING = 5;
+  const GROUP_SPACING = 45; // espaçamento entre dias
+  const Y_AXIS_LABEL_WIDTH = 50;
 
   useEffect(() => {
     const carregarTudo = async () => {
@@ -171,52 +175,89 @@ export default function TelaCadastro({ navigation }) {
         );
       }
     };
-    const transformarParaDadosAgrupados = (
-      dados: StackDataItem[]
-    ): BarDataPoint[] => {
-      const dadosAgrupados: BarDataPoint[] = [];
 
-      const diasComDados = dados.filter((dia) =>
-        dia.stacks.some((s) => s.value > 0)
-      );
+    // monta os dados do gifted-charts e calcula a largura necessária do gráfico
+    // Substitua a sua função antiga por esta inteira
+    // Substitua TUDO por esta função final
+    // Substitua novamente pela versão final e completa
+    const buildChartDataAndWidth = (dadosFormatados: StackDataItem[]) => {
+      const dados: BarDataPoint[] = [];
+      const groupWidths: number[] = [];
 
-      diasComDados.forEach((dia, diaIndex) => {
+      dadosFormatados.forEach((dia) => {
         const barrasDoDia = dia.stacks.filter((s) => s.value > 0);
-        const totalDeBarrasNoDia = barrasDoDia.length;
-        const pontoMedioIndex = Math.floor((totalDeBarrasNoDia - 1) / 2);
+        const count = barrasDoDia.length || 1;
+        const barsWidth =
+          count * BAR_WIDTH + Math.max(0, count - 1) * INNER_SPACING;
 
-        barrasDoDia.forEach((stack, index) => {
-          dadosAgrupados.push({
-            value: stack.value,
-            frontColor: stack.color,
-            nome: stack.nome,
-            topLabelComponent: () => (
-              <Text style={{ color: "white", fontSize: 10, marginBottom: 5 }}>
-                {stack.value}
-              </Text>
-            ),
-            labelComponent: () => {
-              if (index === pontoMedioIndex) {
-                return (
-                  <Text
-                    style={{ color: "white", width: 70, textAlign: "center" }}
-                  >
-                    {dia.label}
-                  </Text>
-                );
-              }
-              return null;
-            },
+        // A versão final com o hack do espaçamento.
+        const LabelDoDia = () => {
+          // CASO 1: Para grupos, que já funciona.
+          if (barrasDoDia.length > 1) {
+            return (
+              <View style={{ width: barsWidth, alignItems: "center" }}>
+                <Text style={{ color: "white", fontFamily: "Poppins-Regular" }}>
+                  {dia.label}
+                </Text>
+              </View>
+            );
+          }
+
+          // CASO 2: Para barras únicas, o HACK.
+          // Adicionamos dois "espaços invisíveis" na frente do texto.
+          const labelComEspaco = `\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0${dia.label}`;
+
+          return (
+            <Text style={{ color: "white", fontFamily: "Poppins-Regular" }}>
+              {labelComEspaco}
+            </Text>
+          );
+        };
+
+        if (barrasDoDia.length === 0) {
+          dados.push({
+            value: 0,
+            frontColor: "#5A5A5A",
+            labelComponent: LabelDoDia,
+            spacing: GROUP_SPACING,
           });
-        });
-
-        if (diaIndex < diasComDados.length - 1) {
-          dadosAgrupados.push({ value: 0, spacing: 20 });
+        } else {
+          barrasDoDia.forEach((stack, index) => {
+            dados.push({
+              value: stack.value,
+              frontColor: stack.color || "#5A5A5A",
+              nome: stack.nome,
+              topLabelComponent:
+                stack.value > 0
+                  ? () => (
+                      <Text
+                        style={{
+                          color: "white",
+                          fontSize: 10,
+                          marginBottom: 5,
+                        }}
+                      >
+                        {new Intl.NumberFormat("pt-BR", {
+                          style: "currency",
+                          currency: "BRL",
+                          maximumFractionDigits: 0,
+                        }).format(stack.value)}
+                      </Text>
+                    )
+                  : undefined,
+              labelComponent: index === 0 ? LabelDoDia : undefined,
+              spacing:
+                index < barrasDoDia.length - 1 ? INNER_SPACING : GROUP_SPACING,
+            });
+          });
         }
+        groupWidths.push(barsWidth + GROUP_SPACING);
       });
-
-      return dadosAgrupados;
+      const totalWidth =
+        Y_AXIS_LABEL_WIDTH + groupWidths.reduce((acc, w) => acc + w, 0) + 40;
+      return { dados, totalWidth };
     };
+
     const carregarGraficoDeBarras = async () => {
       try {
         let { url } = useApi();
@@ -253,10 +294,11 @@ export default function TelaCadastro({ navigation }) {
             })),
           };
         });
-        const dadosTransformados =
-          transformarParaDadosAgrupados(dadosFormatados);
-        setDadosAgrupados(dadosTransformados);
+
+        const { dados, totalWidth } = buildChartDataAndWidth(dadosFormatados);
+        setDadosAgrupados(dados);
         setDadosBarras(dadosFormatados);
+        setChartWidthState(totalWidth);
       } catch (error) {
         console.error(
           "Erro ao carregar gráfico de barras:",
@@ -416,44 +458,44 @@ export default function TelaCadastro({ navigation }) {
               Grafico de Barras
             </Text>
 
-            <ScrollView
-              horizontal
-              showsHorizontalScrollIndicator={false}
-              contentContainerStyle={{ paddingHorizontal: 10 }}
-            >
-              <BarChart
-                data={dadosAgrupados}
-                spacing={3}
-                barWidth={30}
-                width={480}
-                maxValue={yAxisMaxValue}
-                yAxisExtraHeight={30}
-                noOfSections={5}
-                yAxisLabelWidth={50}
-                yAxisLabelPrefix="R$ "
-                yAxisTextStyle={{ color: "white" }}
-                xAxisLabelTextStyle={{
-                  color: "white",
-                  fontFamily: "Poppins-Regular",
-                }}
-                backgroundColor="#393939"
-                yAxisThickness={0}
-                xAxisThickness={0}
-                barBorderRadius={0}
-                formatYLabel={formatarLabelY}
-                onPress={(item: StackItem) => {
-                  const valorFormatado = new Intl.NumberFormat("pt-BR", {
-                    style: "currency",
-                    currency: "BRL",
-                  }).format(item.value);
+            <View style={{ marginHorizontal: 10 }}>
+              <ScrollView
+                horizontal={true}
+                showsHorizontalScrollIndicator={false}
+              >
+                <BarChart
+                  data={dadosAgrupados}
+                  spacing={0}
+                  barWidth={BAR_WIDTH}
+                  width={chartWidthState}
+                  maxValue={yAxisMaxValue}
+                  yAxisExtraHeight={30}
+                  noOfSections={5}
+                  yAxisLabelWidth={Y_AXIS_LABEL_WIDTH}
+                  yAxisLabelPrefix="R$ "
+                  yAxisTextStyle={{ color: "white" }}
+                  xAxisLabelTextStyle={{ color: "transparent" }}
+                  backgroundColor="#393939"
+                  yAxisThickness={0}
+                  xAxisThickness={0}
+                  barBorderRadius={0}
+                  formatYLabel={formatarLabelY}
+                  initialSpacing={Y_AXIS_LABEL_WIDTH + 8} // compensa margem do eixo Y
+                  endSpacing={GROUP_SPACING * 2} // evita corte no final
+                  onPress={(item: StackItem) => {
+                    const valorFormatado = new Intl.NumberFormat("pt-BR", {
+                      style: "currency",
+                      currency: "BRL",
+                    }).format(item.value);
 
-                  Alert.alert(
-                    item.nome || "Detalhe da Categoria",
-                    `Valor: ${valorFormatado}`
-                  );
-                }}
-              />
-            </ScrollView>
+                    Alert.alert(
+                      item.nome || "Detalhe da Categoria",
+                      `Valor: ${valorFormatado}`
+                    );
+                  }}
+                />
+              </ScrollView>
+            </View>
           </View>
           <View style={styles.separador}></View>
           <Text
