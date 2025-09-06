@@ -137,7 +137,7 @@ const styles = StyleSheet.create({
         paddingHorizontal: 20
     },
     categoriaWrapper: {
-        width: '33.33%',   // sempre ocupa 1/3 da tela
+        width: '33.33%',   
         alignItems: 'center',
         justifyContent: 'center',
         marginVertical: 15,

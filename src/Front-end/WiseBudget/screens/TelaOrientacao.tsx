@@ -1,7 +1,7 @@
 import React, { useRef, useState, useEffect } from "react";
 import {
   Animated,
-  Dimensions,
+  useWindowDimensions,
   SafeAreaView,
   StyleSheet,
   Text,
@@ -11,10 +11,8 @@ import {
   Image,
 } from "react-native";
 import { StatusBar } from "expo-status-bar";
-import {useAuth} from "../App";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 
-const { width } = Dimensions.get("window");
 
 const slides = [
   {
@@ -26,19 +24,143 @@ const slides = [
     text: `O WiseBudget permite que você registre todas as suas entradas e saídas financeiras em poucos cliques. Utilize categorias personalizadas para separar seus gastos e ganhos, garantindo um acompanhamento detalhado.\n\nOs gráficos interativos facilitam a visualização dos dados de suas finanças, mostrando padrões de consumo e evolução das economias. Além disso, você pode acessar relatórios completos para entender melhor onde está economizando ou gastando mais.`,
   },
   {
-    title: "Defina Metas e Acompanhe seu Progresso",
+    title: "Acompanhe seu Progresso",
     text: `Com o WiseBudget, você pode estabelecer metas financeiras e acompanhar seu progresso de forma contínua. Defina objetivos como poupar para uma viagem, quitar dívidas ou criar um fundo de emergência.\n\nO aplicativo monitora o cumprimento dessas metas, alertando você quando estiver perto de alcançar seus objetivos ou quando precisar ajustar algum planejamento. Dessa forma, você mantém sua vida financeira sob controle, sempre ciente de como está avançando.`,
   },
 ];
 
-export default function TelaOrientacao ({ navigation }) {
-  const { markOrientationsAsSeen , dismissOrientations} = useAuth();
+const useAuth = () => ({
+  markOrientationsAsSeen: () => console.log("Marked orientations as seen"),
+  dismissOrientations: () => console.log("Dismissed orientations"),
+});
+
+
+export default function TelaOrientacao({ navigation }) {
+  const { width, height } = useWindowDimensions();
+
+
+  const getResponsiveFontSize = (size) => {
+    const scale = width / 375;
+    return Math.round(size * scale);
+  };
+
+  const styles = StyleSheet.create({
+    container: {
+      flex: 1,
+      backgroundColor: "#1e1e1e",
+    },
+    slide: {
+      width: width,
+      paddingHorizontal: width * 0.08,
+      justifyContent: "flex-start",
+      alignItems: "center",
+      paddingTop: height * 0.02,
+    },
+    imageContainer: {
+      width: width * 0.5,
+      height: width * 0.5,
+      borderRadius: width * 0.25,
+      marginBottom: height * 0.02,
+      overflow: 'hidden',
+      alignSelf: 'center',
+    },
+    circleImage: {
+      width: '100%',
+      height: '100%',
+    },
+    title: {
+      fontFamily: 'Poppins-Regular',
+      fontSize: getResponsiveFontSize(20),
+      color: "#fff",
+      fontWeight: "bold",
+      textAlign: "left",
+      width: "100%",
+      marginBottom: 15,
+    },
+    text: {
+      fontFamily: 'Poppins-Regular',
+      fontSize: getResponsiveFontSize(14),
+      color: "#d3d3d3",
+      textAlign: "left",
+      width: "100%",
+    },
+    controlsWrapper: {
+      paddingBottom: height * 0.06,
+      paddingHorizontal: width * 0.10,
+      height: height * 0.2,
+      justifyContent: 'flex-end',
+    },
+    dot: {
+      height: 10,
+      borderRadius: 5,
+      backgroundColor: "#f1c40f",
+      marginHorizontal: 5,
+    },
+    arrowsContainer: {
+      flexDirection: "row",
+      justifyContent: "space-between",
+      alignItems: 'center',
+    },
+    arrow: {
+      fontSize: getResponsiveFontSize(28),
+      color: "#f1c40f",
+      fontWeight: "bold",
+    },
+    arrowDisabled: {
+      opacity: 0.3,
+    },
+    buttonContainer: {
+      justifyContent: 'center',
+      alignItems: 'center',
+    },
+    button: {
+      backgroundColor: '#f1c40f',
+      paddingVertical: height * 0.018,
+      width: '80%',
+      borderRadius: 30,
+      justifyContent: 'center',
+      alignItems: 'center',
+      elevation: 3,
+      shadowColor: '#000',
+      shadowOffset: { width: 0, height: 2 },
+      shadowOpacity: 0.2,
+      shadowRadius: 2,
+    },
+    buttonText: {
+      color: '#1e1e1e',
+      fontSize: getResponsiveFontSize(16),
+      fontWeight: 'bold',
+      fontFamily: 'Poppins-Regular',
+    },
+    checkboxContainer: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      marginTop: 20,
+    },
+    skipButtonText: {
+      color: '#a3a3a3',
+      fontSize: getResponsiveFontSize(14),
+      fontFamily: 'Poppins-Regular',
+      marginLeft: 12,
+    },
+    navigationContainer: {
+      flexDirection: "row",
+      justifyContent: "space-between",
+      alignItems: "center",
+    },
+    dotsContainer: {
+      flexDirection: "row",
+      alignItems: "center",
+    },
+
+  });
+
+  const { markOrientationsAsSeen, dismissOrientations } = useAuth();
   const [dontShowAgain, setDontShowAgain] = useState(false);
 
   const scrollX = useRef(new Animated.Value(0)).current;
-  const scrollRef = useRef<ScrollView>(null);
+  const scrollRef = useRef(null);
   const [currentIndex, setCurrentIndex] = useState(0);
-  
 
   const buttonOpacity = useRef(new Animated.Value(0)).current;
 
@@ -71,17 +193,18 @@ export default function TelaOrientacao ({ navigation }) {
   };
 
   const handleFinish = () => {
-      if (dontShowAgain) {
-          markOrientationsAsSeen();
-      } else {
-        dismissOrientations();
-      }
+    if (dontShowAgain) {
+      markOrientationsAsSeen();
+    } else {
+      dismissOrientations();
+    }
   };
+
   const onScroll = Animated.event(
     [{ nativeEvent: { contentOffset: { x: scrollX } } }],
     {
       useNativeDriver: false,
-      listener: (event: { nativeEvent: { contentOffset: { x: any; }; }; }) => {
+      listener: (event) => {
         const x = event.nativeEvent.contentOffset.x;
         setCurrentIndex(Math.round(x / width));
       },
@@ -108,8 +231,8 @@ export default function TelaOrientacao ({ navigation }) {
       >
         {slides.map((slide, index) => (
           <View key={index} style={styles.slide}>
-            <View style={styles.circle}>
-              <Image source={images[index]} style={{ width: '100%', height: '100%' }} />
+            <View style={styles.imageContainer}>
+              <Image source={images[index]} style={styles.circleImage} resizeMode="cover" />
             </View>
             <Text style={styles.title}>{slide.title}</Text>
             <Text style={styles.text}>{slide.text}</Text>
@@ -117,144 +240,68 @@ export default function TelaOrientacao ({ navigation }) {
         ))}
       </Animated.ScrollView>
 
-      <View style={styles.dotsContainer}>
-        {slides.map((_, index) => {
-          const inputRange = [(index - 1) * width, index * width, (index + 1) * width];
-          const dotWidth = scrollX.interpolate({
-            inputRange,
-            outputRange: [8, 16, 8],
-            extrapolate: "clamp",
-          });
-          const opacity = scrollX.interpolate({
-            inputRange,
-            outputRange: [0.3, 1, 0.3],
-            extrapolate: "clamp",
-          });
-          return (
-            <Animated.View
-              key={index}
-              style={[styles.dot, { width: dotWidth, opacity }]}
-            />
-          );
-        })}
+      <View style={styles.controlsWrapper}>
+        {currentIndex === slides.length - 1 ? (
+          // Último slide: botão Concluir + checkbox
+          <Animated.View style={[styles.buttonContainer, { opacity: buttonOpacity }]}>
+            <TouchableOpacity style={styles.button} onPress={handleFinish} activeOpacity={0.7}>
+              <Text style={styles.buttonText}>Concluir</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.checkboxContainer}
+              onPress={() => setDontShowAgain(!dontShowAgain)}
+            >
+              <FontAwesome
+                name={dontShowAgain ? "check-square" : "square-o"}
+                size={24}
+                color="#a3a3a3"
+              />
+              <Text style={styles.skipButtonText}>Não mostrar novamente</Text>
+            </TouchableOpacity>
+          </Animated.View>
+        ) : (
+          // Slides anteriores: setas + pontos
+          <View style={styles.navigationContainer}>
+            <TouchableOpacity onPress={handlePrev} disabled={currentIndex === 0}>
+              <Text style={[styles.arrow, currentIndex === 0 && styles.arrowDisabled]}>
+                {"<"}
+              </Text>
+            </TouchableOpacity>
+
+            <View style={styles.dotsContainer}>
+              {slides.map((_, index) => {
+                const inputRange = [(index - 1) * width, index * width, (index + 1) * width];
+                const dotWidth = scrollX.interpolate({
+                  inputRange,
+                  outputRange: [10, 20, 10],
+                  extrapolate: "clamp",
+                });
+                const opacity = scrollX.interpolate({
+                  inputRange,
+                  outputRange: [0.3, 1, 0.3],
+                  extrapolate: "clamp",
+                });
+                return (
+                  <Animated.View key={index} style={[styles.dot, { width: dotWidth, opacity }]} />
+                );
+              })}
+            </View>
+
+            <TouchableOpacity onPress={handleNext} disabled={currentIndex === slides.length - 1}>
+              <Text
+                style={[
+                  styles.arrow,
+                  currentIndex === slides.length - 1 && styles.arrowDisabled,
+                ]}
+              >
+                {">"}
+              </Text>
+            </TouchableOpacity>
+          </View>
+        )}
       </View>
 
-      {currentIndex === slides.length - 1 ? (
-        <Animated.View style={[styles.buttonContainer, { opacity: buttonOpacity }]}>
-          <TouchableOpacity style={styles.button} onPress={handleFinish} activeOpacity={0.7}>
-            <Text style={styles.buttonText}>Concluir</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.checkboxContainer} onPress={() => setDontShowAgain(!dontShowAgain)}>
-            <FontAwesome name={dontShowAgain ? "check-square" : "square-o"} size={24} color="#a3a3a3" />
-            <Text style={styles.skipButtonText}>Não mostrar novamente</Text>
-          </TouchableOpacity>
-        </Animated.View>
-      ) : (
-        <View style={styles.arrowsContainer}>
-          <TouchableOpacity onPress={handlePrev} disabled={currentIndex === 0}>
-            <Text style={[styles.arrow, currentIndex === 0 && styles.arrowDisabled]}>{"<"}</Text>
-          </TouchableOpacity>
-          <TouchableOpacity onPress={handleNext} disabled={currentIndex === slides.length - 1}>
-            <Text style={[styles.arrow, currentIndex === slides.length - 1 && styles.arrowDisabled]}>{">"}</Text>
-          </TouchableOpacity>
-        </View>
-      )}
     </SafeAreaView>
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#1e1e1e",
-  },
-  slide: {
-    width: width,
-    padding: 20,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  circle: {
-    marginTop: 50,
-    width: 230,
-    height: 230,
-    borderRadius: 115, 
-    marginBottom: 20,
-    overflow: 'hidden', 
-  },
-  title: {
-    fontFamily: 'Poppins-Regular',
-    fontSize: 16,
-    color: "#fff",
-    fontWeight: "bold",
-    marginTop: 30,
-    textAlign: "left",
-    width: "90%",
-  },
-  text: {
-    fontFamily: 'Poppins-Regular',
-    marginTop: 20,
-    fontSize: 14,
-    color: "#fff",
-    textAlign: "left",
-    lineHeight: 23,
-    width: "90%",
-  },
-  dotsContainer: {
-    flexDirection: "row",
-    justifyContent: "center",
-    marginBottom: 16,
-  },
-  dot: {
-    height: 8,
-    borderRadius: 4,
-    backgroundColor: "#f1c40f",
-    marginHorizontal: 4,
-  },
-  arrowsContainer: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    paddingHorizontal: 40,
-    paddingBottom: 30,
-    alignItems: 'center',
-  },
-  arrow: {
-    fontSize: 28,
-    color: "#f1c40f",
-    fontWeight: "bold",
-  },
-  arrowDisabled: {
-    opacity: 0.3,
-  },
-  buttonContainer: {
-    paddingHorizontal: 40,
-    paddingBottom: 30,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  button: {
-    backgroundColor: '#f1c40f',
-    paddingVertical: 6,
-    paddingHorizontal: 50,
-    borderRadius: 25,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  buttonText: {
-    color: '#1e1e1e',
-    fontSize: 14,
-    fontWeight: 'bold',
-    fontFamily: 'Poppins-Regular',
-  },
-  checkboxContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 20,
-  },
-  skipButtonText: {
-    color: '#a3a3a3',
-    fontSize: 14,
-    fontFamily: 'Poppins-Regular',
-    marginLeft: 10,
-  },
-});

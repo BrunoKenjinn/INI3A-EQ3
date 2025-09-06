@@ -4,8 +4,8 @@ import {
   View,
   Text,
   FlatList,
-  TouchableOpacity,
   Alert,
+  Dimensions,
 } from "react-native";
 import { Header } from "../components/header";
 import FontAwesome5 from "@expo/vector-icons/FontAwesome5";
@@ -23,6 +23,15 @@ import { Loading } from "../components/loading";
 import axios from "axios";
 import useApi from "../hooks/useApi";
 import { useAuth } from "../App";
+
+const { width, height } = Dimensions.get("window");
+
+// helper para calcular tamanho de fonte responsivo
+const getResponsiveFontSize = (size: number) => {
+  // base de 375px de largura (iPhone X)
+  const scale = width / 375;
+  return Math.round(size * scale);
+};
 
 type IconComponentType = ComponentType<
   IconProps<keyof typeof FontAwesome.glyphMap>
@@ -53,7 +62,7 @@ interface Entrada {
 }
 
 export default function TelaHome({ navigation }) {
-  const { user } = useAuth()
+  const { user } = useAuth();
   const [atalhos, setAtalhos] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [chartData, setChartData] = useState<ChartDataItem[]>([
@@ -62,14 +71,26 @@ export default function TelaHome({ navigation }) {
       population: 100,
       color: "#5A5A5A",
       legendFontColor: "#7F7F7F",
-      legendFontSize: 15,
+      legendFontSize: getResponsiveFontSize(14),
     },
   ]);
-  const [title, setTitle] = useState("");
+
+  const chartConfig = {
+    backgroundGradientFrom: "#1E2923",
+    backgroundGradientFromOpacity: 0,
+    backgroundGradientTo: "#08130D",
+    backgroundGradientToOpacity: 0.5,
+    color: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
+    strokeWidth: 2,
+    barPercentage: 0.5,
+    useShadowColorFromDataset: false,
+  };
+
   const atalhosComAdicionar = [
     ...atalhos,
     { id: 0, nome: "Adicionar", icone: "plus", rota: "TelaAdicionarAtalho" },
   ];
+
   const [balanco, setBalanco] = useState<BalancoData>({
     credito_mes: 0,
     debito_mes: 0,
@@ -137,7 +158,7 @@ export default function TelaHome({ navigation }) {
                 population: 100,
                 color: "#5A5A5A",
                 legendFontColor: "#7F7F7F",
-                legendFontSize: 15,
+                legendFontSize: getResponsiveFontSize(15),
               },
             ]);
           }
@@ -188,7 +209,7 @@ export default function TelaHome({ navigation }) {
   );
 
   const handleDelete = async (id: number) => {
-    Alert.alert("Excluir Flho", "Tem certeza que deseja excluir este atalho?", [
+    Alert.alert("Excluir Atalho", "Tem certeza que deseja excluir este atalho?", [
       { text: "Cancelar", style: "cancel" },
       {
         text: "Excluir",
@@ -214,17 +235,6 @@ export default function TelaHome({ navigation }) {
     ]);
   };
 
-  const chartConfig = {
-    backgroundGradientFrom: "#1E2923",
-    backgroundGradientFromOpacity: 0,
-    backgroundGradientTo: "#08130D",
-    backgroundGradientToOpacity: 0.5,
-    color: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
-    strokeWidth: 2,
-    barPercentage: 0.5,
-    useShadowColorFromDataset: false,
-  };
-
   if (isLoading) {
     return <Loading />;
   }
@@ -235,12 +245,12 @@ export default function TelaHome({ navigation }) {
         <Header
           leftIconName="bars"
           leftIconColor="#f1c40f"
-          leftIconSize={24}
+          leftIconSize={width * 0.06}
           leftIconComponent={FontAwesome5}
           title="Olá, Bem vindo de volta!"
           rightIconName="user"
           rightIconColor="#f1c40f"
-          rightIconSize={24}
+          rightIconSize={width * 0.06}
           rightIconComponent={FontAwesome5}
           infoUser={user}
         />
@@ -250,60 +260,58 @@ export default function TelaHome({ navigation }) {
           saldo={balanco.saldo_total.toString()}
         />
 
-        <View style={{ width: "100%" }}>
-          <View style={{ flexDirection: "row", justifyContent: "space-between", marginRight: 10}}>
-            <Text style={{ color: "white", fontFamily: "Poppins-Regular" }}>
-              Gráfico de Setores
-            </Text>
-            <Text style={{ color: "white", fontFamily: "Poppins-Regular" }}>
-              Saídas
-            </Text>
+        <View style={styles.section}>
+          <View style={styles.sectionHeader}>
+            <Text style={styles.sectionText}>Gráfico de Setores</Text>
+            <Text style={styles.sectionText}>Saídas</Text>
           </View>
 
-          <View
-            style={{
-              width: "100%",
-              backgroundColor: "#393939",
-              borderRadius: 20,
-              marginTop: 10,
-              alignItems: "center",
-            }}
-          >
+          <View style={styles.chartWrapper}>
             <PieChart
               data={chartData}
-              width={400}
-              height={150}
+              width={width * 0.5}
+              height={height * 0.15}
               chartConfig={chartConfig}
               accessor={"population"}
               backgroundColor={"transparent"}
-              paddingLeft={"-20"}
+              paddingLeft='30'
               center={[0, 0]}
+              hasLegend={false}
             />
+
+            <View style={styles.legendContainer}>
+              {chartData.map((item, index) => (
+                <View key={index} style={styles.legendItem}>
+                  <View
+                    style={[styles.legendColor, { backgroundColor: item.color }]}
+                  />
+                  <Text style={styles.legendText}>
+                    {item.name} ({item.population})
+                  </Text>
+                </View>
+              ))}
+            </View>
           </View>
         </View>
 
-        <View style={{ width: "100%", marginTop: 20 }}>
-          <View style={{ flexDirection: "row", justifyContent: "space-between", marginRight: 10}}>
-            <Text style={{ color: "white", fontFamily: "Poppins-Regular" }}>
-              Sua Carteira
-            </Text>
-            <Text style={{ color: "white", fontFamily: "Poppins-Regular" }}>
-              Entradas
-            </Text>
+        <View style={styles.section}>
+          <View style={styles.sectionHeader}>
+            <Text style={styles.sectionText}>Sua Carteira</Text>
+            <Text style={styles.sectionText}>Entradas</Text>
           </View>
           <FlatList
             data={entradasHoje}
             keyExtractor={(item) => item.id.toString()}
-            style={{ maxHeight: 200 }}
+            style={{ maxHeight: height * 0.25 }}
             showsVerticalScrollIndicator={false}
             renderItem={({ item }) => (
               <TransacaoCard
                 descricao={item.descricao}
                 valor={item.valor}
                 hora={new Date(item.created_at).toLocaleTimeString([], {
-                hour: "2-digit",
-                minute: "2-digit",
-              })}
+                  hour: "2-digit",
+                  minute: "2-digit",
+                })}
                 icone={item.icone}
                 cor={item.cor}
               />
@@ -311,17 +319,15 @@ export default function TelaHome({ navigation }) {
           />
         </View>
 
-        <View style={{ width: "100%", marginTop: 20 }}>
-          <Text style={{ color: "white", fontFamily: "Poppins-Regular" }}>
-            Atalhos
-          </Text>
+        <View style={styles.section}>
+          <Text style={styles.sectionText}>Atalhos</Text>
 
           <FlatList
             data={atalhosComAdicionar}
             keyExtractor={(item) => item.id.toString()}
             horizontal={true}
             renderItem={({ item }) => (
-              <View style={{ marginRight: 12 }}>
+              <View style={styles.atalhoItem}>
                 <Atalho
                   iconName={item.icone}
                   text={item.nome}
@@ -336,7 +342,7 @@ export default function TelaHome({ navigation }) {
                 />
               </View>
             )}
-            contentContainerStyle={{ paddingVertical: 10 }}
+            contentContainerStyle={styles.atalhoList}
             showsHorizontalScrollIndicator={false}
           />
         </View>
@@ -354,6 +360,63 @@ const styles = StyleSheet.create({
   },
   content: {
     flex: 1,
-    padding: 20,
+    paddingHorizontal: width * 0.05,
+    paddingVertical: height * 0.02,
+  },
+  section: {
+    width: "100%",
+    marginTop: height * 0.02,
+  },
+  sectionHeader: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    marginRight: width * 0.02,
+  },
+  sectionText: {
+    color: "white",
+    fontFamily: "Poppins-Regular",
+    fontSize: getResponsiveFontSize(14),
+  },
+  chartWrapper: {
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
+    width: "100%",
+    backgroundColor: "#393939",
+    borderRadius: width * 0.05,
+    marginTop: height * 0.015,
+    padding: width * 0.03,
+  },
+
+  legendContainer: {
+    marginLeft: 10,
+    flexShrink: 1,
+  },
+
+  legendItem: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginBottom: 6,
+  },
+
+  legendColor: {
+    width: 12,
+    height: 12,
+    borderRadius: 6,
+    marginRight: 6,
+  },
+
+  legendText: {
+    color: "white",
+    fontSize: getResponsiveFontSize(15),
+    flexShrink: 1,
+    flexWrap: "wrap",
+    fontFamily: "Poppins-Regular",
+  },
+  atalhoItem: {
+    marginRight: width * 0.03,
+  },
+  atalhoList: {
+    paddingVertical: height * 0.015,
   },
 });

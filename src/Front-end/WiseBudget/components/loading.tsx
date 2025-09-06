@@ -1,23 +1,27 @@
 import React, { useRef, useEffect } from 'react';
-import { Animated, View, Image, Text, StyleSheet, SafeAreaView } from 'react-native';
+import { Animated, View, Image, StyleSheet, SafeAreaView, Dimensions } from 'react-native';
+
+const { width, height } = Dimensions.get("window");
 
 export function Loading() {
-    const animations = [useRef(new Animated.Value(0)).current,
-                        useRef(new Animated.Value(0)).current,
-                        useRef(new Animated.Value(0)).current];
+    const animations = [
+        useRef(new Animated.Value(0)).current,
+        useRef(new Animated.Value(0)).current,
+        useRef(new Animated.Value(0)).current
+    ];
 
     useEffect(() => {
         const createAnimation = (animatedValue: Animated.Value, delay: number) => {
             return Animated.loop(
                 Animated.sequence([
                     Animated.timing(animatedValue, {
-                        toValue: -10, 
+                        toValue: - (height * 0.015),
                         duration: 800,
                         delay,
                         useNativeDriver: true,
                     }),
                     Animated.timing(animatedValue, {
-                        toValue: 0, 
+                        toValue: 0,
                         duration: 800,
                         useNativeDriver: true,
                     }),
@@ -59,21 +63,22 @@ const styles = StyleSheet.create({
         backgroundColor: '#2c2c2c',
     },
     logo: {
-        width: 200,
-        height: 200,
-        marginBottom: 10,
+        width: width * 0.5,
+        height: width * 0.5,
+        marginBottom: height * 0.02,
+        resizeMode: 'contain',
     },
     dotsContainer: {
         flexDirection: 'row',
         justifyContent: 'center',
         alignItems: 'flex-end',
-        marginTop: 20,
+        marginTop: height * 0.02,
     },
     dot: {
-        width: 12,
-        height: 12,
-        borderRadius: 6,
+        width: width * 0.03,
+        height: width * 0.03,
+        borderRadius: (width * 0.03) / 2,
         backgroundColor: '#f1c40f',
-        marginHorizontal: 6,
+        marginHorizontal: width * 0.015,
     },
 });

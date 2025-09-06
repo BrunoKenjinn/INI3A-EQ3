@@ -1,12 +1,18 @@
 import { useState } from 'react';
-import { View, Text, Image, StyleSheet, TextInput, TouchableOpacity, Alert, ScrollView } from "react-native";
+import { View, Text, Image, StyleSheet, TextInput, TouchableOpacity, Alert, ScrollView, SafeAreaView, Dimensions } from "react-native";
 import axios from 'axios';
 import { MaskedTextInput } from "react-native-mask-text";
 import useApi from "../hooks/useApi";
 
-export default function TelaCadastro({ navigation }) {
+const { width, height } = Dimensions.get("window");
 
-    //pedro esteve aqui
+const getResponsiveFontSize = (size: number) => {
+    const scale = width / 375;
+    return Math.round(size * scale);
+};
+
+
+export default function TelaCadastro({ navigation }) {
     const [nome, setNome] = useState('');
     const [email, setEmail] = useState('');
     const [cpf, setCpf] = useState('');
@@ -16,18 +22,21 @@ export default function TelaCadastro({ navigation }) {
     const [passwordConfirmation, setPasswordConfirmation] = useState('');
 
     const handleRegister = async () => {
+        const [dia, mes, ano] = dataNascimento.split('/');
+        const dataFormatada = `${ano}-${mes}-${dia}`;
+
         const dadosParaEnviar = {
             nome,
             email,
-            cpf: String(cpf).replace(/\D/g, ''), 
-            celular: String(celular).replace(/\D/g, ''), 
-            data_nascimento: dataNascimento,
+            cpf: String(cpf).replace(/\D/g, ''),
+            celular: String(celular).replace(/\D/g, ''),
+            data_nascimento: dataFormatada,
             password,
             password_confirmation: passwordConfirmation,
         };
 
         try {
-            let {url} = useApi();
+            let { url } = useApi();
             await axios.post(url + '/api/register', dadosParaEnviar, {
                 headers: {
                     Accept: 'application/json',
@@ -50,154 +59,181 @@ export default function TelaCadastro({ navigation }) {
     };
 
     return (
-        <ScrollView contentContainerStyle={styles.container}>
-            <Image source={require('../assets/LogoAmarela.png')} style={styles.logo} />
-            <Text style={styles.title}>Crie sua conta</Text>
+        <SafeAreaView style={styles.safeArea}>
+            <ScrollView contentContainerStyle={styles.container}>
+                <Image source={require('../assets/LogoAmarela.png')} style={styles.logo} />
+                <Text style={styles.title}>Crie sua conta</Text>
 
-            <View style={styles.inputGroup}>
-                <Text style={styles.label}>Nome Completo</Text>
-                <TextInput
-                    style={styles.input}
-                    placeholder="Seu nome"
-                    value={nome}
-                    onChangeText={setNome}
-                />
-            </View>
+                <View style={styles.form}>
+                    <View style={styles.inputGroup}>
+                        <Text style={styles.label}>Nome Completo</Text>
+                        <TextInput
+                            style={styles.input}
+                            placeholder="Seu nome"
+                            placeholderTextColor="#a3a3a3"
+                            value={nome}
+                            onChangeText={setNome}
+                        />
+                    </View>
 
-            <View style={styles.inputGroup}>
-                <Text style={styles.label}>Email</Text>
-                <TextInput
-                    style={styles.input}
-                    placeholder="seu@email.com"
-                    value={email}
-                    onChangeText={setEmail}
-                    keyboardType="email-address"
-                />
-            </View>
+                    <View style={styles.inputGroup}>
+                        <Text style={styles.label}>Email</Text>
+                        <TextInput
+                            style={styles.input}
+                            placeholder="seu@email.com"
+                            placeholderTextColor="#a3a3a3"
+                            value={email}
+                            onChangeText={setEmail}
+                            keyboardType="email-address"
+                            autoCapitalize="none"
+                        />
+                    </View>
 
-            <View style={styles.inputGroup}>
-                <Text style={styles.label}>CPF</Text>
-                <MaskedTextInput
-                    style={styles.input}
-                    placeholder="Digite o CPF"
-                    value={cpf}
-                    onChangeText={(text, rawText) => setCpf(rawText)}
-                    keyboardType="numeric"
-                    mask='999.999.999-99'
-                />
-            </View>
+                    <View style={styles.inputGroup}>
+                        <Text style={styles.label}>CPF</Text>
+                        <MaskedTextInput
+                            style={styles.input}
+                            placeholder="Digite o CPF"
+                            placeholderTextColor="#a3a3a3"
+                            value={cpf}
+                            onChangeText={(text) => setCpf(text)}
+                            keyboardType="numeric"
+                            mask='999.999.999-99'
+                        />
+                    </View>
 
-            <View style={styles.inputGroup}>
-                <Text style={styles.label}>Celular</Text>
-                <MaskedTextInput
-                    style={styles.input}
-                    placeholder="Digite o Telefone"
-                    value={celular}
-                    onChangeText={(text, rawText) => setCelular(rawText)}
-                    keyboardType="phone-pad"
-                    mask="(99) 99999-9999"
-                />
-            </View>
+                    <View style={styles.inputGroup}>
+                        <Text style={styles.label}>Celular</Text>
+                        <MaskedTextInput
+                            style={styles.input}
+                            placeholder="Digite o Telefone"
+                            placeholderTextColor="#a3a3a3"
+                            value={celular}
+                            onChangeText={(text) => setCelular(text)}
+                            keyboardType="phone-pad"
+                            mask="(99) 99999-9999"
+                        />
+                    </View>
 
-            <View style={styles.inputGroup}>
-                <Text style={styles.label}>Data de Nascimento</Text>
-                <MaskedTextInput
-                    style={styles.input}
-                    placeholder="DD/MM/AAAA"
-                    value={dataNascimento}
-                    onChangeText={setDataNascimento}
-                    mask='99/99/9999'
-                />
-            </View>
+                    <View style={styles.inputGroup}>
+                        <Text style={styles.label}>Data de Nascimento</Text>
+                        <MaskedTextInput
+                            style={styles.input}
+                            placeholder="DD/MM/AAAA"
+                            placeholderTextColor="#a3a3a3"
+                            value={dataNascimento}
+                            onChangeText={setDataNascimento}
+                            mask='99/99/9999'
+                            keyboardType="numeric"
+                        />
+                    </View>
 
-            <View style={styles.inputGroup}>
-                <Text style={styles.label}>Senha</Text>
-                <TextInput
-                    style={styles.input}
-                    placeholder="Senha"
-                    value={password}
-                    onChangeText={setPassword}
-                    secureTextEntry
-                />
-            </View>
+                    <View style={styles.inputGroup}>
+                        <Text style={styles.label}>Senha</Text>
+                        <TextInput
+                            style={styles.input}
+                            placeholder="Crie uma senha"
+                            placeholderTextColor="#a3a3a3"
+                            value={password}
+                            onChangeText={setPassword}
+                            secureTextEntry
+                        />
+                    </View>
 
-            <View style={styles.inputGroup}>
-                <Text style={styles.label}>Confirmar Senha</Text>
-                <TextInput
-                    style={styles.input}
-                    placeholder="Confirme a senha"
-                    value={passwordConfirmation}
-                    onChangeText={setPasswordConfirmation}
-                    secureTextEntry
-                />
-            </View>
+                    <View style={styles.inputGroup}>
+                        <Text style={styles.label}>Confirmar Senha</Text>
+                        <TextInput
+                            style={styles.input}
+                            placeholder="Confirme a senha"
+                            placeholderTextColor="#a3a3a3"
+                            value={passwordConfirmation}
+                            onChangeText={setPasswordConfirmation}
+                            secureTextEntry
+                        />
+                    </View>
 
-            <TouchableOpacity style={styles.button} onPress={handleRegister}>
-                <Text style={styles.textButton}>Cadastrar</Text>
-            </TouchableOpacity>
-            <TouchableOpacity onPress={() => navigation.navigate('TelaLogin')}>
-            <Text style={styles.loginLink}>
-                Já tem cadastro? <Text style={styles.linkText}>Clique aqui</Text>
-            </Text>
-        </TouchableOpacity>
-        </ScrollView>
+                    <TouchableOpacity style={styles.button} onPress={handleRegister}>
+                        <Text style={styles.textButton}>Cadastrar</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity onPress={() => navigation.navigate('TelaLogin')}>
+                        <Text style={styles.loginLink}>
+                            Já tem cadastro? <Text style={styles.linkText}>Clique aqui</Text>
+                        </Text>
+                    </TouchableOpacity>
+                </View>
+            </ScrollView>
+        </SafeAreaView>
     );
 }
 
 const styles = StyleSheet.create({
-    container: {
+    safeArea: {
+        flex: 1,
         backgroundColor: '#2c2c2c',
+    },
+    container: {
         alignItems: 'center',
-        paddingVertical: 20,
-        paddingHorizontal:30,
-        height: '100%',
+        paddingVertical: height * 0.05,
+        paddingHorizontal: width * 0.05,
     },
     logo: {
-        width: 150,
-        height: 150
+        width: width * 0.3,
+        height: width * 0.3,
+        resizeMode: 'contain',
     },
     title: {
-        fontSize: 30,
+        fontSize: getResponsiveFontSize(28),
         color: '#f1c40f',
         fontFamily: 'Poppins-Bold',
-        marginTop: 10
+        marginTop: height * 0.02,
+        marginBottom: height * 0.02,
+    },
+    form: {
+        width: '100%',
     },
     inputGroup: {
         width: '100%',
-        marginBottom: 15,
+        marginBottom: height * 0.02,
     },
     label: {
         color: '#ffffff',
-        marginBottom: 5,
-        marginLeft: 10,
+        marginBottom: height * 0.01,
+        fontSize: getResponsiveFontSize(14),
+        fontFamily: 'Poppins-Regular',
     },
     input: {
         backgroundColor: '#393939',
-        padding: 10,
-        borderRadius: 20,
+        paddingVertical: height * 0.015,
+        paddingHorizontal: width * 0.04,
+        borderRadius: 15,
         color: '#ffffff',
         width: '100%',
+        fontSize: getResponsiveFontSize(14),
+        fontFamily: 'Poppins-Regular',
     },
     button: {
         backgroundColor: '#f1c40f',
-        padding: 10,
-        width: 160,
+        paddingVertical: height * 0.018,
+        width: '100%',
         alignItems: 'center',
         borderRadius: 15,
-        marginTop: 20
+        marginTop: height * 0.02
     },
     textButton: {
-        fontSize: 18,
-        fontWeight: 'bold'
+        fontSize: getResponsiveFontSize(18),
+        fontFamily: 'Poppins-Bold',
+        color: '#2c2c2c',
     },
     loginLink: {
-        marginTop: 15,
+        marginTop: height * 0.02,
         color: '#ffffff',
-        textAlign: 'center'
+        textAlign: 'center',
+        fontSize: getResponsiveFontSize(14),
+        fontFamily: 'Poppins-Regular',
     },
     linkText: {
         color: '#f1c40f',
-        fontWeight: 'bold',
+        fontFamily: 'Poppins-Bold',
         textDecorationLine: 'underline'
     }
 });

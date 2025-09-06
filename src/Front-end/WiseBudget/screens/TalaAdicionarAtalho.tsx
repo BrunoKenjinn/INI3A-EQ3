@@ -1,13 +1,15 @@
-import { View, Text, Image, StyleSheet, Pressable, TextInput, SafeAreaView, FlatList, ScrollView, Alert } from "react-native";
+import { View, StyleSheet, Pressable, SafeAreaView, FlatList, Alert, Dimensions } from "react-native";
 import { Header } from "../components/header";
 import { Balanço } from "../components/balanco";
 import axios from 'axios';
-import { useCallback, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Atalho } from "../components/atalho";
 import useApi from "../hooks/useApi";
 import { Loading } from "../components/loading";
 import CustomBottomTab from "../components/CustomBottomTab";
+
+const { width, height } = Dimensions.get("window");
 
 interface BalancoData {
     credito_mes: number;
@@ -15,7 +17,6 @@ interface BalancoData {
     saldo_total: number;
     saldo_inicial: number;
 }
-
 
 export default function TelaAdicionarAtalhos({ navigation }) {
     const [balanco, setBalanco] = useState<BalancoData>({
@@ -25,18 +26,18 @@ export default function TelaAdicionarAtalhos({ navigation }) {
         saldo_inicial: 0,
     });
     const [isLoading, setIsLoading] = useState(true);
+    const [atalhos, setAtalhos] = useState([]);
+
     const handleSave = async (nome: string, icone: string, rota: string) => {
         const jaExiste = atalhos.some((a) => a.rota === rota || a.nome === nome);
         if (jaExiste) {
-            console.log("Duplicado", "Este atalho já foi adicionado.");
-            Alert.alert("Duplicado", "Este atalho já foi adicionado")
+            Alert.alert("Duplicado", "Este atalho já foi adicionado");
             return;
         }
-        //esse ja é dele
+
         let { url } = useApi();
         try {
             const token = await AsyncStorage.getItem('auth_token');
-
             const response = await axios.post(url + '/api/atalhos', {
                 nome,
                 icone,
@@ -47,10 +48,7 @@ export default function TelaAdicionarAtalhos({ navigation }) {
                     Accept: 'application/json'
                 }
             });
-
-            console.log('Atalho criado:', response.data);
             navigation.navigate('TelaHome');
-
         } catch (error) {
             console.error('Erro ao salvar atalho:', error.response?.data || error.message);
             Alert.alert('Erro', 'Erro ao salvar atalho');
@@ -70,6 +68,7 @@ export default function TelaAdicionarAtalhos({ navigation }) {
                 setIsLoading(false);
             }
         };
+
         const carregarAtalhos = async () => {
             try {
                 let { url } = useApi();
@@ -80,7 +79,7 @@ export default function TelaAdicionarAtalhos({ navigation }) {
                 setAtalhos(response.data);
             } catch (error) {
                 console.error("Erro ao carregar atalhos:", error.response?.data || error.message);
-                Alert.alert('Erro', 'Errro ao carregar');
+                Alert.alert('Erro', 'Erro ao carregar atalhos');
             }
         };
 
@@ -94,13 +93,12 @@ export default function TelaAdicionarAtalhos({ navigation }) {
                 setBalanco(response.data);
             } catch (error) {
                 console.error("Erro ao buscar balanço:", error.response?.data || error.message);
-                Alert.alert('Erro', 'Erro ao buscar balnço')
+                Alert.alert('Erro', 'Erro ao buscar balanço')
             }
         };
 
         carregarTudo();
     }, []);
-
 
     const atalhosPredefinidos = [
         { id: 2, nome: 'Balanço', icone: 'money', rota: 'TelaBalanco' },
@@ -112,24 +110,21 @@ export default function TelaAdicionarAtalhos({ navigation }) {
         { id: 8, nome: 'Transações', icone: 'exchange', rota: 'TelaTransacoes' },
     ];
 
-    const [atalhos, setAtalhos] = useState(atalhosPredefinidos);
-
     if (isLoading) {
         return <Loading />;
     }
 
-    return <>
+    return (
         <SafeAreaView style={styles.container}>
-            <Header leftIconName="arrowleft"
-                leftIconSize={24}
+            <Header
+                leftIconName="arrowleft"
+                leftIconSize={width * 0.06}
                 leftIconColor="#f1c40f"
                 rightIconName="bells"
-                rightIconSize={24}
+                rightIconSize={width * 0.06}
                 rightIconColor="#f1c40f"
                 title="Atalhos"
             />
-
-
             <FlatList
                 data={atalhosPredefinidos}
                 keyExtractor={(item) => item.id.toString()}
@@ -150,32 +145,28 @@ export default function TelaAdicionarAtalhos({ navigation }) {
                         />
                     </Pressable>
                 )}
-                contentContainerStyle={{ paddingVertical: 10 }}
-                columnWrapperStyle={{ justifyContent: 'space-between' }}
+                contentContainerStyle={{ paddingBottom: height * 0.1 }}
+                columnWrapperStyle={styles.row}
             />
             <View style={styles.tabContainer}>
                 <CustomBottomTab />
             </View>
         </SafeAreaView>
-    </>
+    );
 }
 
 const styles = StyleSheet.create({
     container: {
         backgroundColor: '#2c2c2c',
-        height: '100%',
         flex: 1,
-        paddingHorizontal: 20
+        paddingHorizontal: width * 0.05,
+    },
+    row: {
+        justifyContent: 'space-between',
     },
     atalhoContainer: {
         alignItems: 'center',
         justifyContent: 'center',
-        padding: 10,
-        margin: 8,
-        backgroundColor: '#3a3a3a',
-        borderRadius: 12,
-        minHeight: 100,
-        maxWidth: '30%',
     },
     tabContainer: {
         position: 'absolute',
@@ -184,3 +175,4 @@ const styles = StyleSheet.create({
         right: 0,
     },
 });
+
