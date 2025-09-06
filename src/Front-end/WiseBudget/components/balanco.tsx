@@ -90,7 +90,7 @@ const styles = StyleSheet.create({
     top: {
         width: '100%',
         alignItems: 'center',
-        marginBottom: 12,
+        marginBottom: 10,
     },
     valorComOlho: {
         flexDirection: 'row',
@@ -102,7 +102,7 @@ const styles = StyleSheet.create({
         width: '100%',
         flexDirection: 'row',
         justifyContent: 'space-around',
-        marginTop: 8,
+        marginTop: 7,
     },
     bottomItem: {
         alignItems: "center",

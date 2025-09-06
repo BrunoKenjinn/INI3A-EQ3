@@ -362,6 +362,7 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingHorizontal: width * 0.05,
     paddingVertical: height * 0.02,
+    paddingBottom: height*0.6,
   },
   section: {
     width: "100%",
@@ -384,8 +385,8 @@ const styles = StyleSheet.create({
     width: "100%",
     backgroundColor: "#393939",
     borderRadius: width * 0.05,
-    marginTop: height * 0.015,
-    padding: width * 0.03,
+    marginTop: height * 0.01,
+    padding: width * 0.02,
   },
 
   legendContainer: {
@@ -415,8 +416,5 @@ const styles = StyleSheet.create({
   },
   atalhoItem: {
     marginRight: width * 0.03,
-  },
-  atalhoList: {
-    paddingVertical: height * 0.015,
   },
 });

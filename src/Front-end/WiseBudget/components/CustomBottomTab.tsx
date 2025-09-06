@@ -8,6 +8,7 @@ const { width } = Dimensions.get("window");
 type RootStackParamList = {
     TelaHome: undefined;
     TelaPerfil: undefined;
+    TelaBusca: undefined;
 };
 
 export default function CustomBottomTab() {
@@ -20,8 +21,8 @@ export default function CustomBottomTab() {
                 <FontAwesome name="home" size={iconSize} color="#f1c40f" />
             </TouchableOpacity>
 
-            <TouchableOpacity style={styles.tabButton}>
-                <FontAwesome name="search" size={iconSize} color="#f1c40f" />
+            <TouchableOpacity style={styles.tabButton} onPress={() => navigation.navigate('TelaBusca')}>
+                <FontAwesome name="search" size={iconSize} color="#f1c40f"  />
             </TouchableOpacity>
 
             <TouchableOpacity style={styles.tabButton}>

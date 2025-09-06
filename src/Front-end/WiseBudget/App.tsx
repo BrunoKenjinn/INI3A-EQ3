@@ -14,6 +14,7 @@ import TelaHome from './screens/TelaHome';
 import TelaOrientacao from './screens/TelaOrientacao';
 import TelaAnaliseRapida from './screens/TelaAnaliseRapida';
 import TelaTransacoes from './screens/TelaTransacoes';
+import TelaBusca from './screens/TelaBusca';
 import FontAwesome5 from '@expo/vector-icons/FontAwesome5';
 import TelaAdicionarAtalho from './screens/TalaAdicionarAtalho';
 import TelaPerfil from './screens/TelaPerfil';
@@ -74,6 +75,7 @@ function AppStack() {
       <Stack.Screen name="TelaPerfil" component={TelaPerfil} />
       <Stack.Screen name="TelaEditarPerfil" component={TelaEditarPerfil} />
       <Stack.Screen name="TelaTransacoes" component={TelaTransacoes} />
+      <Stack.Screen name="TelaBusca" component={TelaBusca} />
       <Stack.Screen name="TelaAdicionarTransacoes" component={TelaAdicionarTransacoes} />
       <Stack.Screen name="TelaEditarTransacoes" component={TelaEditarTransacoes} />
     </Stack.Navigator>

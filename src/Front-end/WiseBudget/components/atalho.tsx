@@ -35,7 +35,7 @@ export function Atalho({ iconName, text, onPress, onLongPress }: Props) {
 const styles = StyleSheet.create({
     container: {
         marginBottom: width * 0.03,
-        marginTop: width * 0.05,
+        marginTop: width * 0.02,
     },
     atalhoItem: {
         backgroundColor: '#393939',

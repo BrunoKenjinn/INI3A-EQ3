@@ -108,6 +108,7 @@ export default function TelaAdicionarAtalhos({ navigation }) {
         { id: 6, nome: 'Adicionar Transações', icone: 'plus', rota: 'TelaAdicionarTransacoes' },
         { id: 7, nome: 'Metas', icone: 'bullseye', rota: 'TelaMetas' },
         { id: 8, nome: 'Transações', icone: 'exchange', rota: 'TelaTransacoes' },
+        { id: 9, nome: 'Busca de Transações', icone: 'search', rota: 'TelaBusca' },
     ];
 
     if (isLoading) {
@@ -162,9 +163,12 @@ const styles = StyleSheet.create({
         paddingHorizontal: width * 0.05,
     },
     row: {
-        justifyContent: 'space-between',
+        justifyContent: 'flex-start', 
+        gap: width * 0.02, 
+        marginBottom: width * 0.02, 
     },
     atalhoContainer: {
+        width: '32%',
         alignItems: 'center',
         justifyContent: 'center',
     },
