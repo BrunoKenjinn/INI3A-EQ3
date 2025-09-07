@@ -282,11 +282,10 @@ const styles = StyleSheet.create({
         marginRight: width * 0.02,
     },
     valorInput: {
-        height: height * 0.15,
+        minHeight: height * 0.15,
         fontSize: getResponsiveFontSize(80),
         fontFamily: "Poppins-Bold",
         color: "#fdfdfd",
-        flex: 1,
         textAlignVertical: "center",
     },
     formContainer: {

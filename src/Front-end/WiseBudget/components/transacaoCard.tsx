@@ -70,7 +70,7 @@ const styles = StyleSheet.create({
     width: "100%",
     backgroundColor: "#393939",
     borderRadius: width * 0.05,
-    marginTop: width * 0.025,
+    marginTop: width * 0.02,
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
@@ -84,8 +84,8 @@ const styles = StyleSheet.create({
     marginRight: width * 0.02,
   },
   iconContainer: {
-    height: width * 0.12,
-    width: width * 0.12,
+    height: width * 0.1,
+    width: width * 0.1,
     borderRadius: width * 0.03,
     backgroundColor: "#2c2c2c",
     justifyContent: "center",
@@ -94,11 +94,11 @@ const styles = StyleSheet.create({
   descricaoText: {
     fontFamily: 'Poppins-Bold',
     color: '#ffffff',
-    fontSize: getResponsiveFontSize(15),
+    fontSize: getResponsiveFontSize(12),
   },
   subtitleContainer: {
     flexDirection: 'row',
-    gap: width * 0.015,
+    gap: width * 0.01,
     alignItems: 'center',
   },
   subtitleText: {
@@ -109,6 +109,6 @@ const styles = StyleSheet.create({
   valorText: {
     fontFamily: "Poppins-Bold",
     color: "#ffffff",
-    fontSize: getResponsiveFontSize(15),
+    fontSize: getResponsiveFontSize(12),
   },
 });

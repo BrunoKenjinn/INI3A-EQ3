@@ -103,7 +103,7 @@ function AuthProvider({ children }) {
     try {
       await AsyncStorage.setItem('auth_token', token);
       axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
-      setUserToken(token);
+      setUserToken(token); 
 
       try {
         let { url } = useApi();

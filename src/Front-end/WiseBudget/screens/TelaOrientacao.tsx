@@ -12,6 +12,8 @@ import {
 } from "react-native";
 import { StatusBar } from "expo-status-bar";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
+import { useAuth } from "../App";
+
 
 
 const slides = [
@@ -28,11 +30,6 @@ const slides = [
     text: `Com o WiseBudget, você pode estabelecer metas financeiras e acompanhar seu progresso de forma contínua. Defina objetivos como poupar para uma viagem, quitar dívidas ou criar um fundo de emergência.\n\nO aplicativo monitora o cumprimento dessas metas, alertando você quando estiver perto de alcançar seus objetivos ou quando precisar ajustar algum planejamento. Dessa forma, você mantém sua vida financeira sob controle, sempre ciente de como está avançando.`,
   },
 ];
-
-const useAuth = () => ({
-  markOrientationsAsSeen: () => console.log("Marked orientations as seen"),
-  dismissOrientations: () => console.log("Dismissed orientations"),
-});
 
 
 export default function TelaOrientacao({ navigation }) {
@@ -198,6 +195,7 @@ export default function TelaOrientacao({ navigation }) {
     } else {
       dismissOrientations();
     }
+    navigation.replace("Auth", { screen: "TelaInicial" });
   };
 
   const onScroll = Animated.event(
@@ -242,7 +240,6 @@ export default function TelaOrientacao({ navigation }) {
 
       <View style={styles.controlsWrapper}>
         {currentIndex === slides.length - 1 ? (
-          // Último slide: botão Concluir + checkbox
           <Animated.View style={[styles.buttonContainer, { opacity: buttonOpacity }]}>
             <TouchableOpacity style={styles.button} onPress={handleFinish} activeOpacity={0.7}>
               <Text style={styles.buttonText}>Concluir</Text>
@@ -260,7 +257,6 @@ export default function TelaOrientacao({ navigation }) {
             </TouchableOpacity>
           </Animated.View>
         ) : (
-          // Slides anteriores: setas + pontos
           <View style={styles.navigationContainer}>
             <TouchableOpacity onPress={handlePrev} disabled={currentIndex === 0}>
               <Text style={[styles.arrow, currentIndex === 0 && styles.arrowDisabled]}>

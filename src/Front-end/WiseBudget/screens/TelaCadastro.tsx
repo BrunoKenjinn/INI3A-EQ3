@@ -152,14 +152,17 @@ export default function TelaCadastro({ navigation }) {
                         />
                     </View>
 
-                    <TouchableOpacity style={styles.button} onPress={handleRegister}>
-                        <Text style={styles.textButton}>Cadastrar</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity onPress={() => navigation.navigate('TelaLogin')}>
-                        <Text style={styles.loginLink}>
-                            Já tem cadastro? <Text style={styles.linkText}>Clique aqui</Text>
-                        </Text>
-                    </TouchableOpacity>
+                    <View style={{ alignItems: 'center' }}>
+                        <TouchableOpacity style={styles.button} onPress={handleRegister}>
+                            <Text style={styles.textButton}>Cadastrar</Text>
+                        </TouchableOpacity>
+
+                        <TouchableOpacity onPress={() => navigation.navigate('TelaLogin')}>
+                            <Text style={styles.loginLink}>
+                                Já tem cadastro? <Text style={styles.linkText}>Clique aqui</Text>
+                            </Text>
+                        </TouchableOpacity>
+                    </View>
                 </View>
             </ScrollView>
         </SafeAreaView>
@@ -177,8 +180,8 @@ const styles = StyleSheet.create({
         paddingHorizontal: width * 0.05,
     },
     logo: {
-        width: width * 0.3,
-        height: width * 0.3,
+        width: width * 0.4,
+        height: width * 0.4,
         resizeMode: 'contain',
     },
     title: {
@@ -214,10 +217,10 @@ const styles = StyleSheet.create({
     button: {
         backgroundColor: '#f1c40f',
         paddingVertical: height * 0.018,
-        width: '100%',
+        width: '60%',
         alignItems: 'center',
         borderRadius: 15,
-        marginTop: height * 0.02
+        marginTop: height * 0.05
     },
     textButton: {
         fontSize: getResponsiveFontSize(18),

@@ -85,7 +85,7 @@ const styles = StyleSheet.create({
     text2: {
         fontFamily: 'Poppins-Bold',
         color: "#ffffff",
-        fontSize: getResponsiveFontSize(20),
+        fontSize: getResponsiveFontSize(17),
     },
     top: {
         width: '100%',

@@ -63,8 +63,8 @@ const styles = StyleSheet.create({
         backgroundColor: '#2c2c2c',
     },
     logo: {
-        width: width * 0.5,
-        height: width * 0.5,
+        width: width * 0.7,
+        height: width * 0.7,
         marginBottom: height * 0.02,
         resizeMode: 'contain',
     },

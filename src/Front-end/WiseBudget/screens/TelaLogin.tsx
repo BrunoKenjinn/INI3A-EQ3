@@ -24,15 +24,21 @@ export default function TelaLogin({ navigation }) {
 
     const handleLogin = () => {
         let { url } = useApi();
+
         if (!identifier || !password) {
             Alert.alert('Atenção', 'Por favor, preencha o CPF/Email e a senha.');
             return;
         }
 
-        axios.post(url + '/api/login', {
-            identifier: identifier.replace(/\D/g, ''), 
-            password: password,
-        })
+        let payload: any = {
+            identifier: identifier.includes("@")
+                ? identifier // email
+                : identifier.replace(/\D/g, ''), 
+            password,
+        };
+
+
+        axios.post(url + '/api/login', payload)
             .then(async response => {
                 const { access_token } = response.data;
                 if (access_token) {
@@ -43,12 +49,14 @@ export default function TelaLogin({ navigation }) {
             })
             .catch(error => {
                 if (error.response) {
+                    console.log("Erro 422:", error.response.data);
                     Alert.alert('Erro', error.response.data.message || 'Credenciais inválidas.');
                 } else {
                     Alert.alert('Erro', 'Não foi possível conectar ao servidor.');
                 }
             });
     };
+
 
     const handleChange = (text: string) => {
         if (/[a-zA-Z]/.test(text)) {
@@ -189,20 +197,20 @@ const styles = StyleSheet.create({
         fontFamily: 'Poppins-Regular',
     },
     buttons: {
-        width: '90%',
+        width: '60%',
         alignItems: 'center',
-        marginTop: height * 0.05,
+        marginTop: height * 0.15,
     },
     button: {
         backgroundColor: '#f1c40f',
-        paddingVertical: height * 0.018,
+        paddingVertical: height * 0.015,
         width: '100%',
         alignItems: 'center',
         borderRadius: 15,
     },
     buttonText: {
         fontFamily: 'Poppins-Bold',
-        fontSize: getResponsiveFontSize(18),
+        fontSize: getResponsiveFontSize(16),
         color: '#2c2c2c'
     },
     secondaryButton: {

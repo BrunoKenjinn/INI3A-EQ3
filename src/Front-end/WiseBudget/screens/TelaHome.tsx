@@ -270,7 +270,7 @@ export default function TelaHome({ navigation }) {
             <PieChart
               data={chartData}
               width={width * 0.5}
-              height={height * 0.15}
+              height={height * 0.18}
               chartConfig={chartConfig}
               accessor={"population"}
               backgroundColor={"transparent"}
@@ -376,7 +376,7 @@ const styles = StyleSheet.create({
   sectionText: {
     color: "white",
     fontFamily: "Poppins-Regular",
-    fontSize: getResponsiveFontSize(14),
+    fontSize: getResponsiveFontSize(12),
   },
   chartWrapper: {
     flexDirection: "row",
@@ -409,7 +409,7 @@ const styles = StyleSheet.create({
 
   legendText: {
     color: "white",
-    fontSize: getResponsiveFontSize(15),
+    fontSize: getResponsiveFontSize(12),
     flexShrink: 1,
     flexWrap: "wrap",
     fontFamily: "Poppins-Regular",

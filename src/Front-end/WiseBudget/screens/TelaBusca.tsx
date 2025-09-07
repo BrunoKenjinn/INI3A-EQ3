@@ -7,7 +7,6 @@ import RangeSlider from "rn-range-slider";
 import DateTimePickerModal from "react-native-modal-datetime-picker";
 import FontAwesome5 from "@expo/vector-icons/FontAwesome5";
 import useApi from "../hooks/useApi";
-// A importação dos seus componentes originais
 import { Header } from "../components/header";
 import { TransacaoCard } from "../components/transacaoCard";
 import CustomBottomTab from "../components/CustomBottomTab";
@@ -19,7 +18,6 @@ const getResponsiveFontSize = (size) => {
     return Math.round(size * scale);
 };
 
-// Componentes para o RangeSlider, que dependem do StyleSheet
 const Thumb = () => <View style={styles.thumb} />;
 const Rail = () => <View style={styles.rail} />;
 const RailSelected = () => <View style={styles.railSelected} />;
@@ -41,15 +39,14 @@ interface Transacao {
     cor: string;
 }
 
-export default function TelaBusca() {
-    // A sua lógica original foi completamente restaurada
+export default function TelaBusca({navigation}) {
     const { url } = useApi();
     const [nome, setNome] = useState("");
     const [categorias, setCategorias] = useState<Categoria[]>([]);
     const [categoriaId, setCategoriaId] = useState<number | null>(null);
-    const [tipo, setTipo] = useState<"todos" | "receita" | "despesa">("todos");
+    const [tipo, setTipo] = useState<"todos" | "entrada" | "saida">("todos");
     const [valorMin, setValorMin] = useState(0);
-    const [valorMax, setValorMax] = useState(50000);
+    const [valorMax, setValorMax] = useState(5000);
     const [filtroValorAtivo, setFiltroValorAtivo] = useState(false);
     const [resultados, setResultados] = useState<Transacao[]>([]);
     const [pesquisado, setPesquisado] = useState(false);
@@ -149,8 +146,9 @@ export default function TelaBusca() {
                     <View style={styles.pickerContainer}>
                         <Picker selectedValue={tipo} onValueChange={setTipo} style={styles.picker} dropdownIconColor="#f1c40f">
                             <Picker.Item label="Todos os tipos" value="todos" />
-                            <Picker.Item label="Receita" value="receita" />
-                            <Picker.Item label="Despesa" value="despesa" />
+                            <Picker.Item label="Entrada/Crédito" value="entrada" />
+                            <Picker.Item label="Saída/Débito" value="saida" />
+                            <Picker.Item label="Recorrente" value="recorrente" />
                         </Picker>
                     </View>
 
@@ -165,7 +163,7 @@ export default function TelaBusca() {
                             <RangeSlider
                                 style={styles.slider}
                                 min={0}
-                                max={50000}
+                                max={5000}
                                 step={10}
                                 low={valorMin}
                                 high={valorMax}
@@ -208,10 +206,11 @@ export default function TelaBusca() {
                         onConfirm={(date) => { setDataFim(date); setPickerFimVisivel(false); }}
                         onCancel={() => setPickerFimVisivel(false)}
                     />
-
-                    <TouchableOpacity style={styles.searchButton} onPress={handleBuscar}>
-                        <Text style={styles.textButton}>Buscar</Text>
-                    </TouchableOpacity>
+                    <View style={{ alignItems: 'center' }}>
+                        <TouchableOpacity style={styles.searchButton} onPress={handleBuscar}>
+                            <Text style={styles.textButton}>Buscar</Text>
+                        </TouchableOpacity>
+                    </View>
 
                     {pesquisado && (
                         <View style={styles.resultsContainer}>
@@ -228,6 +227,9 @@ export default function TelaBusca() {
                                         valor={item.valor}
                                         icone={item.icone}
                                         cor={item.cor}
+                                        onPress={() =>
+                                            navigation.navigate("TelaEditarTransacoes", { transacao: item })
+                                        }
                                     />
                                 ))
                             )}
@@ -240,7 +242,6 @@ export default function TelaBusca() {
     );
 }
 
-// O StyleSheet foi mantido conforme o seu gosto
 const styles = StyleSheet.create({
     container: {
         flex: 1,
@@ -258,7 +259,7 @@ const styles = StyleSheet.create({
         fontSize: getResponsiveFontSize(14),
         fontFamily: 'Poppins-Regular',
         marginBottom: height * 0.01,
-        marginTop: height * 0.015, // MUDANÇA: Altura da margem diminuída
+        marginTop: height * 0.015,
     },
     valorLabel: {
         color: "#ffffff",
@@ -270,19 +271,19 @@ const styles = StyleSheet.create({
         color: '#ffffff',
         paddingHorizontal: width * 0.04,
         borderRadius: 10,
-        height: height * 0.055, // MUDANÇA: Altura do campo diminuída
+        height: height * 0.055,
         fontSize: getResponsiveFontSize(14),
         justifyContent: 'center',
     },
     pickerContainer: {
         backgroundColor: '#393939',
         borderRadius: 10,
-        height: height * 0.055, // MUDANÇA: Altura do campo diminuída
+        height: height * 0.055,
         justifyContent: 'center',
     },
     picker: {
         color: '#ffffff',
-        backgroundColor: '#393939', // MUDANÇA: Cor de fundo adicionada
+        backgroundColor: '#393939',
     },
     row: {
         flexDirection: 'row',
@@ -308,8 +309,8 @@ const styles = StyleSheet.create({
     },
     searchButton: {
         backgroundColor: "#f1c40f",
-        paddingVertical: height * 0.018,
-        width: "100%",
+        paddingVertical: height * 0.01,
+        width: "60%",
         alignItems: "center",
         justifyContent: "center",
         borderRadius: 15,
