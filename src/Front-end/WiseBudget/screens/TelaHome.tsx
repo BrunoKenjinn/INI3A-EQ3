@@ -26,9 +26,7 @@ import { useAuth } from "../App";
 
 const { width, height } = Dimensions.get("window");
 
-// helper para calcular tamanho de fonte responsivo
 const getResponsiveFontSize = (size: number) => {
-  // base de 375px de largura (iPhone X)
   const scale = width / 375;
   return Math.round(size * scale);
 };
@@ -239,6 +237,8 @@ export default function TelaHome({ navigation }) {
     return <Loading />;
   }
 
+  const totalPopulation = chartData.reduce((sum, item) => sum + item.population, 0);
+
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.content}>
@@ -280,16 +280,20 @@ export default function TelaHome({ navigation }) {
             />
 
             <View style={styles.legendContainer}>
-              {chartData.map((item, index) => (
-                <View key={index} style={styles.legendItem}>
-                  <View
-                    style={[styles.legendColor, { backgroundColor: item.color }]}
-                  />
-                  <Text style={styles.legendText}>
-                    {item.name} ({item.population})
-                  </Text>
-                </View>
-              ))}
+              {chartData.map((item, index) => {
+                const percentage = totalPopulation > 0 ? ((item.population / totalPopulation) * 100).toFixed(0) : 0;
+
+                return (
+                  <View key={index} style={styles.legendItem}>
+                    <View
+                      style={[styles.legendColor, { backgroundColor: item.color }]}
+                    />
+                    <Text style={styles.legendText}>
+                      {item.name} ({percentage}%)
+                    </Text>
+                  </View>
+                );
+              })}
             </View>
           </View>
         </View>
@@ -362,7 +366,7 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingHorizontal: width * 0.05,
     paddingVertical: height * 0.02,
-    paddingBottom: height*0.6,
+    paddingBottom: height * 0.6,
   },
   section: {
     width: "100%",

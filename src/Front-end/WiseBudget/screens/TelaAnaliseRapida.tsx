@@ -13,6 +13,7 @@ import {
   StyleSheet,
   TouchableOpacity,
   ScrollView,
+  Dimensions
 } from "react-native";
 import { Header } from "../components/header";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -20,6 +21,15 @@ import { Analise } from "../components/analise";
 import { BarChart } from "react-native-gifted-charts";
 import { TransacaoCard } from "../components/transacaoCard";
 import CustomBottomTab from "../components/CustomBottomTab";
+
+
+const { width, height } = Dimensions.get("window");
+
+const getResponsiveFontSize = (size: number) => {
+  const scale = width / 375;
+  return Math.round(size * scale);
+};
+
 
 type IconComponentType = ComponentType<
   IconProps<keyof typeof FontAwesome.glyphMap>
@@ -78,7 +88,7 @@ export default function TelaAnaliseRapida({ navigation }) {
       population: 100,
       color: "#5A5A5A",
       legendFontColor: "#7F7F7F",
-      legendFontSize: 15,
+      legendFontSize: getResponsiveFontSize(15),
     },
   ]);
   const chartConfig = {
@@ -107,10 +117,10 @@ export default function TelaAnaliseRapida({ navigation }) {
     { label: "Sáb", stacks: [{ value: 0, color: "#5A5A5A" }] },
   ]);
   const [principaisTransacoes, setPrincipaisTransacoes] = useState<any[]>([]);
-  const BAR_WIDTH = 30;
-  const INNER_SPACING = 5;
-  const GROUP_SPACING = 45; // espaçamento entre dias
-  const Y_AXIS_LABEL_WIDTH = 50;
+  const BAR_WIDTH = width * 0.08;
+  const INNER_SPACING = width * 0.012;
+  const GROUP_SPACING = width * 0.12;
+  const Y_AXIS_LABEL_WIDTH = width * 0.13;
 
   useEffect(() => {
     const carregarTudo = async () => {
@@ -156,7 +166,11 @@ export default function TelaAnaliseRapida({ navigation }) {
         );
 
         if (response.data && response.data.length > 0) {
-          setChartData(response.data);
+          const responsiveChartData = response.data.map(item => ({
+            ...item,
+            legendFontSize: getResponsiveFontSize(15)
+          }));
+          setChartData(responsiveChartData);
         } else {
           setChartData([
             {
@@ -164,7 +178,7 @@ export default function TelaAnaliseRapida({ navigation }) {
               population: 100,
               color: "#5A5A5A",
               legendFontColor: "#7F7F7F",
-              legendFontSize: 15,
+              legendFontSize: getResponsiveFontSize(15),
             },
           ]);
         }
@@ -176,10 +190,7 @@ export default function TelaAnaliseRapida({ navigation }) {
       }
     };
 
-    // monta os dados do gifted-charts e calcula a largura necessária do gráfico
-    // Substitua a sua função antiga por esta inteira
-    // Substitua TUDO por esta função final
-    // Substitua novamente pela versão final e completa
+
     const buildChartDataAndWidth = (dadosFormatados: StackDataItem[]) => {
       const dados: BarDataPoint[] = [];
       const groupWidths: number[] = [];
@@ -190,9 +201,7 @@ export default function TelaAnaliseRapida({ navigation }) {
         const barsWidth =
           count * BAR_WIDTH + Math.max(0, count - 1) * INNER_SPACING;
 
-        // A versão final com o hack do espaçamento.
         const LabelDoDia = () => {
-          // CASO 1: Para grupos, que já funciona.
           if (barrasDoDia.length > 1) {
             return (
               <View style={{ width: barsWidth, alignItems: "center" }}>
@@ -203,8 +212,6 @@ export default function TelaAnaliseRapida({ navigation }) {
             );
           }
 
-          // CASO 2: Para barras únicas, o HACK.
-          // Adicionamos dois "espaços invisíveis" na frente do texto.
           const labelComEspaco = `\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0${dia.label}`;
 
           return (
@@ -230,20 +237,20 @@ export default function TelaAnaliseRapida({ navigation }) {
               topLabelComponent:
                 stack.value > 0
                   ? () => (
-                      <Text
-                        style={{
-                          color: "white",
-                          fontSize: 10,
-                          marginBottom: 5,
-                        }}
-                      >
-                        {new Intl.NumberFormat("pt-BR", {
-                          style: "currency",
-                          currency: "BRL",
-                          maximumFractionDigits: 0,
-                        }).format(stack.value)}
-                      </Text>
-                    )
+                    <Text
+                      style={{
+                        color: "white",
+                        fontSize: 10,
+                        marginBottom: 5,
+                      }}
+                    >
+                      {new Intl.NumberFormat("pt-BR", {
+                        style: "currency",
+                        currency: "BRL",
+                        maximumFractionDigits: 0,
+                      }).format(stack.value)}
+                    </Text>
+                  )
                   : undefined,
               labelComponent: index === 0 ? LabelDoDia : undefined,
               spacing:
@@ -345,14 +352,16 @@ export default function TelaAnaliseRapida({ navigation }) {
     return `${valor}`;
   };
 
+  const totalPopulation = chartData.reduce((sum, item) => sum + item.population, 0);
+
   return (
     <SafeAreaView style={styles.body}>
       <Header
         leftIconName="arrowleft"
-        leftIconSize={24}
+        leftIconSize={width * 0.06}
         leftIconColor="#f1c40f"
         rightIconName="bells"
-        rightIconSize={24}
+        rightIconSize={width * 0.06}
         rightIconColor="#f1c40f"
         title="Analise Rápida"
       />
@@ -414,51 +423,44 @@ export default function TelaAnaliseRapida({ navigation }) {
             </View>
           </View>
 
-          <Text
-            style={{
-              color: "white",
-              fontFamily: "Poppins-Regular",
-              marginLeft: 10,
-              marginTop: 20,
-            }}
-          >
-            Gráfico de Setores
-          </Text>
-          <View
-            style={{
-              width: "100%",
-              backgroundColor: "#393939",
-              borderRadius: 20,
-              alignItems: "center",
-            }}
-          >
+          <Text style={styles.title}>Gráfico de Setores</Text>
+          <View style={styles.chartContainer}>
             <PieChart
               data={chartData}
-              width={400}
-              height={150}
+              width={width * 0.5}
+              height={height * 0.18}
               chartConfig={chartConfig}
               accessor={"population"}
               backgroundColor={"transparent"}
-              paddingLeft={"-20"}
+              paddingLeft={'30'}
               center={[0, 0]}
+              hasLegend={false}
             />
+
+            <View style={styles.legendContainer}>
+              {chartData.map((item, index) => {
+                const percentage = totalPopulation > 0 ? ((item.population / totalPopulation) * 100).toFixed(0) : 0;
+
+                return (
+                  <View key={index} style={styles.legendItem}>
+                    <View
+                      style={[styles.legendColor, { backgroundColor: item.color }]}
+                    />
+                    <Text style={styles.legendText} numberOfLines={2}>
+                      {item.name} ({percentage}%)
+                    </Text>
+                  </View>
+                );
+              })}
+            </View>
           </View>
 
           <View style={styles.separador}></View>
 
           <View style={{ marginTop: 20 }}>
-            <Text
-              style={{
-                color: "white",
-                fontFamily: "Poppins-Regular",
-                marginLeft: 10,
-                marginBottom: 10,
-              }}
-            >
-              Grafico de Barras
-            </Text>
+            <Text style={styles.title}>Grafico de Barras</Text>
 
-            <View style={{ marginHorizontal: 10 }}>
+            <View style={{ marginHorizontal: width * 0.02 }}>
               <ScrollView
                 horizontal={true}
                 showsHorizontalScrollIndicator={false}
@@ -473,15 +475,15 @@ export default function TelaAnaliseRapida({ navigation }) {
                   noOfSections={5}
                   yAxisLabelWidth={Y_AXIS_LABEL_WIDTH}
                   yAxisLabelPrefix="R$ "
-                  yAxisTextStyle={{ color: "white" }}
+                  yAxisTextStyle={{ color: "white", fontSize: getResponsiveFontSize(10) }}
                   xAxisLabelTextStyle={{ color: "transparent" }}
                   backgroundColor="#393939"
                   yAxisThickness={0}
                   xAxisThickness={0}
-                  barBorderRadius={0}
+                  barBorderRadius={4}
                   formatYLabel={formatarLabelY}
-                  initialSpacing={Y_AXIS_LABEL_WIDTH + 8} // compensa margem do eixo Y
-                  endSpacing={GROUP_SPACING * 2} // evita corte no final
+                  initialSpacing={10}
+                  endSpacing={GROUP_SPACING}
                   onPress={(item: StackItem) => {
                     const valorFormatado = new Intl.NumberFormat("pt-BR", {
                       style: "currency",
@@ -498,16 +500,7 @@ export default function TelaAnaliseRapida({ navigation }) {
             </View>
           </View>
           <View style={styles.separador}></View>
-          <Text
-            style={{
-              color: "white",
-              fontFamily: "Poppins-Regular",
-              marginLeft: 10,
-              marginTop: 10,
-            }}
-          >
-            Principais Transações
-          </Text>
+          <Text style={styles.title}>Principais Transações</Text>
           <View style={{ marginBottom: 20 }}>
             {principaisTransacoes.map((item, index) => (
               <View key={item.id}>
@@ -522,14 +515,7 @@ export default function TelaAnaliseRapida({ navigation }) {
                   cor={item.cor}
                 />
                 {index < principaisTransacoes.length - 1 && (
-                  <View
-                    style={{
-                      height: 2,
-                      backgroundColor: "#2c2c2c",
-                      marginVertical: 5,
-                      marginHorizontal: "8%",
-                    }}
-                  />
+                  <View style={styles.cardSeparator} />
                 )}
               </View>
             ))}
@@ -543,26 +529,30 @@ export default function TelaAnaliseRapida({ navigation }) {
   );
 }
 
+
 const styles = StyleSheet.create({
   body: {
     backgroundColor: "#2c2c2c",
     flex: 1,
-    paddingHorizontal: 20,
+    paddingHorizontal: width * 0.05,
   },
   container: {
     backgroundColor: "#393939",
-    margin: 10,
+    marginHorizontal: width * 0.04,
     borderRadius: 30,
-    marginBottom: 60,
+    marginTop: height * 0.02,
+    marginBottom: height * 0.08,
+    paddingVertical: height * 0.01,
   },
   toggle: {
-    width: 200,
+    width: width * 0.5,
     flexDirection: "row",
-    margin: 20,
+    marginVertical: height * 0.02,
   },
   botao: {
     flex: 1,
     alignItems: "center",
+    paddingVertical: height * 0.01,
     borderWidth: 1,
     borderColor: "#000",
   },
@@ -573,7 +563,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#5A5A5A",
   },
   texto: {
-    fontSize: 11,
+    fontSize: getResponsiveFontSize(12),
     fontFamily: "Poppins-Regular",
   },
   textoSelecionado: {
@@ -581,18 +571,62 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
   },
   textoNormal: {
-    color: "#7f8c8d",
+    color: "#d1d1d1",
   },
   separador: {
     backgroundColor: "#2c2c2c",
     height: 2,
     marginHorizontal: "8%",
-    marginVertical: 10,
+    marginVertical: height * 0.02,
   },
   tabContainer: {
     position: "absolute",
     bottom: 0,
     left: 0,
     right: 0,
+  },
+  title: {
+    color: "white",
+    fontFamily: "Poppins-Regular",
+    fontSize: getResponsiveFontSize(14),
+    marginLeft: width * 0.05,
+    marginVertical: height * 0.01,
+  },
+  chartContainer: {
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
+    width: "100%",
+    backgroundColor: "#393939",
+    borderRadius: width * 0.05,
+    marginTop: height * 0.01,
+    padding: width * 0.02,
+  },
+  cardSeparator: {
+    height: 2,
+    backgroundColor: "#2c2c2c",
+    marginVertical: 5,
+    marginHorizontal: "8%",
+  },
+  legendContainer: {
+    marginLeft: 15,
+    flex: 1,
+  },
+  legendItem: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginBottom: 8,
+  },
+  legendColor: {
+    width: 12,
+    height: 12,
+    borderRadius: 6,
+    marginRight: 8,
+  },
+  legendText: {
+    color: "white",
+    fontSize: getResponsiveFontSize(11),
+    fontFamily: "Poppins-Regular",
+    flexShrink: 1,
   },
 });
