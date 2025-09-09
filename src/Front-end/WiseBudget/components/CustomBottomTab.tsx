@@ -49,3 +49,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
 });
+/*<TouchableOpacity style={styles.tabButton} onPress={() => navigation.navigate('TelaConfigs')}>
+        <FontAwesome name="sliders-h" size={24} color="#f1c40f" />
+     </TouchableOpacity>*/

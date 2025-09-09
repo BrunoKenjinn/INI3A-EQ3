@@ -8,6 +8,7 @@ import { useFocusEffect } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 import useApi from '../hooks/useApi';
+import { Icon } from 'react-native-elements';
 
 export default function TelaPerfil({navigation}) {
     const [infoUser, setInfoUser] = useState<any>(null);
@@ -49,9 +50,8 @@ export default function TelaPerfil({navigation}) {
                     rightIconSize={24}
                     rightIconComponent={FontAwesome5}
                 />
-
+                
                 <Image style={{width:'100%'}} source={require('../assets/images/FotoPerfil.png')} />
-
                 <View style={{ position: 'absolute', bottom: 0, left: 0, right: 0, backgroundColor: '#2c2c2c', borderTopLeftRadius: 30, borderTopRightRadius: 30, zIndex: 99, height: 530, padding: 20 }}>
                     <View style={{ display: 'flex', justifyContent: 'space-between', flexDirection: 'row', marginTop: 20 }}>
                         <View>
@@ -69,8 +69,10 @@ export default function TelaPerfil({navigation}) {
                             <Text style={{ color: '#f1c40f', fontFamily: 'Poppins-Regular' }}>Amigos</Text>
                         </View>
                         <View style={styles.botao}>
-                            <FontAwesome5 name="sliders-h" size={24} color="#f1c40f" />
+                            <TouchableOpacity style={styles.botao} onPress={() => navigation.navigate('TelaConfigs')}>
+                             <FontAwesome5 name="sliders-h" size={24} color="#f1c40f" />
                             <Text style={{ color: '#f1c40f', fontFamily: 'Poppins-Regular' }}>Configs</Text>
+                             </TouchableOpacity>
                         </View>
                         <View style={styles.botao}>
                             <FontAwesome5 name="comment-alt" size={24} color="#f1c40f" />
