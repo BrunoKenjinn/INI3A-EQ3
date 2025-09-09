@@ -37,6 +37,7 @@ class User extends Authenticatable
         'data_nascimento',
         'password',
         'saldo_inicial',
+        'foto',
     ];
 
     /**

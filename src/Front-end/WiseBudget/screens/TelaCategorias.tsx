@@ -1,4 +1,4 @@
-import { View, Text, Image, StyleSheet, Pressable, TextInput, SafeAreaView, FlatList, ScrollView } from "react-native";
+import { View, Text, Image, StyleSheet, Pressable, TextInput, SafeAreaView, FlatList, ScrollView, Alert, SectionList } from "react-native";
 import { Header } from "../components/header";
 import { Balanço } from "../components/balanco";
 import { Categoria } from "../components/categoria";
@@ -7,6 +7,15 @@ import { useCallback, useEffect, useState } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useFocusEffect } from "@react-navigation/native";
 import useApi from "../hooks/useApi";
+import { Loading } from "../components/loading";
+import CustomBottomTab from "../components/CustomBottomTab";
+
+interface BalancoData {
+    credito_mes: number;
+    debito_mes: number;
+    saldo_total: number;
+    saldo_inicial: number;
+}
 
 
 
@@ -14,11 +23,31 @@ import useApi from "../hooks/useApi";
 export default function TelaCategorias({ navigation }) {
     const [categorias, setCategorias] = useState([]);
     const categoriasComAdicionar = [...categorias, { id: 'adicionar', nome: 'Adicionar', icone: 'plus' }];
+    const [isLoading, setIsLoading] = useState(true);
+    const [balanco, setBalanco] = useState<BalancoData>({
+        credito_mes: 0,
+        debito_mes: 0,
+        saldo_total: 0,
+        saldo_inicial: 0,
+    });
     useFocusEffect(
         useCallback(() => {
+            const carregarTudo = async () => {
+                setIsLoading(true);
+                try {
+                    await carregarCategorias();
+                    await carregarBalanco();
+                } catch (error) {
+                    console.error("Erro ao carregar dados da Tela de Categorias:", error);
+                    Alert.alert("Erro", "Não foi possível carregar os dados. Tente novamente.");
+                } finally {
+                    setIsLoading(false);
+                }
+            };
+
             const carregarCategorias = async () => {
                 try {
-                    let {url} = useApi();
+                    let { url } = useApi();
                     const token = await AsyncStorage.getItem('auth_token');
                     const response = await axios.get(url + '/api/categorias', {
                         headers: {
@@ -29,14 +58,32 @@ export default function TelaCategorias({ navigation }) {
                     setCategorias(response.data);
                 } catch (error) {
                     console.error('Erro ao buscar categorias:', error.response?.data || error.message);
+                    Alert.alert("Erro", "Erro ao buscar categorias");
                 }
             };
 
-            carregarCategorias();
+            const carregarBalanco = async () => {
+                try {
+                    let { url } = useApi();
+                    const token = await AsyncStorage.getItem('auth_token');
+                    const response = await axios.get(url + '/api/balanco', {
+                        headers: { Authorization: `Bearer ${token}` }
+                    });
+                    setBalanco(response.data);
+                } catch (error) {
+                    console.error("Erro ao buscar balanço:", error.response?.data || error.message);
+                    Alert.alert("Erro", "erro ao buscar balanço");
+                }
+            };
+            carregarTudo();
 
             return () => { };
         }, [])
     );
+
+    if (isLoading) {
+        return <Loading />;
+    }
 
     return <>
         <SafeAreaView style={styles.container}>
@@ -47,33 +94,38 @@ export default function TelaCategorias({ navigation }) {
                 rightIconSize={24}
                 rightIconColor="#f1c40f"
                 title="Categorias" />
+            <FlatList
+                data={categoriasComAdicionar}
+                keyExtractor={(item, index) => index.toString()}
+                numColumns={3}
+                ListHeaderComponent={
+                    <Balanço
+                        credito={balanco.credito_mes.toString()}
+                        debito={balanco.debito_mes.toString()}
+                        saldo={balanco.saldo_total.toString()}
+                    />
+                }
+                renderItem={({ item }) => (
+                    <View style={styles.categoriaWrapper}>
+                        <Categoria
+                            iconName={item.icone}
+                            text={item.nome}
+                            onPress={() => {
+                                if (item.id === 'adicionar') {
+                                    navigation.navigate('TelaAdicionarCategoria');
+                                } else {
+                                    navigation.navigate('TelaEditarCategoria', { categoria: item });
+                                }
+                            }}
+                        />
+                    </View>
+                )}
+            />
+            <View style={styles.tabContainer}>
+                <CustomBottomTab />
+            </View>
 
-            <ScrollView contentContainerStyle={{ padding: 20 }}>
-                <Balanço saldo="12.345,00" gasto="12.345,00" />
-                <FlatList
-                    data={categoriasComAdicionar}
-                    keyExtractor={(item, index) => index.toString()}
-                    numColumns={3}
-                    renderItem={({ item }) => (
-                        <View style={{ flex: 1, margin: 8 }}>
-                            <Categoria
-                                iconName={item.icone}
-                                text={item.nome}
-                                onPress={() => {
-                                    if (item.id === 'adicionar') {
-                                        navigation.navigate('TelaAdicionarCategoria');
-                                    } else {
-                                        navigation.navigate('TelaEditarCategoria', { categoria: item });
-                                    }
-                                }}
-                            />
-                        </View>
-                    )}
-                    contentContainerStyle={{ paddingVertical: 10 }}
-                    columnWrapperStyle={{ justifyContent: 'center' }}
-                />
-            </ScrollView>
-        </SafeAreaView>
+        </SafeAreaView >
     </>
 }
 
@@ -81,6 +133,19 @@ const styles = StyleSheet.create({
     container: {
         backgroundColor: '#2c2c2c',
         height: '100%',
-        padding: 20
-    }
+        flex: 1,
+        paddingHorizontal: 20
+    },
+    categoriaWrapper: {
+        width: '33.33%',   
+        alignItems: 'center',
+        justifyContent: 'center',
+        marginVertical: 15,
+    },
+    tabContainer: {
+        position: 'absolute',
+        bottom: 0,
+        left: 0,
+        right: 0,
+    },
 });

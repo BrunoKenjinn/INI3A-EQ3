@@ -12,8 +12,11 @@ import TelaEditarCategoria from './screens/TelaEditarCategoria';
 import TelaLogin from './screens/TelaLogin';
 import TelaHome from './screens/TelaHome';
 import TelaOrientacao from './screens/TelaOrientacao';
+import TelaAnaliseRapida from './screens/TelaAnaliseRapida';
+import TelaNotificacoes from './screens/TelaNotificacoes';
 import TelaTransacoes from './screens/TelaTransacoes';
 import TelaConfigs from './screens/TelaConfigs';
+import TelaBusca from './screens/TelaBusca';
 import FontAwesome5 from '@expo/vector-icons/FontAwesome5';
 import TelaAdicionarAtalho from './screens/TalaAdicionarAtalho';
 import TelaPerfil from './screens/TelaPerfil';
@@ -22,22 +25,33 @@ import TelaDefinirSaldoInicial from './screens/TelaDefinirSaldoInicial';
 import { createContext, useContext, useEffect, useState } from 'react';
 import axios from 'axios';
 import TelaAdicionarTransacoes from './screens/TelaAdicionarTransacoes';
+import TelaEditarTransacoes from './screens/TelaEditarTransacoes';
 import useApi from './hooks/useApi';
+import { Loading } from './components/loading';
 
 const Stack = createNativeStackNavigator();
-const AuthContext = createContext({
-  userToken: null,
-  hasSeenOrientations: false,
-  orientationsDismissed: false,
-  isLoading: true,
-  needSaldoInicial: false,
-  signIn: (token: string) => { },
-  signOut: () => { },
-  markOrientationsAsSeen: () => { },
-  dismissOrientations: () => { },
-  setNeedSaldoInicial: (v: boolean) => { },
-});
-export const useAuth = () => useContext(AuthContext);
+type AuthContextType = {
+  userToken: string | null;
+  user: any;
+  setUser: React.Dispatch<React.SetStateAction<any>>;
+  hasSeenOrientations: boolean;
+  orientationsDismissed: boolean;
+  needSaldoInicial: boolean;
+  signIn: (token: string) => void;
+  signOut: () => void;
+  markOrientationsAsSeen: () => void;
+  dismissOrientations: () => void;
+  setNeedSaldoInicial: (v: boolean) => void;
+};
+
+const AuthContext = createContext<AuthContextType | undefined>(undefined);
+export const useAuth = () => {
+  const context = useContext(AuthContext);
+  if (!context) {
+    throw new Error("useAuth deve ser usado dentro de um AuthProvider");
+  }
+  return context;
+};
 
 function AuthStack() {
   return (
@@ -55,6 +69,7 @@ function AppStack() {
 
     <Stack.Navigator initialRouteName="TelaHome" screenOptions={{ headerShown: false }}>
       <Stack.Screen name="TelaHome" component={TelaHome} />
+      <Stack.Screen name="TelaAnaliseRapida" component={TelaAnaliseRapida} />
       <Stack.Screen name="TelaCategorias" component={TelaCategorias} />
       <Stack.Screen name="TelaAdicionarCategoria" component={TelaAdicionarCategoria} />
       <Stack.Screen name="TelaEditarCategoria" component={TelaEditarCategoria} />
@@ -62,8 +77,11 @@ function AppStack() {
       <Stack.Screen name="TelaPerfil" component={TelaPerfil} />
       <Stack.Screen name="TelaConfigs" component={TelaConfigs} />
       <Stack.Screen name="TelaEditarPerfil" component={TelaEditarPerfil} />
+      <Stack.Screen name="TelaNotificacoes" component={TelaNotificacoes} />
       <Stack.Screen name="TelaTransacoes" component={TelaTransacoes} />
+      <Stack.Screen name="TelaBusca" component={TelaBusca} />
       <Stack.Screen name="TelaAdicionarTransacoes" component={TelaAdicionarTransacoes} />
+      <Stack.Screen name="TelaEditarTransacoes" component={TelaEditarTransacoes} />
     </Stack.Navigator>
   );
 }
@@ -79,10 +97,11 @@ function OnboardingStack() {
 
 function AuthProvider({ children }) {
   const [userToken, setUserToken] = useState(null);
+  const [user, setUser] = useState(null);
   const [hasSeenOrientations, setHasSeenOrientations] = useState(false);
   const [orientationsDismissed, setOrientationsDismissed] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
   const [needSaldoInicial, setNeedSaldoInicial] = useState(false);
+  const [loadingAuthState, setLoadingAuthState] = useState(true);
 
   const signIn = async (token) => {
     try {
@@ -91,8 +110,9 @@ function AuthProvider({ children }) {
       setUserToken(token);
 
       try {
-        let {url} = useApi();
+        let { url } = useApi();
         const res = await axios.get(url + "/api/user");
+        setUser(res.data);
         setNeedSaldoInicial(res.data?.saldo_inicial === null);
       } catch (e) {
         console.error("Falha ao buscar usuário após login", e.response?.data || e.message);
@@ -107,6 +127,7 @@ function AuthProvider({ children }) {
       await AsyncStorage.removeItem('auth_token');
       delete axios.defaults.headers.common['Authorization'];
       setUserToken(null);
+      setUser(null);
     } catch (e) {
       console.error("Erro ao remover token", e);
     }
@@ -132,6 +153,7 @@ function AuthProvider({ children }) {
           try {
             let { url } = useApi();
             const res = await axios.get(url + "/api/user");
+            setUser(res.data);
             setUserToken(token);
             setNeedSaldoInicial(res.data?.saldo_inicial === null);
           } catch (e) {
@@ -144,21 +166,26 @@ function AuthProvider({ children }) {
         }
       } catch (e) {
         console.error("Erro ao buscar estado inicial", e);
+      } finally {
+        setLoadingAuthState(false);
       }
-      setIsLoading(false);
     };
     checkInitialState();
   }, []);
 
+  if (loadingAuthState) {
+    return <Loading />;
+  }
+
   return (
-    <AuthContext.Provider value={{ userToken, hasSeenOrientations, orientationsDismissed, isLoading, needSaldoInicial, signIn, signOut, markOrientationsAsSeen, dismissOrientations, setNeedSaldoInicial }}>
+    <AuthContext.Provider value={{ userToken, user, setUser, hasSeenOrientations, orientationsDismissed, needSaldoInicial, signIn, signOut, markOrientationsAsSeen, dismissOrientations, setNeedSaldoInicial }}>
       {children}
     </AuthContext.Provider>
   );
 }
 
 function AppNavigator() {
-  const { userToken, hasSeenOrientations, orientationsDismissed, isLoading, needSaldoInicial } = useAuth();
+  const { userToken, hasSeenOrientations, orientationsDismissed, needSaldoInicial } = useAuth();
 
   const [fontsLoaded] = useFonts({
     'Poppins-Regular': require('./assets/fonts/Poppins-Regular.ttf'),
@@ -167,7 +194,7 @@ function AppNavigator() {
     ...FontAwesome5.font
   });
 
-  if (isLoading || !fontsLoaded) {
+  if (!fontsLoaded) {
     return (
       <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#2c2c2c' }}>
         <ActivityIndicator size="large" color="#f1c40f" />

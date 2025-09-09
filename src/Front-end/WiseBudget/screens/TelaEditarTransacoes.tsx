@@ -33,16 +33,17 @@ type Categoria = {
     nome: string;
 };
 
-export default function TelaAdicionarTransacoes({ navigation }) {
-    const [date, setDate] = useState(new Date());
+export default function TelaEditarTransacoes({ navigation, route }) {
+    const { transacao } = route.params;
+    const [date, setDate] = useState(new Date(transacao.data));
     const [show, setShow] = useState(false);
-    const [fonte, setFonte] = useState("");
-    const [selectedValue, setSelectedValue] = useState("entrada");
-    const [valor, setValor] = useState("");
+    const [fonte, setFonte] = useState(transacao.descricao);
+    const [selectedValue, setSelectedValue] = useState(transacao.tipo);
+    const [valor, setValor] = useState(String(transacao.valor));
     const [categorias, setCategorias] = useState<Categoria[]>([]);
-    const [categoriaId, setCategoriaId] = useState<number | null>(null);
-    const [recorrente, setRecorrente] = useState(false);
-    const [frequencia, setFrequencia] = useState("");
+    const [categoriaId, setCategoriaId] = useState<number | null>(transacao.categoria_id || null);
+    const [recorrente, setRecorrente] = useState(!!transacao.recorrente);
+    const [frequencia, setFrequencia] = useState(transacao.frequencia || "");
 
     useEffect(() => {
         const fetchCategorias = async () => {
@@ -57,7 +58,7 @@ export default function TelaAdicionarTransacoes({ navigation }) {
                 });
                 setCategorias(response.data);
 
-                if (response.data.length > 0) {
+                if (!categoriaId && response.data.length > 0) {
                     setCategoriaId(response.data[0].id);
                 }
             } catch (error) {
@@ -81,11 +82,10 @@ export default function TelaAdicionarTransacoes({ navigation }) {
         try {
             let { url } = useApi();
             const token = await AsyncStorage.getItem("auth_token");
-
             const dataFormatada = date.toISOString().split('T')[0];
 
-            const response = await axios.post(
-                url + "/api/transacoes",
+            await axios.put(
+                `${url}/api/transacoes/${transacao.id}`,
                 {
                     fonte: fonte,
                     valor: parseFloat(valor.replace(",", ".")),
@@ -102,15 +102,50 @@ export default function TelaAdicionarTransacoes({ navigation }) {
                     },
                 }
             );
+
+            Alert.alert("Sucesso", "Transação atualizada com sucesso!");
             navigation.navigate("TelaHome");
         } catch (error) {
             console.error(
-                "Erro ao salvar transação:",
+                "Erro ao atualizar transação:",
                 error.response?.data || error.message
             );
-            Alert.alert("Erro", "Não foi possível salvar a transação.");
+            Alert.alert("Erro", "Não foi possível atualizar a transação.");
         }
     };
+
+    const handleDelete = async () => {
+        try {
+            let { url } = useApi();
+            const token = await AsyncStorage.getItem("auth_token");
+            await axios.delete(`${url}/api/transacoes/${transacao.id}`, {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                    Accept: "application/json",
+                },
+            });
+            Alert.alert("Sucesso", "Transação excluída!");
+            navigation.navigate("TelaHome");
+        } catch (error) {
+            console.error(
+                "Erro ao excluir transação:",
+                error.response?.data || error.message
+            );
+            Alert.alert("Erro", "Não foi possível excluir a transação.");
+        }
+    };
+
+    const confirmDelete = () => {
+        Alert.alert("Confirmação", "Deseja realmente excluir esta transação?", [
+            { text: "Cancelar", style: "cancel" },
+            {
+                text: "Excluir",
+                style: "destructive",
+                onPress: handleDelete,
+            },
+        ]);
+    };
+
 
     const onChange = (event: any, selectedDate?: Date) => {
         setShow(false);
@@ -131,7 +166,7 @@ export default function TelaAdicionarTransacoes({ navigation }) {
                 leftIconColor="#f1c40f"
                 leftIconSize={width * 0.06}
                 leftIconComponent={FontAwesome5}
-                title="Adicionar Transação"
+                title="Editar Transação"
             />
             <ScrollView contentContainerStyle={styles.scrollContainer}>
                 <View style={styles.valorContainer}>
@@ -144,7 +179,7 @@ export default function TelaAdicionarTransacoes({ navigation }) {
                         </Text>
                         <TextInput
                             placeholder="0,00"
-                            placeholderTextColor={"#ccc"}
+                            placeholderTextColor={"#cccccc"}
                             style={styles.valorInput}
                             value={valor}
                             onChangeText={setValor}
@@ -171,7 +206,7 @@ export default function TelaAdicionarTransacoes({ navigation }) {
                     <View style={styles.pickerContainer}>
                         <Picker
                             selectedValue={selectedValue}
-                            onValueChange={(itemValue) => setSelectedValue(itemValue)}
+                            onValueChange={setSelectedValue}
                             style={styles.picker}
                             dropdownIconColor="#ffffff"
                         >
@@ -226,7 +261,7 @@ export default function TelaAdicionarTransacoes({ navigation }) {
                             <View style={styles.pickerContainer}>
                                 <Picker
                                     selectedValue={frequencia}
-                                    onValueChange={(itemValue) => setFrequencia(itemValue)}
+                                    onValueChange={setFrequencia}
                                     style={styles.picker}
                                     dropdownIconColor="#ffffff"
                                 >
@@ -239,10 +274,14 @@ export default function TelaAdicionarTransacoes({ navigation }) {
                             </View>
                         </>
                     )}
-
-                    <TouchableOpacity style={styles.button} onPress={handleSave}>
-                        <Text style={styles.textButton}>Salvar</Text>
-                    </TouchableOpacity>
+                    <View style={styles.buttonRow}>
+                        <TouchableOpacity style={styles.button} onPress={handleSave}>
+                            <Text style={styles.textButton}>Salvar</Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity style={styles.button} onPress={confirmDelete}>
+                            <Text style={styles.textButton}>Excluir</Text>
+                        </TouchableOpacity>
+                    </View>
                 </View>
             </ScrollView>
             <CustomBottomTab />
@@ -261,7 +300,6 @@ const styles = StyleSheet.create({
     valorContainer: {
         alignItems: "center",
         paddingHorizontal: width * 0.05,
-        marginBottom: height * 0.02,
     },
     labelValor: {
         textAlign: "center",
@@ -286,7 +324,6 @@ const styles = StyleSheet.create({
         fontSize: getResponsiveFontSize(80),
         fontFamily: "Poppins-Bold",
         color: "#fdfdfd",
-        textAlignVertical: "center",
     },
     formContainer: {
         paddingHorizontal: width * 0.05,
@@ -334,19 +371,24 @@ const styles = StyleSheet.create({
         width: "100%",
         color: "#ffffff",
         backgroundColor: "#393939",
+        fontSize: getResponsiveFontSize(14),
+    },
+    buttonRow: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        marginTop: height * 0.03,
     },
     button: {
         backgroundColor: "#f1c40f",
         paddingVertical: height * 0.018,
-        width: "100%",
+        width: "48%",
         alignItems: "center",
         justifyContent: "center",
         borderRadius: 15,
-        marginTop: height * 0.03,
     },
     textButton: {
         fontSize: getResponsiveFontSize(18),
-        color: "#fff",
+        color: "#393939",
         fontFamily: 'Poppins-Bold',
     },
     switchContainer: {
@@ -362,4 +404,3 @@ const styles = StyleSheet.create({
         fontFamily: 'Poppins-Regular',
     },
 });
-

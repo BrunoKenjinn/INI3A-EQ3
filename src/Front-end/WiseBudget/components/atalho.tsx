@@ -1,38 +1,56 @@
+import { View, StyleSheet, Text, TouchableOpacity, Dimensions } from 'react-native';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
-import { View, StyleSheet, Text, TouchableOpacity } from 'react-native';
+
+const { width } = Dimensions.get("window");
+
+const getResponsiveFontSize = (size: number) => {
+    const scale = width / 375;
+    return Math.round(size * scale);
+};
 
 type Props = {
-    iconName: string;
+    iconName: React.ComponentProps<typeof FontAwesome>["name"];
     text: string;
     onPress: () => void;
     onLongPress?: () => void;
-    rota?: string;
 };
 
-export function Atalho({iconName, text, onPress, onLongPress} : Props) {
-    return <View style={{ marginBottom: 12, marginTop: 20 }}>
-                <TouchableOpacity style={styles.atalhoItem} onPress={onPress} onLongPress={onLongPress} delayLongPress={500}>
-                    <FontAwesome name={iconName} size={32} color="#f1c40f" />
-                    <Text style={styles.atalhoText}>{text}</Text>
-                </TouchableOpacity>
+export function Atalho({ iconName, text, onPress, onLongPress }: Props) {
+    return (
+        <View style={styles.container}>
+            <TouchableOpacity 
+                style={styles.atalhoItem} 
+                onPress={onPress} 
+                onLongPress={onLongPress} 
+                delayLongPress={500}
+                activeOpacity={0.7}
+            >
+                <FontAwesome name={iconName} size={width * 0.08} color="#f1c40f" />
+                <Text style={styles.atalhoText}>{text}</Text>
+            </TouchableOpacity>
         </View>
+    );
 }
 
 const styles = StyleSheet.create({
-  atalhoItem: {
-    backgroundColor: '#393939',
-    borderRadius: 15,
-    padding: 20,
-    alignItems: 'center',
-    justifyContent: 'center',
-    width: 110, 
-    height: 110, 
-  },
-  atalhoText: {
-    color: 'white',
-    fontSize: 14,
-    fontFamily: 'Poppins-Regular',
-    marginTop: 8,
-    textAlign: 'center',
-  },
+    container: {
+        marginBottom: width * 0.03,
+        marginTop: width * 0.02,
+    },
+    atalhoItem: {
+        backgroundColor: '#393939',
+        borderRadius: width * 0.04,
+        padding: width * 0.03,
+        alignItems: 'center',
+        justifyContent: 'center',
+        width: width * 0.25,
+        height: width * 0.25,
+    },
+    atalhoText: {
+        color: 'white',
+        fontSize: getResponsiveFontSize(10),
+        fontFamily: 'Poppins-Regular',
+        marginTop: width * 0.02,
+        textAlign: 'center',
+    },
 });
