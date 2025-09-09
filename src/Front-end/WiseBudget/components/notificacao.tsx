@@ -14,11 +14,12 @@ type NotificationCardProps = {
   title: string;
   description: string;
   date: string;
+  onPress: () => void;
 };
 
-export function NotificationCard({ iconName, title, description, date }: NotificationCardProps) {
+export function Notificacao({ iconName, title, description, date, onPress }: NotificationCardProps) {
   return (
-    <TouchableOpacity style={styles.container}>
+    <TouchableOpacity onPress={onPress} style={styles.container} >
       <View style={styles.iconContainer}>
         <FontAwesome name={iconName} size={width * 0.06} color="#2c2c2c" />
       </View>

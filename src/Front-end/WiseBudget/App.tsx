@@ -13,6 +13,7 @@ import TelaLogin from './screens/TelaLogin';
 import TelaHome from './screens/TelaHome';
 import TelaOrientacao from './screens/TelaOrientacao';
 import TelaAnaliseRapida from './screens/TelaAnaliseRapida';
+import TelaNotificacoes from './screens/TelaNotificacoes';
 import TelaTransacoes from './screens/TelaTransacoes';
 import TelaBusca from './screens/TelaBusca';
 import FontAwesome5 from '@expo/vector-icons/FontAwesome5';
@@ -74,6 +75,7 @@ function AppStack() {
       <Stack.Screen name="TelaAdicionarAtalho" component={TelaAdicionarAtalho} />
       <Stack.Screen name="TelaPerfil" component={TelaPerfil} />
       <Stack.Screen name="TelaEditarPerfil" component={TelaEditarPerfil} />
+      <Stack.Screen name="TelaNotificacoes" component={TelaNotificacoes} />
       <Stack.Screen name="TelaTransacoes" component={TelaTransacoes} />
       <Stack.Screen name="TelaBusca" component={TelaBusca} />
       <Stack.Screen name="TelaAdicionarTransacoes" component={TelaAdicionarTransacoes} />
@@ -103,7 +105,7 @@ function AuthProvider({ children }) {
     try {
       await AsyncStorage.setItem('auth_token', token);
       axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
-      setUserToken(token); 
+      setUserToken(token);
 
       try {
         let { url } = useApi();
