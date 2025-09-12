@@ -9,6 +9,7 @@ type RootStackParamList = {
     TelaHome: undefined;
     TelaPerfil: undefined;
     TelaBusca: undefined;
+    TelaNotificacoes: undefined;
 };
 
 export default function CustomBottomTab() {
@@ -25,7 +26,7 @@ export default function CustomBottomTab() {
                 <FontAwesome name="search" size={iconSize} color="#f1c40f"  />
             </TouchableOpacity>
 
-            <TouchableOpacity style={styles.tabButton}>
+            <TouchableOpacity style={styles.tabButton} onPress={() => navigation.navigate('TelaNotificacoes')}>
                 <FontAwesome name="bell" size={iconSize} color="#f1c40f" />
             </TouchableOpacity>
 
@@ -57,3 +58,6 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
     },
 });
+/*<TouchableOpacity style={styles.tabButton} onPress={() => navigation.navigate('TelaConfigs')}>
+        <FontAwesome name="sliders-h" size={24} color="#f1c40f" />
+     </TouchableOpacity>*/

@@ -1,21 +1,13 @@
-import {
-    Image,
-    SafeAreaView,
-    Text,
-    TouchableOpacity,
-    View,
-    StyleSheet,
-    Alert,
-    Dimensions,
-    ActivityIndicator,
-} from "react-native";
-import { Header } from "../components/header";
-import FontAwesome5 from "@expo/vector-icons/FontAwesome5";
-import { useAuth } from "../App";
-import CustomBottomTab from "../components/CustomBottomTab";
-import { useCallback, useState } from "react";
-import { useFocusEffect } from "@react-navigation/native";
-import AsyncStorage from "@react-native-async-storage/async-storage";
+
+import { Image, SafeAreaView, Text, TouchableOpacity, View, StyleSheet, Dimensions } from 'react-native'
+import { Header } from '../components/header'
+import FontAwesome5 from '@expo/vector-icons/FontAwesome5';
+import { useAuth } from '../App';
+import CustomBottomTab from '../components/CustomBottomTab';
+import { useCallback, useState } from 'react';
+import { useFocusEffect } from '@react-navigation/native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { Icon } from 'react-native-elements';
 import axios from "axios";
 import useApi from "../hooks/useApi";
 import { Loading } from "../components/loading";
@@ -119,10 +111,10 @@ export default function TelaPerfil({ navigation }) {
                             </Text>
                         </View>
                         <View style={styles.botao}>
-                            <FontAwesome5 name="sliders-h" size={getResponsiveFontSize(24)} color="#f1c40f" />
-                            <Text style={styles.botaoText}>
-                                Configs
-                            </Text>
+                            <TouchableOpacity style={styles.botao} onPress={() => navigation.navigate('TelaConfigs')}>
+                                <FontAwesome5 name="sliders-h" size={24} color="#f1c40f" />
+                                <Text style={{ color: '#f1c40f', fontFamily: 'Poppins-Regular' }}>Configs</Text>
+                            </TouchableOpacity>
                         </View>
                         <View style={styles.botao}>
                             <FontAwesome5 name="comment-alt" size={getResponsiveFontSize(24)} color="#f1c40f" />
