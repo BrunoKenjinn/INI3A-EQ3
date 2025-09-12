@@ -1,5 +1,5 @@
-<<<<<<< HEAD
-import { Image, SafeAreaView, Text, TouchableOpacity, View, StyleSheet } from 'react-native'
+
+import { Image, SafeAreaView, Text, TouchableOpacity, View, StyleSheet, Dimensions } from 'react-native'
 import { Header } from '../components/header'
 import FontAwesome5 from '@expo/vector-icons/FontAwesome5';
 import { useAuth } from '../App';
@@ -7,32 +7,10 @@ import CustomBottomTab from '../components/CustomBottomTab';
 import { useCallback, useState } from 'react';
 import { useFocusEffect } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import axios from 'axios';
-import useApi from '../hooks/useApi';
 import { Icon } from 'react-native-elements';
-=======
-import {
-    Image,
-    SafeAreaView,
-    Text,
-    TouchableOpacity,
-    View,
-    StyleSheet,
-    Alert,
-    Dimensions,
-    ActivityIndicator,
-} from "react-native";
-import { Header } from "../components/header";
-import FontAwesome5 from "@expo/vector-icons/FontAwesome5";
-import { useAuth } from "../App";
-import CustomBottomTab from "../components/CustomBottomTab";
-import { useCallback, useState } from "react";
-import { useFocusEffect } from "@react-navigation/native";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
 import useApi from "../hooks/useApi";
 import { Loading } from "../components/loading";
->>>>>>> 0a53541806dff0e8a6d74cc0c582ede5650c5b19
 
 const { width, height } = Dimensions.get("window");
 
