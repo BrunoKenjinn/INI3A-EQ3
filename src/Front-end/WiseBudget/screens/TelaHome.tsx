@@ -253,6 +253,7 @@ export default function TelaHome({ navigation }) {
           rightIconSize={width * 0.06}
           rightIconComponent={FontAwesome5}
           infoUser={user}
+          onRightPress={() => navigation.navigate("TelaPerfil")}
         />
         <Balanço
           credito={balanco.credito_mes.toString()}

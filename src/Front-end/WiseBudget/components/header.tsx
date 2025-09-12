@@ -1,12 +1,12 @@
-import { 
-  View, 
-  StyleSheet, 
-  Text, 
-  Image, 
-  Dimensions, 
-  Platform, 
-  StatusBar, 
-  TouchableOpacity 
+import {
+  View,
+  StyleSheet,
+  Text,
+  Image,
+  Dimensions,
+  Platform,
+  StatusBar,
+  TouchableOpacity
 } from "react-native";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import { NavigationProp, useNavigation } from "@react-navigation/native";
@@ -17,7 +17,7 @@ let { url } = useApi();
 const { width } = Dimensions.get("window");
 
 const getResponsiveFontSize = (size: number) => {
-  const scale = width / 375; 
+  const scale = width / 375;
   return Math.round(size * scale);
 };
 
@@ -36,6 +36,7 @@ type Props = {
   rightIconColor?: string;
   rightIconComponent?: React.ElementType;
   infoUser?: any;
+  onRightPress?: () => void;
 };
 
 export function Header({
@@ -49,6 +50,7 @@ export function Header({
   rightIconColor = "#fff",
   rightIconComponent: RightIcon = AntDesign,
   infoUser,
+  onRightPress,
 }: Props) {
   const navigation = useNavigation<NavigationProp<RootStackParamList>>();
 
@@ -69,7 +71,7 @@ export function Header({
       <Text style={styles.title}>{title}</Text>
 
       {rightIconName ? (
-        <TouchableOpacity onPress={() => navigation.navigate("TelaPerfil")}>
+        <TouchableOpacity onPress={onRightPress ? onRightPress : () => { }}>
           {infoUser?.foto ? (
             <Image
               style={styles.profilePic}
