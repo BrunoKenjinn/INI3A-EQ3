@@ -30,6 +30,7 @@ import useApi from './hooks/useApi';
 import { Loading } from './components/loading';
 import TelaMetas from './screens/TelaMetas';
 import TelaConfigsNotificacoes from './screens/TelaConfigsNotificacoes';
+import TelaAdicionarMeta from './screens/TelaAdicionarMeta';
 
 const Stack = createNativeStackNavigator();
 type AuthContextType = {
@@ -69,8 +70,9 @@ function AuthStack() {
 function AppStack() {
   return (
 
-    <Stack.Navigator initialRouteName="TelaMetas" screenOptions={{ headerShown: false }}>
+    <Stack.Navigator initialRouteName="TelaAdicionarMeta" screenOptions={{ headerShown: false }}>
       <Stack.Screen name="TelaMetas" component={TelaMetas} />
+      <Stack.Screen name="TelaAdicionarMeta" component={TelaAdicionarMeta} />
       <Stack.Screen name="TelaHome" component={TelaHome} />
       <Stack.Screen name="TelaAnaliseRapida" component={TelaAnaliseRapida} />
       <Stack.Screen name="TelaCategorias" component={TelaCategorias} />
