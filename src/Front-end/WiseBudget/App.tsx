@@ -30,6 +30,7 @@ import useApi from './hooks/useApi';
 import { Loading } from './components/loading';
 import TelaMetas from './screens/TelaMetas';
 import TelaConfigsNotificacoes from './screens/TelaConfigsNotificacoes';
+import TelaAdicionarMeta from './screens/TelaAdicionarMeta';
 
 const Stack = createNativeStackNavigator();
 type AuthContextType = {
@@ -69,8 +70,9 @@ function AuthStack() {
 function AppStack() {
   return (
 
-    <Stack.Navigator initialRouteName="TelaMetas" screenOptions={{ headerShown: false }}>
+    <Stack.Navigator initialRouteName="TelaHome" screenOptions={{ headerShown: false }}>
       <Stack.Screen name="TelaMetas" component={TelaMetas} />
+      <Stack.Screen name="TelaAdicionarMeta" component={TelaAdicionarMeta} />
       <Stack.Screen name="TelaHome" component={TelaHome} />
       <Stack.Screen name="TelaAnaliseRapida" component={TelaAnaliseRapida} />
       <Stack.Screen name="TelaCategorias" component={TelaCategorias} />
@@ -84,6 +86,7 @@ function AppStack() {
       <Stack.Screen name="TelaNotificacoes" component={TelaNotificacoes} />
       <Stack.Screen name="TelaTransacoes" component={TelaTransacoes} />
       <Stack.Screen name="TelaBusca" component={TelaBusca} />
+      <Stack.Screen name="TelaMetas" component={TelaMetas} />
       <Stack.Screen name="TelaAdicionarTransacoes" component={TelaAdicionarTransacoes} />
       <Stack.Screen name="TelaEditarTransacoes" component={TelaEditarTransacoes} />
     </Stack.Navigator>

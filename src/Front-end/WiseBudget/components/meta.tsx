@@ -1,7 +1,27 @@
 import React from 'react';
-import { View, Text, StyleSheet } from "react-native";
+import { View, Text, StyleSheet, Dimensions } from "react-native";
+import FontAwesome from '@expo/vector-icons/FontAwesome';
 
-export function Meta({ progress = 30, goalAmount = "R$20.000", subtitle = "Alcance A Meta Para Concluir.", date = "Abril 25" }) {
+const { width} = Dimensions.get("window");
+
+const getResponsiveFontSize = (size: number) => {
+  const scale = width / 375;
+  return Math.round(size * scale);
+};
+
+type MetaProps = {
+  progress?: number;
+  goalAmount?: string;
+  subtitle?: string;
+  date?: string;
+};
+
+export function Meta({
+  progress,
+  goalAmount,
+  subtitle,
+  date,
+}: MetaProps) {
 
   const progressWidth = `${progress}%`;
 
@@ -9,17 +29,14 @@ export function Meta({ progress = 30, goalAmount = "R$20.000", subtitle = "Alcan
     <View style={styles.card}>
       <View style={styles.cardTopContent}>
         <View style={styles.trophyIconContainer}>
-          <Text style={styles.trophyIconText}>🏆</Text>
+          <FontAwesome name="trophy" size={width * 0.1} color="#f1c40f" />
         </View>
 
         <View style={styles.mainInfo}>
-          <Text style={styles.title}>
-            Progresso
-          </Text>
+          <Text style={styles.title}>Progresso</Text>
 
           <View style={styles.progressBarContainer}>
             <View style={styles.progressBarBackground} />
-            
             <View style={[styles.progressBarFill, { width: progressWidth }]} />
 
             <View style={styles.progressBarTextContainer}>
@@ -43,53 +60,51 @@ export function Meta({ progress = 30, goalAmount = "R$20.000", subtitle = "Alcan
 const styles = StyleSheet.create({
   card: {
     backgroundColor: '#2c2c2c',
-    borderRadius: 12,
+    borderRadius: width * 0.04,
     maxWidth: 400,
     width: '100%',
-    marginBottom: 10
+    marginBottom: width * 0.03,
+    padding: width * 0.04,
   },
   cardTopContent: {
     flexDirection: 'row',
     alignItems: 'flex-start',
-    gap: 15,
+    gap: width * 0.04,
   },
   trophyIconContainer: {
-    backgroundColor: '#BDC3C7',
-    width: 50,
-    height: 50,
-    borderRadius: 12,
+    backgroundColor: '#393939',
+    width: width * 0.15,
+    height: width * 0.15,
+    borderRadius: width * 0.04,
     justifyContent: 'center',
     alignItems: 'center',
     flexShrink: 0,
-  },
-  trophyIconText: {
-    fontSize: 24,
   },
   mainInfo: {
     flex: 1,
   },
   title: {
-    fontSize: 18,
+    fontSize: getResponsiveFontSize(16),
     fontWeight: 'bold',
-    marginBottom: 10,
+    marginBottom: width * 0.02,
     color: '#ffffff',
   },
   progressBarContainer: {
-    height: 35,
+    height: width * 0.09,
     width: '100%',
     position: 'relative',
     justifyContent: 'center',
   },
   progressBarBackground: {
     backgroundColor: '#4a545e',
-    height: 35,
+    height: '100%',
     width: '100%',
     borderRadius: 50,
     position: 'absolute',
   },
   progressBarFill: {
     backgroundColor: '#34495E',
-    height: 35,
+    height: '100%',
     borderRadius: 50,
     position: 'absolute',
   },
@@ -98,31 +113,32 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    paddingHorizontal: 15, 
+    paddingHorizontal: width * 0.04,
     position: 'relative',
   },
   progressText: {
     color: '#ffffff',
     fontWeight: 'bold',
+    fontSize: getResponsiveFontSize(12),
   },
   footer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginTop: 15,
+    marginTop: width * 0.04,
   },
   subtitle: {
     color: '#c5c5c5',
-    fontSize: 13,
+    fontSize: getResponsiveFontSize(11),
   },
   date: {
     color: '#ffffff',
-    fontSize: 13,
+    fontSize: getResponsiveFontSize(11),
     fontWeight: 'bold',
   },
   divider: {
     height: 1,
     backgroundColor: '#4a545e',
-    marginTop: 20,
-  }
+    marginTop: width * 0.05,
+  },
 });
