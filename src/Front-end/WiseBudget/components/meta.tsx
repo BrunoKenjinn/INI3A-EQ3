@@ -1,8 +1,8 @@
-import React from 'react';
+import React from "react";
 import { View, Text, StyleSheet, Dimensions } from "react-native";
-import FontAwesome from '@expo/vector-icons/FontAwesome';
+import FontAwesome from "@expo/vector-icons/FontAwesome";
 
-const { width} = Dimensions.get("window");
+const { width } = Dimensions.get("window");
 
 const getResponsiveFontSize = (size: number) => {
   const scale = width / 375;
@@ -14,6 +14,7 @@ type MetaProps = {
   goalAmount?: string;
   subtitle?: string;
   date?: string;
+  valorAtualFormatado?: string;
 };
 
 export function Meta({
@@ -21,8 +22,8 @@ export function Meta({
   goalAmount,
   subtitle,
   date,
+  valorAtualFormatado,
 }: MetaProps) {
-
   const progressWidth = `${progress}%`;
 
   return (
@@ -33,16 +34,26 @@ export function Meta({
         </View>
 
         <View style={styles.mainInfo}>
-          <Text style={styles.title}>Progresso</Text>
-
+          <View
+            style={{
+              flexDirection: "row",
+              justifyContent: "space-between",
+              alignItems: "center",
+            }}
+          >
+            <Text style={styles.title}>Progresso</Text>
+            <Text style={styles.progressText}>{progress || 0}%</Text>
+          </View>
           <View style={styles.progressBarContainer}>
             <View style={styles.progressBarBackground} />
             <View style={[styles.progressBarFill, { width: progressWidth }]} />
-
-            <View style={styles.progressBarTextContainer}>
-              <Text style={styles.progressText}>{progress}%</Text>
-              <Text style={styles.progressText}>{goalAmount}</Text>
-            </View>
+          </View>
+          <View style={styles.progressBarTextContainer}>
+            {/* Mostra o valor atual e o valor total */}
+            <Text style={styles.progressText}>
+              {valorAtualFormatado || "R$ 0,00"}
+            </Text>
+            <Text style={styles.progressText}>{goalAmount}</Text>
           </View>
         </View>
       </View>
@@ -55,29 +66,29 @@ export function Meta({
       <View style={styles.divider} />
     </View>
   );
-};
+}
 
 const styles = StyleSheet.create({
   card: {
-    backgroundColor: '#2c2c2c',
+    backgroundColor: "#2c2c2c",
     borderRadius: width * 0.04,
     maxWidth: 400,
-    width: '100%',
+    width: "100%",
     marginBottom: width * 0.03,
     padding: width * 0.04,
   },
   cardTopContent: {
-    flexDirection: 'row',
-    alignItems: 'flex-start',
+    flexDirection: "row",
+    alignItems: "flex-start",
     gap: width * 0.04,
   },
   trophyIconContainer: {
-    backgroundColor: '#393939',
+    backgroundColor: "#393939",
     width: width * 0.15,
     height: width * 0.15,
     borderRadius: width * 0.04,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
     flexShrink: 0,
   },
   mainInfo: {
@@ -85,60 +96,61 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: getResponsiveFontSize(16),
-    fontWeight: 'bold',
+    fontWeight: "bold",
     marginBottom: width * 0.02,
-    color: '#ffffff',
+    color: "#ffffff",
   },
   progressBarContainer: {
     height: width * 0.09,
-    width: '100%',
-    position: 'relative',
-    justifyContent: 'center',
+    width: "100%",
+    position: "relative",
+    justifyContent: "center",
   },
   progressBarBackground: {
-    backgroundColor: '#4a545e',
-    height: '100%',
-    width: '100%',
+    backgroundColor: "#4a545e",
+    height: "100%",
+    width: "100%",
     borderRadius: 50,
-    position: 'absolute',
+    position: "absolute",
   },
   progressBarFill: {
-    backgroundColor: '#34495E',
-    height: '100%',
+    backgroundColor: "#34495E",
+    height: "100%",
     borderRadius: 50,
-    position: 'absolute',
+    position: "absolute",
   },
   progressBarTextContainer: {
-    width: '100%',
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
+    width: "100%",
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
     paddingHorizontal: width * 0.04,
-    position: 'relative',
+    position: "relative",
+    marginTop: 5,
   },
   progressText: {
-    color: '#ffffff',
-    fontWeight: 'bold',
+    color: "#ffffff",
+    fontWeight: "bold",
     fontSize: getResponsiveFontSize(12),
   },
   footer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
     marginTop: width * 0.04,
   },
   subtitle: {
-    color: '#c5c5c5',
+    color: "#c5c5c5",
     fontSize: getResponsiveFontSize(11),
   },
   date: {
-    color: '#ffffff',
+    color: "#ffffff",
     fontSize: getResponsiveFontSize(11),
-    fontWeight: 'bold',
+    fontWeight: "bold",
   },
   divider: {
     height: 1,
-    backgroundColor: '#4a545e',
+    backgroundColor: "#4a545e",
     marginTop: width * 0.05,
   },
 });
