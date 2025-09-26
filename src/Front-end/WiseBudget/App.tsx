@@ -11,6 +11,7 @@ import TelaAdicionarCategoria from './screens/TelaAdicionarCategoria';
 import TelaEditarCategoria from './screens/TelaEditarCategoria';
 import TelaLogin from './screens/TelaLogin';
 import TelaHome from './screens/TelaHome';
+import TelaBalanco from './screens/TelaBalanco';
 import TelaOrientacao from './screens/TelaOrientacao';
 import TelaAnaliseRapida from './screens/TelaAnaliseRapida';
 import TelaNotificacoes from './screens/TelaNotificacoes';
@@ -71,7 +72,6 @@ function AppStack() {
   return (
 
     <Stack.Navigator initialRouteName="TelaHome" screenOptions={{ headerShown: false }}>
-      <Stack.Screen name="TelaMetas" component={TelaMetas} />
       <Stack.Screen name="TelaAdicionarMeta" component={TelaAdicionarMeta} />
       <Stack.Screen name="TelaHome" component={TelaHome} />
       <Stack.Screen name="TelaAnaliseRapida" component={TelaAnaliseRapida} />
@@ -79,6 +79,7 @@ function AppStack() {
       <Stack.Screen name="TelaAdicionarCategoria" component={TelaAdicionarCategoria} />
       <Stack.Screen name="TelaEditarCategoria" component={TelaEditarCategoria} />
       <Stack.Screen name="TelaAdicionarAtalho" component={TelaAdicionarAtalho} />
+      <Stack.Screen name="TelaBalanco" component={TelaBalanco} />
       <Stack.Screen name="TelaPerfil" component={TelaPerfil} />
       <Stack.Screen name="TelaConfigs" component={TelaConfigs} />
       <Stack.Screen name="TelaConfigsNotificacoes" component={TelaConfigsNotificacoes} />

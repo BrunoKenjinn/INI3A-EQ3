@@ -146,8 +146,8 @@ export default function TelaBusca({navigation}) {
                     <View style={styles.pickerContainer}>
                         <Picker selectedValue={tipo} onValueChange={setTipo} style={styles.picker} dropdownIconColor="#f1c40f">
                             <Picker.Item label="Todos os tipos" value="todos" />
-                            <Picker.Item label="Entrada/Crédito" value="entrada" />
-                            <Picker.Item label="Saída/Débito" value="saida" />
+                            <Picker.Item label="Receita" value="entrada" />
+                            <Picker.Item label="Despesa" value="saida" />
                             <Picker.Item label="Recorrente" value="recorrente" />
                         </Picker>
                     </View>
