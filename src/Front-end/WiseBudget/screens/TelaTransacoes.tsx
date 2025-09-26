@@ -161,8 +161,8 @@ export default function TelaTransacoes({ navigation }) {
                         dropdownIconColor="#f1c40f"
                     >
                         <Picker.Item label="Todos" value="todos" />
-                        <Picker.Item label="Entradas" value="entrada" />
-                        <Picker.Item label="Saídas" value="saida" />
+                        <Picker.Item label="Receitas" value="entrada" />
+                        <Picker.Item label="Despesas" value="saida" />
                         <Picker.Item label="Recorrente" value="recorrente" />
                     </Picker>
                 </View>

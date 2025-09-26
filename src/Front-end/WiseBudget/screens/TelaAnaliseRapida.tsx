@@ -367,12 +367,13 @@ export default function TelaAnaliseRapida({ navigation }) {
       />
       <ScrollView>
         <Analise
-          total={analise.saldo_total.toString()}
-          economia={analise.economia.toString()}
+          total={(analise.saldo_total ?? 0).toString()}
+          economia={(analise.economia ?? 0).toString()}
           maiorGasto={analise.maior_gasto || "Nenhum"}
           iconeMaiorGasto={analise.icone_maior_gasto || "question"}
           corMaiorGasto={analise.cor_maior_gasto || "#f1c40f"}
         />
+
 
         <View style={styles.container}>
           <View style={{ alignItems: "center" }}>
@@ -395,7 +396,7 @@ export default function TelaAnaliseRapida({ navigation }) {
                       : styles.textoNormal,
                   ]}
                 >
-                  Crédito
+                  Receitas
                 </Text>
               </TouchableOpacity>
 
@@ -417,7 +418,7 @@ export default function TelaAnaliseRapida({ navigation }) {
                       : styles.textoNormal,
                   ]}
                 >
-                  Débito
+                  Despesas
                 </Text>
               </TouchableOpacity>
             </View>

@@ -47,6 +47,7 @@ interface BalancoData {
   debito_mes: number;
   saldo_total: number;
   saldo_inicial: number;
+  saldo: number;
 }
 
 interface Entrada {
@@ -94,6 +95,7 @@ export default function TelaHome({ navigation }) {
     debito_mes: 0,
     saldo_total: 0,
     saldo_inicial: 0,
+    saldo:0,
   });
 
   const [entradasHoje, setEntradasHoje] = useState<Entrada[]>([]);
@@ -258,7 +260,8 @@ export default function TelaHome({ navigation }) {
         <Balanço
           credito={balanco.credito_mes.toString()}
           debito={balanco.debito_mes.toString()}
-          saldo={balanco.saldo_total.toString()}
+          saldo={balanco.saldo.toString()}
+          saldoTotal={balanco.saldo_total.toString()}
         />
 
         <View style={styles.section}>

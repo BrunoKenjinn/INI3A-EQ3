@@ -15,6 +15,7 @@ interface BalancoData {
     debito_mes: number;
     saldo_total: number;
     saldo_inicial: number;
+    saldo:number;
 }
 
 
@@ -29,6 +30,7 @@ export default function TelaCategorias({ navigation }) {
         debito_mes: 0,
         saldo_total: 0,
         saldo_inicial: 0,
+        saldo:0,
     });
     useFocusEffect(
         useCallback(() => {
@@ -102,7 +104,8 @@ export default function TelaCategorias({ navigation }) {
                     <Balanço
                         credito={balanco.credito_mes.toString()}
                         debito={balanco.debito_mes.toString()}
-                        saldo={balanco.saldo_total.toString()}
+                        saldo={balanco.saldo.toString()}
+                        saldoTotal={balanco.saldo_total.toString()}
                     />
                 }
                 renderItem={({ item }) => (

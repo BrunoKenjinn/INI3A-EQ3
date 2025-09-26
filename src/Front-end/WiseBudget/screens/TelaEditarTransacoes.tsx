@@ -201,7 +201,7 @@ export default function TelaEditarTransacoes({ navigation, route }) {
                     </View>
 
                     <Text style={styles.textInputLabel}>
-                        A transação é uma entrada ou saída?
+                        A transação é uma receita ou despesa?
                     </Text>
                     <View style={styles.pickerContainer}>
                         <Picker
@@ -210,8 +210,8 @@ export default function TelaEditarTransacoes({ navigation, route }) {
                             style={styles.picker}
                             dropdownIconColor="#ffffff"
                         >
-                            <Picker.Item label="Entrada/Crédito" value="entrada" />
-                            <Picker.Item label="Saída/Débito" value="saida" />
+                            <Picker.Item label="Receita" value="entrada" />
+                            <Picker.Item label="Despesa" value="saida" />
                         </Picker>
                     </View>
 

@@ -13,9 +13,10 @@ type Props = {
     debito: string;
     credito: string;
     saldo: string;
+    saldoTotal: string;
 };
 
-export function Balanço({ debito, credito, saldo }: Props) {
+export function Balanço({ debito, credito, saldo, saldoTotal }: Props) {
     const [mostrarValores, setMostrarValores] = useState(true);
 
     const formatar = (value: string) => {
@@ -37,35 +38,54 @@ export function Balanço({ debito, credito, saldo }: Props) {
     };
 
     return (
-        <View>
-            <View style={styles.top}>
-                <Text style={styles.text1}>Saldo</Text>
-                <View style={styles.valorComOlho}>
-                    <Text style={styles.text2}>
-                        {mostrarValores ? formatar(saldo) : valorMascarado(saldo)}
-                    </Text>
-                    <TouchableOpacity onPress={() => setMostrarValores(!mostrarValores)}>
-                        <FontAwesome
-                            name={mostrarValores ? "eye" : "eye-slash"}
-                            size={getResponsiveFontSize(16)}
-                            color="white"
-                        />
-                    </TouchableOpacity>
-                </View>
-            </View>
 
-            <View style={styles.bottom}>
+        <View style={styles.container}>
+            <View style={styles.column}>
+                <View style={styles.topItem}>
+                    <Text style={styles.text1}>Saldo Mensal</Text>
+                    <View style={styles.valorComOlho}>
+                        <Text style={styles.text2}>
+                            {mostrarValores ? formatar(saldo) : valorMascarado(saldo)}
+                        </Text>
+                        <TouchableOpacity onPress={() => setMostrarValores(!mostrarValores)}>
+                            <FontAwesome
+                                name={mostrarValores ? "eye" : "eye-slash"}
+                                size={getResponsiveFontSize(16)}
+                                color="white"
+                            />
+                        </TouchableOpacity>
+                    </View>
+                </View>
+
                 <View style={styles.bottomItem}>
-                    <Text style={styles.text1}>Débito</Text>
+                    <Text style={styles.text1}>Despesas</Text>
                     <Text style={styles.text2}>
                         {mostrarValores ? formatar(debito) : valorMascarado(debito)}
                     </Text>
                 </View>
+            </View>
 
-                <View style={styles.divisor} />
+            <View style={styles.divisor} />
+
+            <View style={styles.column}>
+                <View style={styles.topItem}>
+                    <Text style={styles.text1}>Saldo Total</Text>
+                    <View style={styles.valorComOlho}>
+                        <Text style={styles.text2}>
+                            {mostrarValores ? formatar(saldoTotal) : valorMascarado(saldoTotal)}
+                        </Text>
+                        <TouchableOpacity onPress={() => setMostrarValores(!mostrarValores)}>
+                            <FontAwesome
+                                name={mostrarValores ? "eye" : "eye-slash"}
+                                size={getResponsiveFontSize(16)}
+                                color="white"
+                            />
+                        </TouchableOpacity>
+                    </View>
+                </View>
 
                 <View style={styles.bottomItem}>
-                    <Text style={styles.text1}>Crédito</Text>
+                    <Text style={styles.text1}>Receitas</Text>
                     <Text style={styles.text2}>
                         {mostrarValores ? formatar(credito) : valorMascarado(credito)}
                     </Text>
@@ -73,9 +93,20 @@ export function Balanço({ debito, credito, saldo }: Props) {
             </View>
         </View>
     );
-}
 
+
+}
 const styles = StyleSheet.create({
+    container: {
+        flexDirection: "row",
+        justifyContent: "space-around",
+        marginTop: 7,
+        marginBottom: 7,
+    },
+    column: {
+        flex: 1,
+        alignItems: "center",
+    },
     text1: {
         fontFamily: 'Poppins-Regular',
         color: "#ffffff",
@@ -87,10 +118,13 @@ const styles = StyleSheet.create({
         color: "#ffffff",
         fontSize: getResponsiveFontSize(17),
     },
-    top: {
-        width: '100%',
-        alignItems: 'center',
+    topItem: {
+        alignItems: "center",
         marginBottom: 10,
+    },
+    bottomItem: {
+        alignItems: "center",
+        marginTop: 10,
     },
     valorComOlho: {
         flexDirection: 'row',
@@ -98,19 +132,11 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         marginTop: 4,
     },
-    bottom: {
-        width: '100%',
-        flexDirection: 'row',
-        justifyContent: 'space-around',
-        marginTop: 7,
-    },
-    bottomItem: {
-        alignItems: "center",
-    },
     divisor: {
         width: 2,
-        height: "90%",
         backgroundColor: "#fff",
         opacity: 0.6,
+        marginHorizontal: 10,
+        alignSelf: "stretch",
     },
 });
