@@ -32,8 +32,10 @@ import { Loading } from './components/loading';
 import TelaMetas from './screens/TelaMetas';
 import TelaConfigsNotificacoes from './screens/TelaConfigsNotificacoes';
 import TelaAdicionarMeta from './screens/TelaAdicionarMeta';
-import TelaDistribuirMetas from './screens/TelaDistribuirMetas';  
+import TelaDistribuirMetas from './screens/TelaDistribuirMetas';
 import TelaAnalise from './screens/TelaAnalise';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
+
 
 const Stack = createNativeStackNavigator();
 type AuthContextType = {
@@ -73,7 +75,7 @@ function AuthStack() {
 function AppStack() {
   return (
 
-    <Stack.Navigator initialRouteName="TelaAnalise" screenOptions={{ headerShown: false }}>
+    <Stack.Navigator initialRouteName="TelaHome" screenOptions={{ headerShown: false }}>
       <Stack.Screen name="TelaAdicionarMeta" component={TelaAdicionarMeta} />
       <Stack.Screen name="TelaHome" component={TelaHome} />
       <Stack.Screen name="TelaAnaliseRapida" component={TelaAnaliseRapida} />
@@ -235,9 +237,12 @@ function AppNavigator() {
 
 export default function App() {
   return (
-    <AuthProvider>
-      <AppNavigator />
-    </AuthProvider>
+    <GestureHandlerRootView style={{ flex: 1 }}>
+      <AuthProvider>
+        <AppNavigator />
+      </AuthProvider>
+    </GestureHandlerRootView>
   );
+
 }
 
