@@ -22,15 +22,13 @@ export default function TelaCadastro({ navigation }) {
     const [passwordConfirmation, setPasswordConfirmation] = useState('');
 
     const handleRegister = async () => {
-        const [dia, mes, ano] = dataNascimento.split('/');
-        const dataFormatada = `${ano}-${mes}-${dia}`;
 
         const dadosParaEnviar = {
             nome,
             email,
             cpf: String(cpf).replace(/\D/g, ''),
             celular: String(celular).replace(/\D/g, ''),
-            data_nascimento: dataFormatada,
+            data_nascimento: dataNascimento,
             password,
             password_confirmation: passwordConfirmation,
         };
