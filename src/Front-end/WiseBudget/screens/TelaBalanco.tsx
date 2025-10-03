@@ -8,6 +8,7 @@ import {
     ActivityIndicator,
     StatusBar,
     SafeAreaView,
+    ScrollView,
 } from "react-native";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import { LineChart } from "react-native-chart-kit";
@@ -26,6 +27,22 @@ const getResponsiveFontSize = (size) => {
     return size;
 };
 
+// Corrige a formatação da legenda do eixo Y
+const formatYLabel = (yLabel) => {
+    const value = Number(yLabel);
+    if (isNaN(value)) {
+        return yLabel;
+    }
+    if (value === 0) {
+        return "0";
+    }
+    if (Math.abs(value) >= 1000) {
+        // Mostra sem casas decimais e sem '.0', ex: 1200 -> 1.2k
+        return `${(value / 1000).toFixed(1).replace(/\.0$/, "")}k`;
+    }
+    return `${value}`;
+};
+
 const monthLabels = ["Jan", "Fev", "Mar", "Abr", "Mai", "Jun", "Jul", "Ago", "Set", "Out", "Nov", "Dez"];
 
 export default function TelaBalanco() {
@@ -39,13 +56,35 @@ export default function TelaBalanco() {
         menorSaldo: 0,
         saldoTotal: 0,
     });
+    const [extraMetrics, setExtraMetrics] = useState({
+        mediaMensal: 0,
+        mesMaiorSaldo: "-",
+        mesMenorSaldo: "-",
+    });
     const [anoSelecionado, setAnoSelecionado] = useState(anoAtual);
     const [isLoading, setIsLoading] = useState(false);
-    const [hasData, setHasData] = useState(false); 
+    const [hasData, setHasData] = useState(false);
+
+    const calcularExtraMetrics = (monthlyValues: number[]) => {
+        const valuesWithData = monthlyValues.filter((v: number) => v !== 0); // considera negativos
+        let mediaMensal = 0;
+        let mesMaiorSaldo = "-";
+        let mesMenorSaldo = "-";
+        if (valuesWithData.length > 0) {
+            mediaMensal = valuesWithData.reduce((a: number, b: number) => a + b, 0) / valuesWithData.length;
+            const maior = Math.max(...valuesWithData);
+            const menor = Math.min(...valuesWithData);
+            const idxMaior = monthlyValues.findIndex((v: number) => v === maior);
+            const idxMenor = monthlyValues.findIndex((v: number) => v === menor);
+            mesMaiorSaldo = monthLabels[idxMaior] || "-";
+            mesMenorSaldo = monthLabels[idxMenor] || "-";
+        }
+        setExtraMetrics({ mediaMensal, mesMaiorSaldo, mesMenorSaldo });
+    };
 
     const fetchMonthlyBalance = async (ano = anoSelecionado) => {
         setIsLoading(true);
-        setHasData(false); 
+        setHasData(false);
         let { url } = useApi();
 
         try {
@@ -55,11 +94,11 @@ export default function TelaBalanco() {
                 params: { ano: ano },
             });
 
-            const data = response.data || [];
-            const monthlyValues = Array(12).fill(0); 
+            const data: any[] = response.data || [];
+            const monthlyValues: number[] = Array(12).fill(0);
 
-            data.forEach((item) => {
-                const monthIndex = Number(item.mes) - 1; 
+            data.forEach((item: any) => {
+                const monthIndex = Number(item.mes) - 1;
                 if (monthIndex >= 0 && monthIndex < 12) {
                     monthlyValues[monthIndex] = Number(item.saldo) || 0;
                 }
@@ -69,20 +108,20 @@ export default function TelaBalanco() {
                 labels: monthLabels,
                 datasets: [
                     {
-                        data: monthlyValues,
-                        color: (opacity = 1) => `rgba(241, 196, 15, ${opacity})`,
-                        strokeWidth: 2,
+                        data: monthlyValues
                     },
                 ],
             });
 
-            const valuesWithData = monthlyValues.filter((v) => v > 0);
+            calcularExtraMetrics(monthlyValues);
+
+            const valuesWithData = monthlyValues.filter((v: number) => v !== 0); // considera negativos
             if (valuesWithData.length > 0) {
                 setHasData(true);
                 setMetrics({
                     maiorSaldo: Math.max(...valuesWithData),
                     menorSaldo: Math.min(...valuesWithData),
-                    saldoTotal: valuesWithData.reduce((a, b) => a + b, 0),
+                    saldoTotal: valuesWithData.reduce((a: number, b: number) => a + b, 0),
                 });
             } else {
                 setMetrics({ maiorSaldo: 0, menorSaldo: 0, saldoTotal: 0 });
@@ -94,6 +133,7 @@ export default function TelaBalanco() {
                 datasets: [{ data: Array(12).fill(0) }],
             });
             setMetrics({ maiorSaldo: 0, menorSaldo: 0, saldoTotal: 0 });
+            setExtraMetrics({ mediaMensal: 0, mesMaiorSaldo: "-", mesMenorSaldo: "-" });
         } finally {
             setIsLoading(false);
         }
@@ -113,6 +153,9 @@ export default function TelaBalanco() {
         barPercentage: 0.5,
         useShadowColorFromDataset: false,
         decimalPlaces: 2,
+        propsForLabels: {
+            fontSize: getResponsiveFontSize(12), // Increased font size
+        }
     };
 
     return (
@@ -158,16 +201,24 @@ export default function TelaBalanco() {
                 <ActivityIndicator size="large" color="#f1c40f" style={styles.chartContainer} />
             ) : hasData ? (
                 <View style={styles.chartContainer}>
-                    <LineChart
-                        data={chartData}
-                        width={width * 0.9} 
-                        height={250} 
-                        chartConfig={chartConfig}
-                        bezier // Linhas curvadas
-                        style={{
-                            borderRadius: 16,
-                        }}
-                    />
+                    <ScrollView horizontal={true} showsHorizontalScrollIndicator={false}>
+                        <LineChart
+                            data={chartData}
+                            width={width * 1.2} 
+                            height={400}
+                            chartConfig={chartConfig}
+                            bezier
+                            style={{ 
+                                borderRadius: 16, 
+                                paddingRight: 30,
+                                paddingLeft: 25 
+                            }}
+                            formatYLabel={formatYLabel}
+                            yAxisLabel="R$ "
+                            segments={10}
+                            fromZero={true}
+                        />
+                    </ScrollView>
                 </View>
             ) : (
                 <View style={[styles.chartContainer, { justifyContent: "center" }]}>
@@ -175,18 +226,35 @@ export default function TelaBalanco() {
                 </View>
             )}
 
-            <View style={styles.metricsContainer}>
-                <View style={styles.metricBox}>
-                    <Text style={styles.metricLabel}>Maior Saldo</Text>
-                    <Text style={styles.metricValue}>R$ {metrics.maiorSaldo.toFixed(2)}</Text>
+            {/* Métricas abaixo do gráfico */}
+            <View style={styles.metricsWrapper}>
+                <View style={styles.metricsContainer}>
+                    <View style={styles.metricBox}>
+                        <Text style={styles.metricLabel}>Maior Saldo</Text>
+                        <Text style={styles.metricValue}>R$ {metrics.maiorSaldo.toFixed(2)}</Text>
+                    </View>
+                    <View style={styles.metricBox}>
+                        <Text style={styles.metricLabel}>Menor Saldo</Text>
+                        <Text style={styles.metricValue}>R$ {metrics.menorSaldo.toFixed(2)}</Text>
+                    </View>
+                    <View style={styles.metricBox}>
+                        <Text style={styles.metricLabel}>Saldo Total</Text>
+                        <Text style={styles.metricValue}>R$ {metrics.saldoTotal.toFixed(2)}</Text>
+                    </View>
                 </View>
-                <View style={styles.metricBox}>
-                    <Text style={styles.metricLabel}>Menor Saldo</Text>
-                    <Text style={styles.metricValue}>R$ {metrics.menorSaldo.toFixed(2)}</Text>
-                </View>
-                <View style={styles.metricBox}>
-                    <Text style={styles.metricLabel}>Saldo Total</Text>
-                    <Text style={styles.metricValue}>R$ {metrics.saldoTotal.toFixed(2)}</Text>
+                <View style={styles.metricsContainer}>
+                    <View style={styles.metricBox}>
+                        <Text style={styles.metricLabel}>Média Mensal</Text>
+                        <Text style={styles.metricValue}>R$ {extraMetrics.mediaMensal.toFixed(2)}</Text>
+                    </View>
+                    <View style={styles.metricBox}>
+                        <Text style={styles.metricLabel}>Mês Maior Saldo</Text>
+                        <Text style={styles.metricValue}>{extraMetrics.mesMaiorSaldo}</Text>
+                    </View>
+                    <View style={styles.metricBox}>
+                        <Text style={styles.metricLabel}>Mês Menor Saldo</Text>
+                        <Text style={styles.metricValue}>{extraMetrics.mesMenorSaldo}</Text>
+                    </View>
                 </View>
             </View>
 
@@ -199,7 +267,7 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: "#1e1e1e",
-        alignItems: "center", 
+        alignItems: "center",
     },
     yearSelector: {
         flexDirection: "row",
@@ -214,30 +282,33 @@ const styles = StyleSheet.create({
         marginHorizontal: 15,
     },
     chartContainer: {
-        width: "90%", 
-        height: 300,
+        width: "90%",
+        height: 420,
         backgroundColor: "#2c2c2c",
         borderRadius: 16,
-        marginBottom: 20,
-        alignItems: "center", 
+        marginBottom: 10, // Reduced space
         justifyContent: "center",
     },
     noData: {
         color: "#bbb",
         fontSize: getResponsiveFontSize(14),
+        alignSelf: 'center'
+    },
+    metricsWrapper: {
+        width: '90%',
     },
     metricsContainer: {
-        width: "90%",
         flexDirection: "row",
         justifyContent: "space-between",
+        marginBottom: 10,
     },
     metricBox: {
         backgroundColor: "#2c2c2c",
-        padding: 15,
+        padding: 10,
         borderRadius: 12,
         alignItems: "center",
         flex: 1,
-        marginHorizontal: 5,
+        marginHorizontal: 3,
     },
     metricLabel: {
         color: "#bbb",
@@ -250,3 +321,4 @@ const styles = StyleSheet.create({
         fontWeight: "bold",
     },
 });
+

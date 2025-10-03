@@ -274,7 +274,7 @@ export default function TelaHome({ navigation }) {
             <PieChart
               data={chartData}
               width={width * 0.5}
-              height={height * 0.18}
+              height={height * 0.16}
               chartConfig={chartConfig}
               accessor={"population"}
               backgroundColor={"transparent"}
@@ -310,7 +310,7 @@ export default function TelaHome({ navigation }) {
           <FlatList
             data={entradasHoje}
             keyExtractor={(item) => item.id.toString()}
-            style={{ maxHeight: height * 0.25 }}
+            style={{ maxHeight: height * 0.2 }}
             showsVerticalScrollIndicator={false}
             renderItem={({ item }) => (
               <TransacaoCard
@@ -369,7 +369,7 @@ const styles = StyleSheet.create({
   content: {
     flex: 1,
     paddingHorizontal: width * 0.05,
-    paddingVertical: height * 0.02,
+    paddingVertical: height * 0.01,
     paddingBottom: height * 0.6,
   },
   section: {

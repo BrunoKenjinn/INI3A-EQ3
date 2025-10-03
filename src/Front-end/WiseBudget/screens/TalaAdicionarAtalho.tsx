@@ -25,7 +25,7 @@ export default function TelaAdicionarAtalhos({ navigation }) {
         debito_mes: 0,
         saldo_total: 0,
         saldo_inicial: 0,
-        saldo:0,
+        saldo: 0,
     });
     const [isLoading, setIsLoading] = useState(true);
     const [atalhos, setAtalhos] = useState([]);
@@ -111,6 +111,7 @@ export default function TelaAdicionarAtalhos({ navigation }) {
         { id: 7, nome: 'Metas', icone: 'bullseye', rota: 'TelaMetas' },
         { id: 8, nome: 'Transações', icone: 'exchange', rota: 'TelaTransacoes' },
         { id: 9, nome: 'Busca de Transações', icone: 'search', rota: 'TelaBusca' },
+        { id: 10, nome: 'Analise Específica', icone: 'search-plus', rota: 'TelaAnalise' },
     ];
 
     if (isLoading) {
@@ -166,9 +167,9 @@ const styles = StyleSheet.create({
         paddingHorizontal: width * 0.05,
     },
     row: {
-        justifyContent: 'flex-start', 
-        gap: width * 0.02, 
-        marginBottom: width * 0.02, 
+        justifyContent: 'flex-start',
+        gap: width * 0.02,
+        marginBottom: width * 0.02,
     },
     atalhoContainer: {
         width: '32%',

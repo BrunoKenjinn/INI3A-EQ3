@@ -77,7 +77,7 @@ export function Balanço({ debito, credito, saldo, saldoTotal }: Props) {
                         <TouchableOpacity onPress={() => setMostrarValores(!mostrarValores)}>
                             <FontAwesome
                                 name={mostrarValores ? "eye" : "eye-slash"}
-                                size={getResponsiveFontSize(16)}
+                                size={getResponsiveFontSize(15)}
                                 color="white"
                             />
                         </TouchableOpacity>
@@ -111,20 +111,18 @@ const styles = StyleSheet.create({
         fontFamily: 'Poppins-Regular',
         color: "#ffffff",
         textAlign: 'center',
-        fontSize: getResponsiveFontSize(14),
+        fontSize: getResponsiveFontSize(13),
     },
     text2: {
         fontFamily: 'Poppins-Bold',
         color: "#ffffff",
-        fontSize: getResponsiveFontSize(17),
+        fontSize: getResponsiveFontSize(16),
     },
     topItem: {
         alignItems: "center",
-        marginBottom: 10,
     },
     bottomItem: {
         alignItems: "center",
-        marginTop: 10,
     },
     valorComOlho: {
         flexDirection: 'row',
