@@ -6,6 +6,7 @@ import {
   FlatList,
   Alert,
   Dimensions,
+  TouchableWithoutFeedback,
 } from "react-native";
 import { Header } from "../components/header";
 import FontAwesome5 from "@expo/vector-icons/FontAwesome5";
@@ -61,6 +62,8 @@ interface Entrada {
 }
 
 export default function TelaHome({ navigation }) {
+  const { signOut } = useAuth();
+  const [isActive, setIsActive] = useState(false);
   const { user } = useAuth();
   const [atalhos, setAtalhos] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -95,7 +98,7 @@ export default function TelaHome({ navigation }) {
     debito_mes: 0,
     saldo_total: 0,
     saldo_inicial: 0,
-    saldo:0,
+    saldo: 0,
   });
 
   const [entradasHoje, setEntradasHoje] = useState<Entrada[]>([]);
@@ -204,42 +207,49 @@ export default function TelaHome({ navigation }) {
 
       carregarTudo();
 
-      return () => { };
+      return () => {};
     }, [])
   );
 
   const handleDelete = async (id: number) => {
-    Alert.alert("Excluir Atalho", "Tem certeza que deseja excluir este atalho?", [
-      { text: "Cancelar", style: "cancel" },
-      {
-        text: "Excluir",
-        onPress: async () => {
-          try {
-            let { url } = useApi();
-            const token = await AsyncStorage.getItem("auth_token");
-            await axios.delete(url + `/api/atalhos/${id}`, {
-              headers: {
-                Authorization: `Bearer ${token}`,
-              },
-            });
-            setAtalhos((prev) => prev.filter((a) => a.id !== id));
-          } catch (error) {
-            console.error(
-              "Erro ao excluir atalho:",
-              error.response?.data || error.message
-            );
-          }
+    Alert.alert(
+      "Excluir Atalho",
+      "Tem certeza que deseja excluir este atalho?",
+      [
+        { text: "Cancelar", style: "cancel" },
+        {
+          text: "Excluir",
+          onPress: async () => {
+            try {
+              let { url } = useApi();
+              const token = await AsyncStorage.getItem("auth_token");
+              await axios.delete(url + `/api/atalhos/${id}`, {
+                headers: {
+                  Authorization: `Bearer ${token}`,
+                },
+              });
+              setAtalhos((prev) => prev.filter((a) => a.id !== id));
+            } catch (error) {
+              console.error(
+                "Erro ao excluir atalho:",
+                error.response?.data || error.message
+              );
+            }
+          },
+          style: "destructive",
         },
-        style: "destructive",
-      },
-    ]);
+      ]
+    );
   };
 
   if (isLoading) {
     return <Loading />;
   }
 
-  const totalPopulation = chartData.reduce((sum, item) => sum + item.population, 0);
+  const totalPopulation = chartData.reduce(
+    (sum, item) => sum + item.population,
+    0
+  );
 
   return (
     <SafeAreaView style={styles.container}>
@@ -256,7 +266,42 @@ export default function TelaHome({ navigation }) {
           rightIconComponent={FontAwesome5}
           infoUser={user}
           onRightPress={() => navigation.navigate("TelaPerfil")}
+          onLeftPress={() => {
+            setIsActive(true);
+          }}
         />
+
+        {isActive && (
+          <TouchableWithoutFeedback
+            onPress={() => setIsActive(false)} 
+          >
+            <View style={styles.overlay} />
+          </TouchableWithoutFeedback>
+        )}
+
+        {isActive && (
+          <SafeAreaView style={styles.sidebar}>
+            <Text style={styles.sidebarText}>Menu</Text>
+            <Text
+              style={styles.sidebarItem}
+              onPress={() => {
+                setIsActive(false);
+                navigation.navigate("TelaPerfil");
+              }}
+            >
+              Perfil
+            </Text>
+            <Text
+              style={styles.sidebarItem}
+              onPress={() => {
+                signOut()
+                setIsActive(false);
+              }}
+            >
+              Sair
+            </Text>
+          </SafeAreaView>
+        )}
         <Balanço
           credito={balanco.credito_mes.toString()}
           debito={balanco.debito_mes.toString()}
@@ -278,19 +323,25 @@ export default function TelaHome({ navigation }) {
               chartConfig={chartConfig}
               accessor={"population"}
               backgroundColor={"transparent"}
-              paddingLeft='30'
+              paddingLeft="30"
               center={[0, 0]}
               hasLegend={false}
             />
 
             <View style={styles.legendContainer}>
               {chartData.map((item, index) => {
-                const percentage = totalPopulation > 0 ? ((item.population / totalPopulation) * 100).toFixed(0) : 0;
+                const percentage =
+                  totalPopulation > 0
+                    ? ((item.population / totalPopulation) * 100).toFixed(0)
+                    : 0;
 
                 return (
                   <View key={index} style={styles.legendItem}>
                     <View
-                      style={[styles.legendColor, { backgroundColor: item.color }]}
+                      style={[
+                        styles.legendColor,
+                        { backgroundColor: item.color },
+                      ]}
                     />
                     <Text style={styles.legendText}>
                       {item.name} ({percentage}%)
@@ -422,7 +473,44 @@ const styles = StyleSheet.create({
     flexWrap: "wrap",
     fontFamily: "Poppins-Regular",
   },
+
   atalhoItem: {
     marginRight: width * 0.03,
+  },
+
+  sidebar: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    bottom: 0,
+    width: width * 0.7,
+    backgroundColor: "#393939",
+    padding: width * 0.05,
+    zIndex: 10,
+    elevation: 10,
+  },
+
+  sidebarText: {
+    color: "#f1c40f",
+    fontSize: getResponsiveFontSize(18),
+    fontFamily: "Poppins-Bold",
+    marginBottom: height * 0.02,
+  },
+
+  sidebarItem: {
+    color: "white",
+    fontSize: getResponsiveFontSize(14),
+    fontFamily: "Poppins-Regular",
+    marginBottom: height * 0.02,
+  },
+
+  overlay: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+    zIndex: 9, 
   },
 });

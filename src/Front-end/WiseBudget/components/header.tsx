@@ -37,6 +37,7 @@ type Props = {
   rightIconComponent?: React.ElementType;
   infoUser?: any;
   onRightPress?: () => void;
+  onLeftPress?: () => void;
 };
 
 export function Header({
@@ -51,13 +52,14 @@ export function Header({
   rightIconComponent: RightIcon = AntDesign,
   infoUser,
   onRightPress,
+  onLeftPress
 }: Props) {
   const navigation = useNavigation<NavigationProp<RootStackParamList>>();
 
   return (
     <View style={styles.header}>
       {leftIconName ? (
-        <TouchableOpacity onPress={() => navigation.goBack()}>
+        <TouchableOpacity onPress={onLeftPress ? onLeftPress : () => { }}>
           <LeftIcon
             name={leftIconName}
             size={leftIconSize}
