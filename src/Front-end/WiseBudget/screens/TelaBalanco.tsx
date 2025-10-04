@@ -1,14 +1,14 @@
 import React, { useState, useEffect } from "react";
 import {
-    View,
-    Text,
-    StyleSheet,
-    TouchableOpacity,
-    Dimensions,
-    ActivityIndicator,
-    StatusBar,
-    SafeAreaView,
-    ScrollView,
+  View,
+  Text,
+  StyleSheet,
+  TouchableOpacity,
+  Dimensions,
+  ActivityIndicator,
+  StatusBar,
+  SafeAreaView,
+  ScrollView,
 } from "react-native";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import { LineChart } from "react-native-chart-kit";
@@ -19,306 +19,340 @@ import { Header } from "../components/header";
 import FontAwesome5 from "@expo/vector-icons/FontAwesome5";
 import CustomBottomTab from "../components/CustomBottomTab";
 
-const { width } = Dimensions.get("window");
+const { width, height } = Dimensions.get("window");
 
 const getResponsiveFontSize = (size) => {
-    if (width < 350) return size * 0.85;
-    if (width < 400) return size * 0.9;
-    return size;
+  if (width < 350) return size * 0.85;
+  if (width < 400) return size * 0.9;
+  return size;
 };
 
 // Corrige a formatação da legenda do eixo Y
 const formatYLabel = (yLabel) => {
-    const value = Number(yLabel);
-    if (isNaN(value)) {
-        return yLabel;
-    }
-    if (value === 0) {
-        return "0";
-    }
-    if (Math.abs(value) >= 1000) {
-        // Mostra sem casas decimais e sem '.0', ex: 1200 -> 1.2k
-        return `${(value / 1000).toFixed(1).replace(/\.0$/, "")}k`;
-    }
-    return `${value}`;
+  const value = Number(yLabel);
+  if (isNaN(value)) {
+    return yLabel;
+  }
+  if (value === 0) {
+    return "0";
+  }
+  if (Math.abs(value) >= 1000) {
+    // Mostra sem casas decimais e sem '.0', ex: 1200 -> 1.2k
+    return `${(value / 1000).toFixed(1).replace(/\.0$/, "")}k`;
+  }
+  return `${value}`;
 };
 
-const monthLabels = ["Jan", "Fev", "Mar", "Abr", "Mai", "Jun", "Jul", "Ago", "Set", "Out", "Nov", "Dez"];
+const monthLabels = [
+  "Jan",
+  "Fev",
+  "Mar",
+  "Abr",
+  "Mai",
+  "Jun",
+  "Jul",
+  "Ago",
+  "Set",
+  "Out",
+  "Nov",
+  "Dez",
+];
 
-export default function TelaBalanco() {
-    const anoAtual = new Date().getFullYear();
-    const [chartData, setChartData] = useState({
+export default function TelaBalanco({ navigation }) {
+  const anoAtual = new Date().getFullYear();
+  const [chartData, setChartData] = useState({
+    labels: monthLabels,
+    datasets: [{ data: Array(12).fill(0) }],
+  });
+  const [metrics, setMetrics] = useState({
+    maiorSaldo: 0,
+    menorSaldo: 0,
+    saldoTotal: 0,
+  });
+  const [extraMetrics, setExtraMetrics] = useState({
+    mediaMensal: 0,
+    mesMaiorSaldo: "-",
+    mesMenorSaldo: "-",
+  });
+  const [anoSelecionado, setAnoSelecionado] = useState(anoAtual);
+  const [isLoading, setIsLoading] = useState(false);
+  const [hasData, setHasData] = useState(false);
+
+  const calcularExtraMetrics = (monthlyValues: number[]) => {
+    const valuesWithData = monthlyValues.filter((v: number) => v !== 0); // considera negativos
+    let mediaMensal = 0;
+    let mesMaiorSaldo = "-";
+    let mesMenorSaldo = "-";
+    if (valuesWithData.length > 0) {
+      mediaMensal =
+        valuesWithData.reduce((a: number, b: number) => a + b, 0) /
+        valuesWithData.length;
+      const maior = Math.max(...valuesWithData);
+      const menor = Math.min(...valuesWithData);
+      const idxMaior = monthlyValues.findIndex((v: number) => v === maior);
+      const idxMenor = monthlyValues.findIndex((v: number) => v === menor);
+      mesMaiorSaldo = monthLabels[idxMaior] || "-";
+      mesMenorSaldo = monthLabels[idxMenor] || "-";
+    }
+    setExtraMetrics({ mediaMensal, mesMaiorSaldo, mesMenorSaldo });
+  };
+
+  const fetchMonthlyBalance = async (ano = anoSelecionado) => {
+    setIsLoading(true);
+    setHasData(false);
+    let { url } = useApi();
+
+    try {
+      const token = await AsyncStorage.getItem("auth_token");
+      const response = await axios.get(`${url}/api/balanco-historico`, {
+        headers: { Authorization: `Bearer ${token}` },
+        params: { ano: ano },
+      });
+
+      const data: any[] = response.data || [];
+      const monthlyValues: number[] = Array(12).fill(0);
+
+      data.forEach((item: any) => {
+        const monthIndex = Number(item.mes) - 1;
+        if (monthIndex >= 0 && monthIndex < 12) {
+          monthlyValues[monthIndex] = Number(item.saldo) || 0;
+        }
+      });
+
+      setChartData({
+        labels: monthLabels,
+        datasets: [
+          {
+            data: monthlyValues,
+          },
+        ],
+      });
+
+      calcularExtraMetrics(monthlyValues);
+
+      const valuesWithData = monthlyValues.filter((v: number) => v !== 0); // considera negativos
+      if (valuesWithData.length > 0) {
+        setHasData(true);
+        setMetrics({
+          maiorSaldo: Math.max(...valuesWithData),
+          menorSaldo: Math.min(...valuesWithData),
+          saldoTotal: valuesWithData.reduce((a: number, b: number) => a + b, 0),
+        });
+      } else {
+        setMetrics({ maiorSaldo: 0, menorSaldo: 0, saldoTotal: 0 });
+      }
+    } catch (error) {
+      console.error("Erro ao buscar histórico de balanço:", error);
+      setChartData({
         labels: monthLabels,
         datasets: [{ data: Array(12).fill(0) }],
-    });
-    const [metrics, setMetrics] = useState({
-        maiorSaldo: 0,
-        menorSaldo: 0,
-        saldoTotal: 0,
-    });
-    const [extraMetrics, setExtraMetrics] = useState({
+      });
+      setMetrics({ maiorSaldo: 0, menorSaldo: 0, saldoTotal: 0 });
+      setExtraMetrics({
         mediaMensal: 0,
         mesMaiorSaldo: "-",
         mesMenorSaldo: "-",
-    });
-    const [anoSelecionado, setAnoSelecionado] = useState(anoAtual);
-    const [isLoading, setIsLoading] = useState(false);
-    const [hasData, setHasData] = useState(false);
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
-    const calcularExtraMetrics = (monthlyValues: number[]) => {
-        const valuesWithData = monthlyValues.filter((v: number) => v !== 0); // considera negativos
-        let mediaMensal = 0;
-        let mesMaiorSaldo = "-";
-        let mesMenorSaldo = "-";
-        if (valuesWithData.length > 0) {
-            mediaMensal = valuesWithData.reduce((a: number, b: number) => a + b, 0) / valuesWithData.length;
-            const maior = Math.max(...valuesWithData);
-            const menor = Math.min(...valuesWithData);
-            const idxMaior = monthlyValues.findIndex((v: number) => v === maior);
-            const idxMenor = monthlyValues.findIndex((v: number) => v === menor);
-            mesMaiorSaldo = monthLabels[idxMaior] || "-";
-            mesMenorSaldo = monthLabels[idxMenor] || "-";
-        }
-        setExtraMetrics({ mediaMensal, mesMaiorSaldo, mesMenorSaldo });
-    };
+  useEffect(() => {
+    fetchMonthlyBalance();
+  }, []);
 
-    const fetchMonthlyBalance = async (ano = anoSelecionado) => {
-        setIsLoading(true);
-        setHasData(false);
-        let { url } = useApi();
+  const chartConfig = {
+    backgroundGradientFrom: "#2c2c2c",
+    backgroundGradientFromOpacity: 1,
+    backgroundGradientTo: "#2c2c2c",
+    backgroundGradientToOpacity: 1,
+    color: (opacity = 1) => `rgba(241, 196, 15, ${opacity})`,
+    strokeWidth: 2,
+    barPercentage: 0.5,
+    useShadowColorFromDataset: false,
+    decimalPlaces: 2,
+    propsForLabels: {
+      fontSize: getResponsiveFontSize(12), // Increased font size
+    },
+  };
 
-        try {
-            const token = await AsyncStorage.getItem("auth_token");
-            const response = await axios.get(`${url}/api/balanco-historico`, {
-                headers: { Authorization: `Bearer ${token}` },
-                params: { ano: ano },
-            });
+  return (
+    <SafeAreaView style={styles.container}>
+      <StatusBar barStyle="light-content" />
+      <Header
+        leftIconName="arrow-left"
+        leftIconColor="#f1c40f"
+        leftIconSize={width * 0.06}
+        leftIconComponent={FontAwesome5}
+        title="Balanço"
+        rightIconName="bell"
+        rightIconColor="#f1c40f"
+        rightIconSize={width * 0.06}
+        rightIconComponent={FontAwesome5}
+        onLeftPress={() => navigation.goBack()}
+      />
 
-            const data: any[] = response.data || [];
-            const monthlyValues: number[] = Array(12).fill(0);
-
-            data.forEach((item: any) => {
-                const monthIndex = Number(item.mes) - 1;
-                if (monthIndex >= 0 && monthIndex < 12) {
-                    monthlyValues[monthIndex] = Number(item.saldo) || 0;
-                }
-            });
-
-            setChartData({
-                labels: monthLabels,
-                datasets: [
-                    {
-                        data: monthlyValues
-                    },
-                ],
-            });
-
-            calcularExtraMetrics(monthlyValues);
-
-            const valuesWithData = monthlyValues.filter((v: number) => v !== 0); // considera negativos
-            if (valuesWithData.length > 0) {
-                setHasData(true);
-                setMetrics({
-                    maiorSaldo: Math.max(...valuesWithData),
-                    menorSaldo: Math.min(...valuesWithData),
-                    saldoTotal: valuesWithData.reduce((a: number, b: number) => a + b, 0),
-                });
-            } else {
-                setMetrics({ maiorSaldo: 0, menorSaldo: 0, saldoTotal: 0 });
+      <View style={styles.yearSelector}>
+        <TouchableOpacity
+          onPress={() => {
+            const novoAno = anoSelecionado - 1;
+            setAnoSelecionado(novoAno);
+            fetchMonthlyBalance(novoAno);
+          }}
+        >
+          <FontAwesome name="chevron-left" size={20} color="#f1c40f" />
+        </TouchableOpacity>
+        <Text style={styles.yearText}>{anoSelecionado}</Text>
+        <TouchableOpacity
+          onPress={() => {
+            const novoAno = anoSelecionado + 1;
+            if (novoAno <= anoAtual) {
+              setAnoSelecionado(novoAno);
+              fetchMonthlyBalance(novoAno);
             }
-        } catch (error) {
-            console.error("Erro ao buscar histórico de balanço:", error);
-            setChartData({
-                labels: monthLabels,
-                datasets: [{ data: Array(12).fill(0) }],
-            });
-            setMetrics({ maiorSaldo: 0, menorSaldo: 0, saldoTotal: 0 });
-            setExtraMetrics({ mediaMensal: 0, mesMaiorSaldo: "-", mesMenorSaldo: "-" });
-        } finally {
-            setIsLoading(false);
-        }
-    };
+          }}
+        >
+          <FontAwesome name="chevron-right" size={20} color="#f1c40f" />
+        </TouchableOpacity>
+      </View>
 
-    useEffect(() => {
-        fetchMonthlyBalance();
-    }, []);
-
-    const chartConfig = {
-        backgroundGradientFrom: "#2c2c2c",
-        backgroundGradientFromOpacity: 1,
-        backgroundGradientTo: "#2c2c2c",
-        backgroundGradientToOpacity: 1,
-        color: (opacity = 1) => `rgba(241, 196, 15, ${opacity})`,
-        strokeWidth: 2,
-        barPercentage: 0.5,
-        useShadowColorFromDataset: false,
-        decimalPlaces: 2,
-        propsForLabels: {
-            fontSize: getResponsiveFontSize(12), // Increased font size
-        }
-    };
-
-    return (
-        <SafeAreaView style={styles.container}>
-            <StatusBar barStyle="light-content" />
-            <Header
-                leftIconName="arrow-left"
-                leftIconColor="#f1c40f"
-                leftIconSize={width * 0.06}
-                leftIconComponent={FontAwesome5}
-                title="Balanço"
-                rightIconName="bell"
-                rightIconColor="#f1c40f"
-                rightIconSize={width * 0.06}
-                rightIconComponent={FontAwesome5}
-            />
-
-            <View style={styles.yearSelector}>
-                <TouchableOpacity
-                    onPress={() => {
-                        const novoAno = anoSelecionado - 1;
-                        setAnoSelecionado(novoAno);
-                        fetchMonthlyBalance(novoAno);
-                    }}
-                >
-                    <FontAwesome name="chevron-left" size={20} color="#f1c40f" />
-                </TouchableOpacity>
-                <Text style={styles.yearText}>{anoSelecionado}</Text>
-                <TouchableOpacity
-                    onPress={() => {
-                        const novoAno = anoSelecionado + 1;
-                        if (novoAno <= anoAtual) {
-                            setAnoSelecionado(novoAno);
-                            fetchMonthlyBalance(novoAno);
-                        }
-                    }}
-                >
-                    <FontAwesome name="chevron-right" size={20} color="#f1c40f" />
-                </TouchableOpacity>
+      {isLoading ? (
+        <ActivityIndicator
+          size="large"
+          color="#f1c40f"
+          style={styles.chartContainer}
+        />
+      ) : hasData ? (
+        <View style={styles.chartContainer}>
+          <ScrollView horizontal={true} showsHorizontalScrollIndicator={false}>
+            <View
+              style={{
+                borderRadius: width * 0.05,
+                overflow: "hidden",
+                marginTop: height * 0.02,
+              }}
+            >
+              <LineChart
+                data={chartData}
+                width={width - width * 0.09}
+                height={height * 0.5}
+                verticalLabelRotation={50}
+                chartConfig={chartConfig}
+                bezier
+                withHorizontalLines={false}
+              />
             </View>
+          </ScrollView>
+        </View>
+      ) : (
+        <View style={[styles.chartContainer, { justifyContent: "center" }]}>
+          <Text style={styles.noData}>
+            Nenhum dado disponível para este ano.
+          </Text>
+        </View>
+      )}
 
-            {isLoading ? (
-                <ActivityIndicator size="large" color="#f1c40f" style={styles.chartContainer} />
-            ) : hasData ? (
-                <View style={styles.chartContainer}>
-                    <ScrollView horizontal={true} showsHorizontalScrollIndicator={false}>
-                        <LineChart
-                            data={chartData}
-                            width={width * 1.2} 
-                            height={400}
-                            chartConfig={chartConfig}
-                            bezier
-                            style={{ 
-                                borderRadius: 16, 
-                                paddingRight: 30,
-                                paddingLeft: 25 
-                            }}
-                            formatYLabel={formatYLabel}
-                            yAxisLabel="R$ "
-                            segments={10}
-                            fromZero={true}
-                        />
-                    </ScrollView>
-                </View>
-            ) : (
-                <View style={[styles.chartContainer, { justifyContent: "center" }]}>
-                    <Text style={styles.noData}>Nenhum dado disponível para este ano.</Text>
-                </View>
-            )}
+      {/* Métricas abaixo do gráfico */}
+      <View style={styles.metricsWrapper}>
+        <View style={styles.metricsContainer}>
+          <View style={styles.metricBox}>
+            <Text style={styles.metricLabel}>Maior Saldo</Text>
+            <Text style={styles.metricValue}>
+              R$ {metrics.maiorSaldo.toFixed(2)}
+            </Text>
+          </View>
+          <View style={styles.metricBox}>
+            <Text style={styles.metricLabel}>Menor Saldo</Text>
+            <Text style={styles.metricValue}>
+              R$ {metrics.menorSaldo.toFixed(2)}
+            </Text>
+          </View>
+          <View style={styles.metricBox}>
+            <Text style={styles.metricLabel}>Saldo Total</Text>
+            <Text style={styles.metricValue}>
+              R$ {metrics.saldoTotal.toFixed(2)}
+            </Text>
+          </View>
+        </View>
+        <View style={styles.metricsContainer}>
+          <View style={styles.metricBox}>
+            <Text style={styles.metricLabel}>Média Mensal</Text>
+            <Text style={styles.metricValue}>
+              R$ {extraMetrics.mediaMensal.toFixed(2)}
+            </Text>
+          </View>
+          <View style={styles.metricBox}>
+            <Text style={styles.metricLabel}>Mês Maior Saldo</Text>
+            <Text style={styles.metricValue}>{extraMetrics.mesMaiorSaldo}</Text>
+          </View>
+          <View style={styles.metricBox}>
+            <Text style={styles.metricLabel}>Mês Menor Saldo</Text>
+            <Text style={styles.metricValue}>{extraMetrics.mesMenorSaldo}</Text>
+          </View>
+        </View>
+      </View>
 
-            {/* Métricas abaixo do gráfico */}
-            <View style={styles.metricsWrapper}>
-                <View style={styles.metricsContainer}>
-                    <View style={styles.metricBox}>
-                        <Text style={styles.metricLabel}>Maior Saldo</Text>
-                        <Text style={styles.metricValue}>R$ {metrics.maiorSaldo.toFixed(2)}</Text>
-                    </View>
-                    <View style={styles.metricBox}>
-                        <Text style={styles.metricLabel}>Menor Saldo</Text>
-                        <Text style={styles.metricValue}>R$ {metrics.menorSaldo.toFixed(2)}</Text>
-                    </View>
-                    <View style={styles.metricBox}>
-                        <Text style={styles.metricLabel}>Saldo Total</Text>
-                        <Text style={styles.metricValue}>R$ {metrics.saldoTotal.toFixed(2)}</Text>
-                    </View>
-                </View>
-                <View style={styles.metricsContainer}>
-                    <View style={styles.metricBox}>
-                        <Text style={styles.metricLabel}>Média Mensal</Text>
-                        <Text style={styles.metricValue}>R$ {extraMetrics.mediaMensal.toFixed(2)}</Text>
-                    </View>
-                    <View style={styles.metricBox}>
-                        <Text style={styles.metricLabel}>Mês Maior Saldo</Text>
-                        <Text style={styles.metricValue}>{extraMetrics.mesMaiorSaldo}</Text>
-                    </View>
-                    <View style={styles.metricBox}>
-                        <Text style={styles.metricLabel}>Mês Menor Saldo</Text>
-                        <Text style={styles.metricValue}>{extraMetrics.mesMenorSaldo}</Text>
-                    </View>
-                </View>
-            </View>
-
-            <CustomBottomTab />
-        </SafeAreaView>
-    );
+      <CustomBottomTab />
+    </SafeAreaView>
+  );
 }
 
 const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        backgroundColor: "#1e1e1e",
-        alignItems: "center",
-    },
-    yearSelector: {
-        flexDirection: "row",
-        justifyContent: "center",
-        alignItems: "center",
-        marginVertical: 20,
-    },
-    yearText: {
-        color: "#fff",
-        fontSize: getResponsiveFontSize(18),
-        fontWeight: "bold",
-        marginHorizontal: 15,
-    },
-    chartContainer: {
-        width: "90%",
-        height: 420,
-        backgroundColor: "#2c2c2c",
-        borderRadius: 16,
-        marginBottom: 10, // Reduced space
-        justifyContent: "center",
-    },
-    noData: {
-        color: "#bbb",
-        fontSize: getResponsiveFontSize(14),
-        alignSelf: 'center'
-    },
-    metricsWrapper: {
-        width: '90%',
-    },
-    metricsContainer: {
-        flexDirection: "row",
-        justifyContent: "space-between",
-        marginBottom: 10,
-    },
-    metricBox: {
-        backgroundColor: "#2c2c2c",
-        padding: 10,
-        borderRadius: 12,
-        alignItems: "center",
-        flex: 1,
-        marginHorizontal: 3,
-    },
-    metricLabel: {
-        color: "#bbb",
-        fontSize: getResponsiveFontSize(14),
-        marginBottom: 5,
-    },
-    metricValue: {
-        color: "#fff",
-        fontSize: getResponsiveFontSize(14),
-        fontWeight: "bold",
-    },
+  container: {
+    flex: 1,
+    backgroundColor: "#1e1e1e",
+    alignItems: "center",
+  },
+  yearSelector: {
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
+    marginVertical: 20,
+  },
+  yearText: {
+    color: "#fff",
+    fontSize: getResponsiveFontSize(18),
+    fontWeight: "bold",
+    marginHorizontal: 15,
+  },
+  chartContainer: {
+    width: "90%",
+    height: 420,
+    backgroundColor: "#2c2c2c",
+    borderRadius: 16,
+    marginBottom: 10, // Reduced space
+    justifyContent: "center",
+  },
+  noData: {
+    color: "#bbb",
+    fontSize: getResponsiveFontSize(14),
+    alignSelf: "center",
+  },
+  metricsWrapper: {
+    width: "90%",
+  },
+  metricsContainer: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    marginBottom: 10,
+  },
+  metricBox: {
+    backgroundColor: "#2c2c2c",
+    padding: 10,
+    borderRadius: 12,
+    alignItems: "center",
+    flex: 1,
+    marginHorizontal: 3,
+  },
+  metricLabel: {
+    color: "#bbb",
+    fontSize: getResponsiveFontSize(14),
+    marginBottom: 5,
+  },
+  metricValue: {
+    color: "#fff",
+    fontSize: getResponsiveFontSize(14),
+    fontWeight: "bold",
+  },
 });
-

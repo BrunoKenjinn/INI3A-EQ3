@@ -6,7 +6,7 @@ import { Balanço } from "../components/balanco";
 import { LineChart } from "react-native-chart-kit";
 import { TransacaoCard } from "../components/transacaoCard";
 
-export default function TelaAnalise(navigation) {
+export default function TelaAnalise({navigation}) {
   const { width, height } = Dimensions.get("window");
 
   const chartConfig = {
@@ -77,6 +77,7 @@ export default function TelaAnalise(navigation) {
         rightIconColor="#f1c40f"
         rightIconSize={width * 0.06}
         rightIconComponent={FontAwesome5}
+        onLeftPress={() => navigation.goBack()}
       />
 
       <View style={{ alignItems: "center" }}>
