@@ -98,6 +98,7 @@ export default function TelaEditarCategoria({ navigation, route }) {
                 rightIconSize={width * 0.06}
                 rightIconColor="#f1c40f"
                 title="Editar Categoria"
+                onLeftPress={() => navigation.goBack()}
             />
             <ScrollView contentContainerStyle={styles.scrollContainer}>
                 <View style={styles.inputArea}>

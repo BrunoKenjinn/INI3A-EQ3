@@ -130,6 +130,7 @@ export default function TelaEditarPerfil({ navigation, route }) {
         leftIconColor="#f1c40f"
         leftIconComponent={FontAwesome5}
         title="Editar Perfil"
+        onLeftPress={() => navigation.goBack()}
       />
       <ScrollView contentContainerStyle={styles.container}>
         <TouchableOpacity style={styles.avatarContainer} onPress={pickImage}>
@@ -165,7 +166,8 @@ export default function TelaEditarPerfil({ navigation, route }) {
             value={email}
             onChangeText={setEmail}
             keyboardType="email-address"
-            placeholderTextColor="#a3a3a3"
+            placeholderTextColor="rgba(100, 100, 100, 0.7)"
+            editable={false}
           />
         </View>
 
@@ -177,6 +179,7 @@ export default function TelaEditarPerfil({ navigation, route }) {
             onChangeText={(text) => setCpf(text)}
             mask="999.999.999-99"
             keyboardType="numeric"
+            editable={false}
           />
         </View>
 

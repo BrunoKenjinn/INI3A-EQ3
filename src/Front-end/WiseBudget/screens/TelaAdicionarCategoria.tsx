@@ -51,6 +51,7 @@ export default function TelaAdicionarCategoria({ navigation }) {
                 rightIconSize={width * 0.06}
                 rightIconColor="#f1c40f"
                 title="Adicionar Categoria"
+                onLeftPress={() => navigation.goBack()}
             />
             <ScrollView contentContainerStyle={styles.scrollContainer}>
                 <View style={styles.inputArea}>

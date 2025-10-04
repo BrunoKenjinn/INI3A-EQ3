@@ -128,6 +128,7 @@ export default function TelaAdicionarAtalhos({ navigation }) {
                 rightIconSize={width * 0.06}
                 rightIconColor="#f1c40f"
                 title="Atalhos"
+                onLeftPress={() => navigation.goBack()}
             />
             <FlatList
                 data={atalhosPredefinidos}

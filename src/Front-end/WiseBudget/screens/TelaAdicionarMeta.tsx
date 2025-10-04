@@ -101,6 +101,7 @@ export default function TelaAdicionarMeta({ navigation }) {
         rightIconColor="#f1c40f"
         rightIconSize={width * 0.06}
         rightIconComponent={FontAwesome5}
+        onLeftPress={() => navigation.goBack()}
       />
       <ScrollView contentContainerStyle={styles.content}>
         <Text style={styles.title}>Criar nova meta</Text>

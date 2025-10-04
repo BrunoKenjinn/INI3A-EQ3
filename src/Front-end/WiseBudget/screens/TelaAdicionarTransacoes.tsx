@@ -132,6 +132,7 @@ export default function TelaAdicionarTransacoes({ navigation }) {
                 leftIconSize={width * 0.06}
                 leftIconComponent={FontAwesome5}
                 title="Adicionar Transação"
+                onLeftPress={() => navigation.goBack()}
             />
             <ScrollView contentContainerStyle={styles.scrollContainer}>
                 <View style={styles.valorContainer}>

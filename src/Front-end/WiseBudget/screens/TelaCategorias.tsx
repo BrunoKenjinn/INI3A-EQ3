@@ -95,7 +95,8 @@ export default function TelaCategorias({ navigation }) {
                 rightIconName="bells"
                 rightIconSize={24}
                 rightIconColor="#f1c40f"
-                title="Categorias" />
+                title="Categorias"
+                onLeftPress={() => navigation.goBack()} />
             <FlatList
                 data={categoriasComAdicionar}
                 keyExtractor={(item, index) => index.toString()}

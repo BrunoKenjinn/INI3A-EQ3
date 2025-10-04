@@ -364,6 +364,7 @@ export default function TelaAnaliseRapida({ navigation }) {
         rightIconSize={width * 0.06}
         rightIconColor="#f1c40f"
         title="Analise Rápida"
+        onLeftPress={() => navigation.goBack()}
       />
       <ScrollView>
         <Analise

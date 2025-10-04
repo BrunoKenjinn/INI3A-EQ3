@@ -48,6 +48,7 @@ export default function TelaConfigs({ navigation }) {
           rightIconColor="#f1c40f"
           rightIconSize={24}
           rightIconComponent={FontAwesome5}
+          onLeftPress={() => navigation.goBack()}
         />
 
         <View

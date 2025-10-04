@@ -120,6 +120,7 @@ export default function TelaBusca({navigation}) {
                 rightIconColor="#f1c40f"
                 rightIconSize={width * 0.06}
                 rightIconComponent={FontAwesome5}
+                onLeftPress={() => navigation.goBack()}
             />
             <ScrollView contentContainerStyle={styles.scrollContainer}>
                 <View style={styles.form}>

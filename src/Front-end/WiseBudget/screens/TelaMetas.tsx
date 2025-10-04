@@ -79,6 +79,7 @@ export default function TelaMetas({ navigation }) {
         rightIconColor="#f1c40f"
         rightIconSize={width * 0.06}
         rightIconComponent={FontAwesome5}
+        onLeftPress={() => navigation.goBack()}
       />
 
       <View style={styles.content}>

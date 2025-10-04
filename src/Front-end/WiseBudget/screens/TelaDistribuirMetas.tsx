@@ -163,6 +163,7 @@ export default function TelaDistribuirMetas({ navigation }) {
         leftIconSize={width * 0.06}
         leftIconComponent={FontAwesome5}
         title="Distribuir Ganhos"
+        onLeftPress={() => navigation.goBack()}
       />
       {loading ? (
         <ActivityIndicator size="large" color="#f1c40f" style={{ flex: 1 }} />
