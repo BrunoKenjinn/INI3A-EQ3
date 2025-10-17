@@ -36,6 +36,7 @@ interface Transacao {
   created_at: string;
   icone: React.ComponentProps<typeof FontAwesome5>["name"];
   cor: string;
+  categoria_id: number;
 }
 
 export default function TelaTransacoes({ navigation }) {
