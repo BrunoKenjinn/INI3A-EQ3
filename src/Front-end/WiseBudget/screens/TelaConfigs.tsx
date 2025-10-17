@@ -22,9 +22,9 @@ const getResponsiveFontSize = (size: number) => {
 
 export default function TelaConfigs({ navigation }) {
   const [modalVisible, setModalVisible] = useState(false);
-  const [modalType, setModalType] = useState<"ajuda" | "sobre" | null>(null);
+  const [modalType, setModalType] = useState<"ajuda" | "sobre" | "tema" | null>(null);
 
-  const abrirModal = (tipo: "ajuda" | "sobre") => {
+  const abrirModal = (tipo: "ajuda" | "sobre" | "tema") => {
     setModalType(tipo);
     setModalVisible(true);
   };
@@ -61,7 +61,7 @@ export default function TelaConfigs({ navigation }) {
           }}
         >
           <View style={styles.botoes}>
-            <TouchableOpacity style={styles.botao}>
+            <TouchableOpacity style={styles.botao} onPress={() => abrirModal("tema")}>
               <View style={styles.iconContainer}>
                 <FontAwesome5
                   name="adjust"
@@ -148,6 +148,11 @@ export default function TelaConfigs({ navigation }) {
                   <Text style={styles.modalText}>Pedro Benjamin Mattar Damiance</Text>
                   <Text style={styles.modalText}>Gabriel Alejandro Castillo Medina</Text>
                   <Text style={styles.modalText}>Raul Garbulho Cury</Text>
+                </>
+              )}
+              {modalType === "tema" && (
+                <>
+                  <Text style={styles.modalTitle}>Tema será implementado em breve.</Text>
                 </>
               )}
 
