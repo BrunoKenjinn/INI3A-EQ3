@@ -162,11 +162,12 @@ export default function TelaEditarTransacoes({ navigation, route }) {
     return (
         <SafeAreaView style={styles.container}>
             <Header
-                leftIconName="times"
+                leftIconName="arrow-left"
                 leftIconColor="#f1c40f"
                 leftIconSize={width * 0.06}
                 leftIconComponent={FontAwesome5}
                 title="Editar Transação"
+                onLeftPress={() => navigation.goBack()}
             />
             <ScrollView contentContainerStyle={styles.scrollContainer}>
                 <View style={styles.valorContainer}>
