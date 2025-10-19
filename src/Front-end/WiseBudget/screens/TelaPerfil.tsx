@@ -107,59 +107,28 @@ export default function TelaPerfil({ navigation }) {
             </TouchableOpacity>
           </View>
 
-          <View style={styles.actionsGrid}>
-            <View style={styles.botao}>
+          <TouchableOpacity style={styles.actionsGrid}>
+            <View style={styles.botao}> 
               <FontAwesome5
-                name="user-friends"
-                size={getResponsiveFontSize(24)}
-                color="#f1c40f"
+                name="cog"
+                size={getResponsiveFontSize(28)}
+                color="white"
               />
-              <Text style={styles.botaoText}>Amigos</Text>
             </View>
-            <View style={styles.botao}>
-              <FontAwesome5
-                name="sliders-h"
-                size={getResponsiveFontSize(24)}
-                color="#f1c40f"
-                onPress={() => navigation.navigate("TelaConfigs")}
-              />
-              <Text style={styles.botaoText}>Configs</Text>
-            </View>
-            <View style={styles.botao}>
-              <FontAwesome5
-                name="comment-alt"
-                size={getResponsiveFontSize(24)}
-                color="#f1c40f"
-              />
-              <Text style={styles.botaoText}>Chat</Text>
-            </View>
-            <View style={styles.botao}>
-              <FontAwesome5
-                name="wallet"
-                size={getResponsiveFontSize(24)}
-                color="#f1c40f"
-              />
-              <Text style={styles.botaoText}>Carteira</Text>
-            </View>
-            <View style={styles.botao}>
-              <FontAwesome5
-                name="piggy-bank"
-                size={getResponsiveFontSize(24)}
-                color="#f1c40f"
-              />
-              <Text style={styles.botaoText}>Cofrinho</Text>
-            </View>
-            <TouchableOpacity style={styles.botao} onPress={signOut}>
+            <Text style={styles.botaoText}>Configs</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity style={styles.actionsGridExit}>
+            <View style={styles.botao}> 
               <FontAwesome5
                 name="sign-out-alt"
-                size={getResponsiveFontSize(24)}
-                color="#f1c40f"
+                size={getResponsiveFontSize(28)}
+                color="white"
               />
-              <Text style={styles.botaoText}>Sair</Text>
-            </TouchableOpacity>
-          </View>
+            </View>
+            <Text style={styles.botaoText}>Sair</Text>
+          </TouchableOpacity>
         </View>
-
         <CustomBottomTab />
       </View>
     </SafeAreaView>
@@ -222,12 +191,17 @@ const styles = StyleSheet.create({
     color: "#2c2c2c",
   },
   actionsGrid: {
+    alignItems: 'center',
     flexDirection: "row",
     flexWrap: "wrap",
-    borderColor: "#f1c40f",
-    borderWidth: 1,
+    backgroundColor: "#f1c40f",
     marginTop: height * 0.04,
     borderRadius: 30,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 6 },
+    shadowOpacity: 0.25,
+    shadowRadius: 10,
+    elevation: 8,
   },
   botao: {
     padding: width * 0.02,
@@ -236,10 +210,25 @@ const styles = StyleSheet.create({
     height: height * 0.12,
     justifyContent: "center",
     gap: height * 0.01,
+    marginRight: width * 0.02
   },
   botaoText: {
-    color: "#f1c40f",
+    color: "white",
     fontFamily: "Poppins-Regular",
-    fontSize: getResponsiveFontSize(12),
+    fontSize: getResponsiveFontSize(20),
+    letterSpacing: width * 0.02
+  },
+  actionsGridExit: {
+    alignItems: 'center',
+    flexDirection: "row",
+    flexWrap: "wrap",
+    backgroundColor: "#dc3545",
+    marginTop: height * 0.04,
+    borderRadius: 30,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 6 },
+    shadowOpacity: 0.25,
+    shadowRadius: 10,
+    elevation: 8,
   },
 });
