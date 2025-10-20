@@ -365,6 +365,7 @@ const styles = StyleSheet.create({
   },
   picker: {
     color: "#ffffff",
+    backgroundColor: "#393939",
   },
   label: {
     color: "#f1c40f",

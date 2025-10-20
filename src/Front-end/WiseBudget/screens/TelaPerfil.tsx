@@ -118,7 +118,7 @@ export default function TelaPerfil({ navigation }) {
             <Text style={styles.botaoText}>Configs</Text>
           </TouchableOpacity>
 
-          <TouchableOpacity style={styles.actionsGridExit}>
+          <TouchableOpacity style={styles.actionsGridExit} onPress={signOut}>
             <View style={styles.botao}> 
               <FontAwesome5
                 name="sign-out-alt"
