@@ -40,6 +40,7 @@
     "react-native-masked-text": "^1.13.0",
     "react-native-modal-datetime-picker": "^18.0.0",
     "react-native-pie-chart": "^4.0.1",
+    "react-native-progress": "^5.0.1",
     "react-native-safe-area-context": "5.4.0",
     "react-native-screens": "~4.11.1",
     "react-native-svg": "^15.13.0",

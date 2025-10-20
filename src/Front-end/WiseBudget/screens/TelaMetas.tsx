@@ -31,26 +31,41 @@ interface MetaType {
   progress: number;
   goalAmount: string;
   subtitle: string;
-  date: string;
-  created_at: string;
+  date: string | null;
   valor_atual_formatado: string;
+  isCompleted: boolean;
 }
 
 export default function TelaMetas({ navigation }) {
   const [metas, setMetas] = useState<MetaType[]>([]);
   const [loading, setLoading] = useState(true);
+  const { url } = useApi();
 
   useFocusEffect(
     useCallback(() => {
       const carregarMetas = async () => {
         setLoading(true);
         try {
-          let { url } = useApi();
           const token = await AsyncStorage.getItem("auth_token");
           const response = await axios.get(url + "/api/metas", {
             headers: { Authorization: `Bearer ${token}` },
           });
-          setMetas(response.data);
+
+          const metasFormatadas = response.data
+            .map((meta: any) => ({
+              ...meta,
+              isCompleted: meta.progress >= 100,
+            }))
+            .sort((a, b) => {
+              if (a.isCompleted !== b.isCompleted) {
+                return a.isCompleted ? 1 : -1;
+              }
+              return (
+                new Date(b.created_at || 0).getTime() -
+                new Date(a.created_at || 0).getTime()
+              );
+            });
+          setMetas(metasFormatadas);
         } catch (error) {
           console.error(
             "Erro ao buscar metas:",
@@ -63,7 +78,7 @@ export default function TelaMetas({ navigation }) {
       };
 
       carregarMetas();
-    }, [])
+    }, [url])
   );
 
   return (
@@ -73,11 +88,11 @@ export default function TelaMetas({ navigation }) {
         leftIconColor="#f1c40f"
         leftIconSize={width * 0.06}
         leftIconComponent={FontAwesome5}
-        title="Metas"
-        rightIconName="plus"
+        title="Minhas Metas"
+        rightIconName="plus-circle"
         onRightPress={() => navigation.navigate("TelaAdicionarMeta")}
         rightIconColor="#f1c40f"
-        rightIconSize={width * 0.06}
+        rightIconSize={width * 0.065}
         rightIconComponent={FontAwesome5}
         onLeftPress={() => navigation.goBack()}
       />
@@ -92,7 +107,7 @@ export default function TelaMetas({ navigation }) {
               style={styles.button}
               onPress={() => navigation.navigate("TelaAdicionarMeta")}
             >
-              <Text style={styles.textButton}>Adicionar meta</Text>
+              <Text style={styles.textButton}>Criar minha primeira meta!</Text>
             </TouchableOpacity>
           </View>
         ) : (
@@ -118,6 +133,7 @@ export default function TelaMetas({ navigation }) {
                   subtitle={item.subtitle}
                   date={item.date}
                   valorAtualFormatado={item.valor_atual_formatado}
+                  isCompleted={item.isCompleted} 
                 />
               )}
               contentContainerStyle={styles.listContent}
@@ -139,33 +155,34 @@ const styles = StyleSheet.create({
   },
   content: {
     flex: 1,
-    flexDirection: "column",
     alignItems: "center",
-    padding: 20,
+    paddingHorizontal: width * 0.05,
+    paddingTop: height * 0.02,
   },
   emptyContainer: {
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
+    paddingHorizontal: width * 0.1,
     marginBottom: height * 0.1,
   },
   emptyText: {
     color: "#a3a3a3",
     textAlign: "center",
-    marginTop: height * 0.1,
-    fontSize: width * 0.04,
+    fontSize: getResponsiveFontSize(16),
     fontFamily: "Poppins-Regular",
+    marginBottom: height * 0.03,
   },
   listContent: {
-    paddingBottom: height * 0.1,
+    paddingBottom: height * 0.12,
   },
   button: {
     backgroundColor: "#f1c40f",
     paddingVertical: height * 0.018,
-    width: "50%",
+    paddingHorizontal: width * 0.1,
     alignItems: "center",
-    borderRadius: 15,
-    marginTop: height * 0.05,
+    borderRadius: 25,
+    marginTop: height * 0.02,
   },
   textButton: {
     fontSize: getResponsiveFontSize(15),
@@ -181,6 +198,11 @@ const styles = StyleSheet.create({
     width: "100%",
     borderRadius: 15,
     marginBottom: height * 0.03,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.15,
+    shadowRadius: 5,
+    elevation: 4,
   },
   distribuirButtonText: {
     fontSize: getResponsiveFontSize(16),
@@ -188,4 +210,5 @@ const styles = StyleSheet.create({
     color: "#2c2c2c",
     marginLeft: 10,
   },
+  
 });

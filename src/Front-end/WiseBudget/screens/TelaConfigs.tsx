@@ -22,7 +22,9 @@ const getResponsiveFontSize = (size: number) => {
 
 export default function TelaConfigs({ navigation }) {
   const [modalVisible, setModalVisible] = useState(false);
-  const [modalType, setModalType] = useState<"ajuda" | "sobre" | "tema" | null>(null);
+  const [modalType, setModalType] = useState<"ajuda" | "sobre" | "tema" | null>(
+    null
+  );
 
   const abrirModal = (tipo: "ajuda" | "sobre" | "tema") => {
     setModalType(tipo);
@@ -61,7 +63,10 @@ export default function TelaConfigs({ navigation }) {
           }}
         >
           <View style={styles.botoes}>
-            <TouchableOpacity style={styles.botao} onPress={() => abrirModal("tema")}>
+            <TouchableOpacity
+              style={styles.botao}
+              onPress={() => abrirModal("tema")}
+            >
               <View style={styles.iconContainer}>
                 <FontAwesome5
                   name="adjust"
@@ -124,35 +129,54 @@ export default function TelaConfigs({ navigation }) {
                 <>
                   <Text style={styles.modalTitle}>Ajuda e Suporte</Text>
                   <Text style={styles.modalText}>
-                    <b>📧 Email: </b> suporte@meuapp.com
+                    <Text style={{ fontWeight: "bold" }}>📧 Email: </Text>{" "}
+                    suporte@meuapp.com
                   </Text>
                   <Text style={styles.modalText}>
-                    <b>📞 Telefone: </b> (11) 99999-9999
+                    <Text style={{ fontWeight: "bold" }}>📞 Telefone: </Text>{" "}
+                    (11) 99999-9999
                   </Text>
                   <Text style={styles.modalText}>
-                   <b> 💬 WhatsApp: </b>(11) 98888-8888
+                    <Text style={{ fontWeight: "bold" }}>💬 WhatsApp: </Text>
+                    (11) 98888-8888
                   </Text>
                 </>
               )}
               {modalType === "sobre" && (
                 <>
                   <Text style={styles.modalTitle}>Sobre o Aplicativo</Text>
-                  <Text style={styles.modalText}><b>Versão:</b> 1.0.0</Text>
-                  <Text style={styles.modalText}><b>Criado em: </b> 2025</Text>
                   <Text style={styles.modalText}>
-                    <b>Desenvolvido por: </b>
+                    <Text style={{ fontWeight: "bold" }}>Versão: </Text>1.0.0
+                  </Text>
+                  <Text style={styles.modalText}>
+                    <Text style={{ fontWeight: "bold" }}>Criado em: </Text>2025
+                  </Text>
+                  <Text style={styles.modalText}>
+                    <Text style={{ fontWeight: "bold" }}>
+                      Desenvolvido por:
+                    </Text>
                   </Text>
                   <Text style={styles.modalText}>Bruno Kenji Nomura</Text>
-                  <Text style={styles.modalText}>Murilo Yuki Kasama Nakata</Text>
-                  <Text style={styles.modalText}>Thomaz Ferreira De Godoi Bueno</Text>
-                  <Text style={styles.modalText}>Pedro Benjamin Mattar Damiance</Text>
-                  <Text style={styles.modalText}>Gabriel Alejandro Castillo Medina</Text>
+                  <Text style={styles.modalText}>
+                    Murilo Yuki Kasama Nakata
+                  </Text>
+                  <Text style={styles.modalText}>
+                    Thomaz Ferreira De Godoi Bueno
+                  </Text>
+                  <Text style={styles.modalText}>
+                    Pedro Benjamin Mattar Damiance
+                  </Text>
+                  <Text style={styles.modalText}>
+                    Gabriel Alejandro Castillo Medina
+                  </Text>
                   <Text style={styles.modalText}>Raul Garbulho Cury</Text>
                 </>
               )}
               {modalType === "tema" && (
                 <>
-                  <Text style={styles.modalTitle}>Tema será implementado em breve.</Text>
+                  <Text style={styles.modalTitle}>
+                    Tema será implementado em breve.
+                  </Text>
                 </>
               )}
 

@@ -107,7 +107,7 @@ export default function TelaPerfil({ navigation }) {
             </TouchableOpacity>
           </View>
 
-          <TouchableOpacity style={styles.actionsGrid}>
+          <TouchableOpacity style={styles.actionsGrid} onPress={() => navigation.navigate("TelaConfigs")}>
             <View style={styles.botao}> 
               <FontAwesome5
                 name="cog"
