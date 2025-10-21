@@ -7,6 +7,7 @@ import {
   Alert,
   Dimensions,
   TouchableWithoutFeedback,
+  TouchableOpacity,
 } from "react-native";
 import { Header } from "../components/header";
 import FontAwesome5 from "@expo/vector-icons/FontAwesome5";
@@ -90,7 +91,12 @@ export default function TelaHome({ navigation }) {
 
   const atalhosComAdicionar = [
     ...atalhos,
-    { id: 0, nome: "Adicionar", icone: "plus", rota: "TelaAdicionarAtalho" },
+    {
+      id: 0,
+      nome: "Adicionar",
+      icone: "plus-circle",
+      rota: "TelaAdicionarAtalho",
+    },
   ];
 
   const [balanco, setBalanco] = useState<BalancoData>({
@@ -272,34 +278,48 @@ export default function TelaHome({ navigation }) {
         />
 
         {isActive && (
-          <TouchableWithoutFeedback
-            onPress={() => setIsActive(false)} 
-          >
+          <TouchableWithoutFeedback onPress={() => setIsActive(false)}>
             <View style={styles.overlay} />
           </TouchableWithoutFeedback>
         )}
 
         {isActive && (
           <SafeAreaView style={styles.sidebar}>
-            <Text style={styles.sidebarText}>Menu</Text>
-            <Text
-              style={styles.sidebarItem}
+            <Text style={styles.sidebarTitle}>Menu</Text>
+            <TouchableOpacity
+              style={styles.sidebarItemContainer}
               onPress={() => {
                 setIsActive(false);
-                navigation.navigate("TelaPerfil");
+                navigation.navigate("TelaConfigs");
               }}
             >
-              Perfil
-            </Text>
-            <Text
-              style={styles.sidebarItem}
+              <FontAwesome5
+                name="cog"
+                size={getResponsiveFontSize(16)}
+                color="#f1c40f"
+                style={styles.sidebarIcon}
+              />
+              <Text style={styles.sidebarItemText}>Configurações</Text>
+            </TouchableOpacity>
+            <View style={styles.sidebarDivider} />
+
+            <TouchableOpacity
+              style={styles.sidebarItemContainer}
               onPress={() => {
-                signOut()
+                signOut();
                 setIsActive(false);
               }}
             >
-              Sair
-            </Text>
+              <FontAwesome5
+                name="sign-out-alt"
+                size={getResponsiveFontSize(16)}
+                color="#e74c3c"
+                style={styles.sidebarIcon}
+              />
+              <Text style={[styles.sidebarItemText, styles.sidebarItemSair]}>
+                Sair
+              </Text>
+            </TouchableOpacity>
           </SafeAreaView>
         )}
         <Balanço
@@ -483,25 +503,49 @@ const styles = StyleSheet.create({
     top: 0,
     left: 0,
     bottom: 0,
-    width: width * 0.7,
-    backgroundColor: "#393939",
-    padding: width * 0.05,
+    width: width * 0.75,
+    backgroundColor: "#343a40", 
+    paddingTop: height * 0.05, 
+    paddingHorizontal: width * 0.05,
     zIndex: 10,
     elevation: 10,
+    borderRightWidth: 1, 
+    borderRightColor: "#495057",
   },
-
-  sidebarText: {
+  sidebarTitle: {
     color: "#f1c40f",
-    fontSize: getResponsiveFontSize(18),
+    fontSize: getResponsiveFontSize(20), 
     fontFamily: "Poppins-Bold",
-    marginBottom: height * 0.02,
+    marginBottom: height * 0.04, 
+    textAlign: "center",
   },
-
-  sidebarItem: {
-    color: "white",
-    fontSize: getResponsiveFontSize(14),
-    fontFamily: "Poppins-Regular",
-    marginBottom: height * 0.02,
+  sidebarItemContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    paddingVertical: height * 0.018, 
+    marginBottom: height * 0.005, 
+    borderRadius: 8, 
+    paddingHorizontal: width * 0.02, 
+  },
+  sidebarIcon: {
+    width: width * 0.08, 
+    textAlign: "center", 
+    marginRight: width * 0.04, 
+  },
+  sidebarItemText: {
+    color: "#ecf0f1", 
+    fontSize: getResponsiveFontSize(15),
+    fontFamily: "Poppins-Medium",
+  },
+  sidebarItemSair: {
+    color: "#e74c3c", 
+    fontFamily: "Poppins-Bold", 
+  },
+  sidebarDivider: {
+    height: 1,
+    backgroundColor: "#495057",
+    marginVertical: height * 0.025, 
+    marginHorizontal: width * 0.02, 
   },
 
   overlay: {
@@ -510,7 +554,7 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     bottom: 0,
-    backgroundColor: "rgba(0, 0, 0, 0.5)",
-    zIndex: 9, 
+    backgroundColor: "rgba(0, 0, 0, 0.6)", // Mais escuro
+    zIndex: 9,
   },
 });

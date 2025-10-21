@@ -26,22 +26,12 @@ const getResponsiveFontSize = (size: number) => {
 
 type BackendConfigs = {
   todas_ativas: boolean;
-  som_ativo: boolean;
-  vibracao_ativa: boolean;
-  push_ativo: boolean;
-  email_ativo: boolean;
   lembretes_ativos: boolean;
-  modo_silencioso: boolean;
 };
 
 type FrontendConfigs = {
   todasAtivas: boolean;
-  somAtivo: boolean;
-  vibracaoAtiva: boolean;
-  pushAtivo: boolean;
-  emailAtivo: boolean;
   lembretesAtivos: boolean;
-  modoSilencioso: boolean;
 };
 
 export default function TelaConfigsNotificacoes({ navigation }) {
@@ -60,12 +50,7 @@ export default function TelaConfigsNotificacoes({ navigation }) {
 
       setConfigs({
         todasAtivas: data.todas_ativas,
-        somAtivo: data.som_ativo,
-        vibracaoAtiva: data.vibracao_ativa,
-        pushAtivo: data.push_ativo,
-        emailAtivo: data.email_ativo,
         lembretesAtivos: data.lembretes_ativos,
-        modoSilencioso: data.modo_silencioso,
       });
     } catch (error) {
       console.log(
@@ -82,12 +67,7 @@ export default function TelaConfigsNotificacoes({ navigation }) {
     async (configsParaSalvar: FrontendConfigs) => {
       const payload: BackendConfigs = {
         todas_ativas: configsParaSalvar.todasAtivas,
-        som_ativo: configsParaSalvar.somAtivo,
-        vibracao_ativa: configsParaSalvar.vibracaoAtiva,
-        push_ativo: configsParaSalvar.pushAtivo,
-        email_ativo: configsParaSalvar.emailAtivo,
         lembretes_ativos: configsParaSalvar.lembretesAtivos,
-        modo_silencioso: configsParaSalvar.modoSilencioso,
       };
 
       try {
@@ -117,12 +97,7 @@ export default function TelaConfigsNotificacoes({ navigation }) {
   const toggleTodas = (value: boolean) => {
     setConfigs({
       todasAtivas: value,
-      somAtivo: value,
-      vibracaoAtiva: value,
-      pushAtivo: value,
-      emailAtivo: value,
       lembretesAtivos: value,
-      modoSilencioso: configs?.modoSilencioso || false,
     });
   };
 
@@ -166,41 +141,11 @@ export default function TelaConfigsNotificacoes({ navigation }) {
           value={configs.todasAtivas}
           onChange={toggleTodas}
         />
-
-        <ConfigItem
-          label="Som"
-          value={configs.somAtivo}
-          onChange={(value) => setValorConfig("somAtivo", value)}
-          disabled={!configs.todasAtivas}
-        />
-        <ConfigItem
-          label="Vibração"
-          value={configs.vibracaoAtiva}
-          onChange={(value) => setValorConfig("vibracaoAtiva", value)}
-          disabled={!configs.todasAtivas}
-        />
-        <ConfigItem
-          label="Notificações Push"
-          value={configs.pushAtivo}
-          onChange={(value) => setValorConfig("pushAtivo", value)}
-          disabled={!configs.todasAtivas}
-        />
-        <ConfigItem
-          label="Notificações por E-mail"
-          value={configs.emailAtivo}
-          onChange={(value) => setValorConfig("emailAtivo", value)}
-          disabled={!configs.todasAtivas}
-        />
+        
         <ConfigItem
           label="Lembretes (metas, transações)"
           value={configs.lembretesAtivos}
           onChange={(value) => setValorConfig("lembretesAtivos", value)}
-          disabled={!configs.todasAtivas}
-        />
-        <ConfigItem
-          label="Silenciar à noite (22h às 7h)"
-          value={configs.modoSilencioso}
-          onChange={(value) => setValorConfig("modoSilencioso", value)}
           disabled={!configs.todasAtivas}
         />
       </View>

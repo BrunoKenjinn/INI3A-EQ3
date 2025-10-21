@@ -110,9 +110,6 @@ export default function TelaLogin({ navigation }) {
                                 />
                             </TouchableOpacity>
                         </View>
-                        <TouchableOpacity>
-                            <Text style={styles.textLink}>Esqueceu a senha?</Text>
-                        </TouchableOpacity>
                     </View>
                 </View>
 
@@ -187,13 +184,6 @@ const styles = StyleSheet.create({
         backgroundColor: '#393939',
         fontSize: getResponsiveFontSize(14),
         color: '#ffffff',
-        fontFamily: 'Poppins-Regular',
-    },
-    textLink: {
-        color: '#EAE3C9',
-        textAlign: "right",
-        marginTop: height * 0.01,
-        fontSize: getResponsiveFontSize(12),
         fontFamily: 'Poppins-Regular',
     },
     buttons: {

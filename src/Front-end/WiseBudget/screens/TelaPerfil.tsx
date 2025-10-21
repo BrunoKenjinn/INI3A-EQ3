@@ -18,6 +18,7 @@ import { Icon } from "react-native-elements";
 import axios from "axios";
 import useApi from "../hooks/useApi";
 import { Loading } from "../components/loading";
+import { ScrollView } from "react-native-gesture-handler";
 
 const { width, height } = Dimensions.get("window");
 
@@ -86,48 +87,57 @@ export default function TelaPerfil({ navigation }) {
         />
 
         <View style={styles.infoSheet}>
-          <View style={styles.infoHeader}>
-            <View>
-              <Text style={styles.userName}>
-                {infoUser?.nome || "Carregando..."}
-              </Text>
-              <Text style={styles.userInfo}>
-                {infoUser?.idade
-                  ? `${infoUser.idade} anos, Pessoa Física`
-                  : "Idade não disponível"}
-              </Text>
+          <ScrollView contentContainerStyle={styles.scrollContent}>
+            <View style={styles.infoHeader}>
+              <View style={styles.nameContainer}>
+                <Text
+                  style={styles.userName}
+                  numberOfLines={2}
+                  ellipsizeMode="tail"
+                >
+                  {infoUser?.nome || "Carregando..."}
+                </Text>
+                <Text style={styles.userInfo}>
+                  {infoUser?.idade
+                    ? `${infoUser.idade} anos, Pessoa Física`
+                    : "Idade não disponível"}
+                </Text>
+              </View>
+              <TouchableOpacity
+                style={styles.botaoEditar}
+                onPress={() =>
+                  navigation.navigate("TelaEditarPerfil", { usuario: infoUser })
+                }
+              >
+                <Text style={styles.botaoEditarText}>Editar</Text>
+              </TouchableOpacity>
             </View>
+
             <TouchableOpacity
-              style={styles.botaoEditar}
-              onPress={() =>
-                navigation.navigate("TelaEditarPerfil", { usuario: infoUser })
-              }
+              style={styles.actionsGrid}
+              onPress={() => navigation.navigate("TelaMetas")}
             >
-              <Text style={styles.botaoEditarText}>Editar</Text>
+              <View style={styles.botao}>
+                <FontAwesome5
+                  name="bullseye"
+                  size={getResponsiveFontSize(28)}
+                  color="white"
+                />
+              </View>
+              <Text style={styles.botaoText}>Metas</Text>
             </TouchableOpacity>
-          </View>
 
-          <TouchableOpacity style={styles.actionsGrid} onPress={() => navigation.navigate("TelaConfigs")}>
-            <View style={styles.botao}> 
-              <FontAwesome5
-                name="cog"
-                size={getResponsiveFontSize(28)}
-                color="white"
-              />
-            </View>
-            <Text style={styles.botaoText}>Configs</Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity style={styles.actionsGridExit} onPress={signOut}>
-            <View style={styles.botao}> 
-              <FontAwesome5
-                name="sign-out-alt"
-                size={getResponsiveFontSize(28)}
-                color="white"
-              />
-            </View>
-            <Text style={styles.botaoText}>Sair</Text>
-          </TouchableOpacity>
+            <TouchableOpacity style={styles.actionsGridExit} onPress={signOut}>
+              <View style={styles.botao}>
+                <FontAwesome5
+                  name="sign-out-alt"
+                  size={getResponsiveFontSize(28)}
+                  color="white"
+                />
+              </View>
+              <Text style={styles.botaoText}>Sair</Text>
+            </TouchableOpacity>
+          </ScrollView>
         </View>
         <CustomBottomTab />
       </View>
@@ -159,13 +169,21 @@ const styles = StyleSheet.create({
     borderTopLeftRadius: width * 0.08,
     borderTopRightRadius: width * 0.08,
     height: height * 0.65,
-    padding: width * 0.05,
+  },
+  scrollContent: {
+      padding: width * 0.05, 
+      paddingBottom: height * 0.1, 
   },
   infoHeader: {
     flexDirection: "row",
     justifyContent: "space-between",
-    alignItems: "center",
+    alignItems: "flex-start",
     marginTop: height * 0.02,
+    marginBottom: height * 0.03,
+  },
+  nameContainer: {
+      flexShrink: 1,
+      marginRight: width * 0.03, 
   },
   userName: {
     color: "#f1c40f",
@@ -176,6 +194,7 @@ const styles = StyleSheet.create({
     color: "#a3a3a3",
     fontFamily: "Poppins-Regular",
     fontSize: getResponsiveFontSize(14),
+    marginTop: 2, 
   },
   botaoEditar: {
     backgroundColor: "#f1c40f",
@@ -184,6 +203,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: width * 0.06,
     alignItems: "center",
     justifyContent: "center",
+    alignSelf: 'flex-start', 
   },
   botaoEditarText: {
     fontFamily: "Poppins-Bold",
@@ -191,7 +211,7 @@ const styles = StyleSheet.create({
     color: "#2c2c2c",
   },
   actionsGrid: {
-    alignItems: 'center',
+    alignItems: "center",
     flexDirection: "row",
     flexWrap: "wrap",
     backgroundColor: "#f1c40f",
@@ -210,16 +230,16 @@ const styles = StyleSheet.create({
     height: height * 0.12,
     justifyContent: "center",
     gap: height * 0.01,
-    marginRight: width * 0.02
+    marginRight: width * 0.02,
   },
   botaoText: {
     color: "white",
     fontFamily: "Poppins-Regular",
     fontSize: getResponsiveFontSize(20),
-    letterSpacing: width * 0.02
+    letterSpacing: width * 0.02,
   },
   actionsGridExit: {
-    alignItems: 'center',
+    alignItems: "center",
     flexDirection: "row",
     flexWrap: "wrap",
     backgroundColor: "#dc3545",

@@ -106,12 +106,10 @@ export default function TelaAdicionarAtalhos({ navigation }) {
         { id: 2, nome: 'Balanço', icone: 'money', rota: 'TelaBalanco' },
         { id: 3, nome: 'Análise Rápida', icone: 'flash', rota: 'TelaAnaliseRapida' },
         { id: 4, nome: 'Categorias', icone: 'th-large', rota: 'TelaCategorias' },
-        { id: 5, nome: 'Configurações', icone: 'cog', rota: 'TelaConfigs' },
-        { id: 6, nome: 'Adicionar Transações', icone: 'plus', rota: 'TelaAdicionarTransacoes' },
-        { id: 7, nome: 'Metas', icone: 'bullseye', rota: 'TelaMetas' },
-        { id: 8, nome: 'Transações', icone: 'exchange', rota: 'TelaTransacoes' },
-        { id: 9, nome: 'Busca de Transações', icone: 'search', rota: 'TelaBusca' },
-        { id: 10, nome: 'Analise Específica', icone: 'search-plus', rota: 'TelaAnalise' },
+        { id: 5, nome: 'Adicionar Transações', icone: 'plus', rota: 'TelaAdicionarTransacoes' },
+        { id: 6, nome: 'Transações', icone: 'exchange', rota: 'TelaTransacoes' },
+        { id: 7, nome: 'Busca de Transações', icone: 'search', rota: 'TelaBusca' },
+        { id: 8, nome: 'Analise Específica', icone: 'search-plus', rota: 'TelaAnalise' },
     ];
 
     if (isLoading) {
