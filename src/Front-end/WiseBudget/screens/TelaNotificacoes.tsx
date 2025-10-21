@@ -145,9 +145,9 @@ export default function TelaNotificacoes({ navigation }) {
         leftIconSize={width * 0.06}
         leftIconComponent={FontAwesome5}
         title="Notificações"
-        rightIconName="bell"
-        rightIconColor="#f1c40f"
-        rightIconSize={width * 0.06}
+        rightIconName=""
+        rightIconColor=""
+        rightIconSize={0}
         rightIconComponent={FontAwesome5}
         onLeftPress={() => navigation.goBack()}
       />

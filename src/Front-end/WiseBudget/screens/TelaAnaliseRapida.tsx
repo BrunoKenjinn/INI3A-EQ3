@@ -360,9 +360,9 @@ export default function TelaAnaliseRapida({ navigation }) {
         leftIconName="arrowleft"
         leftIconSize={width * 0.06}
         leftIconColor="#f1c40f"
-        rightIconName="bells"
-        rightIconSize={width * 0.06}
-        rightIconColor="#f1c40f"
+        rightIconName=""
+        rightIconSize={0}
+        rightIconColor=""
         title="Analise Rápida"
         onLeftPress={() => navigation.goBack()}
       />

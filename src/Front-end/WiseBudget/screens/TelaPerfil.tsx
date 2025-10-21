@@ -6,6 +6,7 @@ import {
   View,
   StyleSheet,
   Dimensions,
+  Modal,
 } from "react-native";
 import { Header } from "../components/header";
 import FontAwesome5 from "@expo/vector-icons/FontAwesome5";
@@ -29,6 +30,7 @@ const getResponsiveFontSize = (size: number) => {
 export default function TelaPerfil({ navigation }) {
   const [isLoading, setIsLoading] = useState(true);
   const [infoUser, setInfoUser] = useState<any>(null);
+  const [modalVisible, setModalVisible] = useState(false)
   const { signOut } = useAuth();
 
   useFocusEffect(
@@ -74,6 +76,7 @@ export default function TelaPerfil({ navigation }) {
           rightIconSize={width * 0.06}
           rightIconComponent={FontAwesome5}
           onLeftPress={() => navigation.goBack()}
+          onRightPress={() => navigation.navigate('TelaNotificacoes')}
         />
 
         <Image
@@ -107,8 +110,11 @@ export default function TelaPerfil({ navigation }) {
             </TouchableOpacity>
           </View>
 
-          <TouchableOpacity style={styles.actionsGrid} onPress={() => navigation.navigate("TelaConfigs")}>
-            <View style={styles.botao}> 
+          <TouchableOpacity
+            style={styles.actionsGrid}
+            onPress={() => navigation.navigate("TelaConfigs")}
+          >
+            <View style={styles.botao}>
               <FontAwesome5
                 name="cog"
                 size={getResponsiveFontSize(28)}
@@ -118,8 +124,8 @@ export default function TelaPerfil({ navigation }) {
             <Text style={styles.botaoText}>Configs</Text>
           </TouchableOpacity>
 
-          <TouchableOpacity style={styles.actionsGridExit} onPress={signOut}>
-            <View style={styles.botao}> 
+          <TouchableOpacity style={styles.actionsGridExit} onPress={() => setModalVisible(true)}>
+            <View style={styles.botao}>
               <FontAwesome5
                 name="sign-out-alt"
                 size={getResponsiveFontSize(28)}
@@ -131,6 +137,115 @@ export default function TelaPerfil({ navigation }) {
         </View>
         <CustomBottomTab />
       </View>
+
+      <Modal
+        transparent
+        visible={modalVisible}
+        animationType="fade"
+        onRequestClose={() => setModalVisible(false)}
+      >
+        <View
+          style={{
+            flex: 1,
+            backgroundColor: "rgba(0,0,0,0.6)",
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+        >
+          <View
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              width: width * 0.8,
+              backgroundColor: "#2c2c2c",
+              padding: width * 0.05,
+              borderRadius: width * 0.02,
+            }}
+          >
+            <FontAwesome5
+              name="sign-out-alt"
+              size={getResponsiveFontSize(32)}
+              color="#f1c40f"
+            />
+            <Text
+              style={{
+                fontFamily: "Poppins-Bold",
+                fontSize: getResponsiveFontSize(18),
+                color: "#f1c40f",
+                marginTop: height * 0.02,
+              }}
+            >
+              Deseja Sair?
+            </Text>
+            <Text
+              style={{
+                fontFamily: "Poppins-Regular",
+                fontSize: getResponsiveFontSize(12),
+                color: "white",
+                textAlign: "center",
+                marginTop: height * 0.02,
+              }}
+            >
+              Você tem certeza que deseja sair de sua conta?
+            </Text>
+            <View style={{display: 'flex', flexDirection: 'row', gap: width * 0.02, width: '100%'}}>
+              <TouchableOpacity
+                onPress={() => {
+                  setModalVisible(false);
+                }}
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  width: "50%",
+                  padding: width * 0.02,
+                  borderColor: "#f1c40f",
+                  borderWidth: 1,
+                  borderRadius: width * 0.02,
+                  marginTop: height * 0.02,
+                }}
+              >
+                <Text
+                  style={{
+                    fontFamily: "Poppins-Bold",
+                    color: "#f1c40f",
+                    fontSize: getResponsiveFontSize(14),
+                  }}
+                >
+                  Voltar
+                </Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                onPress={() => {
+                  signOut;
+                  setModalVisible(false);
+                }}
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  width: "50%",
+                  padding: width * 0.02,
+                  backgroundColor: "#dc3545",
+                  borderRadius: width * 0.02,
+                  marginTop: height * 0.02,
+                }}
+              >
+                <Text
+                  style={{
+                    fontFamily: "Poppins-Bold",
+                    color: "white",
+                    fontSize: getResponsiveFontSize(14),
+                  }}
+                >
+                  Sim, Tenho
+                </Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      </Modal>
     </SafeAreaView>
   );
 }
@@ -191,7 +306,7 @@ const styles = StyleSheet.create({
     color: "#2c2c2c",
   },
   actionsGrid: {
-    alignItems: 'center',
+    alignItems: "center",
     flexDirection: "row",
     flexWrap: "wrap",
     backgroundColor: "#f1c40f",
@@ -210,16 +325,16 @@ const styles = StyleSheet.create({
     height: height * 0.12,
     justifyContent: "center",
     gap: height * 0.01,
-    marginRight: width * 0.02
+    marginRight: width * 0.02,
   },
   botaoText: {
     color: "white",
     fontFamily: "Poppins-Regular",
     fontSize: getResponsiveFontSize(20),
-    letterSpacing: width * 0.02
+    letterSpacing: width * 0.02,
   },
   actionsGridExit: {
-    alignItems: 'center',
+    alignItems: "center",
     flexDirection: "row",
     flexWrap: "wrap",
     backgroundColor: "#dc3545",

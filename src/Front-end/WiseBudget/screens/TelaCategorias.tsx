@@ -92,9 +92,9 @@ export default function TelaCategorias({ navigation }) {
             <Header leftIconName="arrowleft"
                 leftIconSize={24}
                 leftIconColor="#f1c40f"
-                rightIconName="bells"
-                rightIconSize={24}
-                rightIconColor="#f1c40f"
+                rightIconName=""
+                rightIconSize={0}
+                rightIconColor=""
                 title="Categorias"
                 onLeftPress={() => navigation.goBack()} />
             <FlatList
