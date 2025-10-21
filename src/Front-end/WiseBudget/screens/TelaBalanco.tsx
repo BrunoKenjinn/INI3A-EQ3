@@ -191,6 +191,7 @@ export default function TelaBalanco({ navigation }) {
         rightIconSize={width * 0.06}
         rightIconComponent={FontAwesome5}
         onLeftPress={() => navigation.goBack()}
+        onRightPress={() => navigation.navigate('TelaNotificacoes')}
       />
 
       <View style={styles.yearSelector}>

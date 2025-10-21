@@ -122,9 +122,9 @@ export default function TelaAdicionarAtalhos({ navigation }) {
                 leftIconName="arrowleft"
                 leftIconSize={width * 0.06}
                 leftIconColor="#f1c40f"
-                rightIconName="bells"
-                rightIconSize={width * 0.06}
-                rightIconColor="#f1c40f"
+                rightIconName=""
+                rightIconSize={0}
+                rightIconColor=""
                 title="Atalhos"
                 onLeftPress={() => navigation.goBack()}
             />

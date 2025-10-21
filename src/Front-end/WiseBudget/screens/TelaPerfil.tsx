@@ -6,6 +6,8 @@ import {
   View,
   StyleSheet,
   Dimensions,
+  Modal,
+  Alert,
 } from "react-native";
 import { Header } from "../components/header";
 import FontAwesome5 from "@expo/vector-icons/FontAwesome5";
@@ -30,6 +32,7 @@ const getResponsiveFontSize = (size: number) => {
 export default function TelaPerfil({ navigation }) {
   const [isLoading, setIsLoading] = useState(true);
   const [infoUser, setInfoUser] = useState<any>(null);
+  const [modalVisible, setModalVisible] = useState(false);
   const { signOut } = useAuth();
 
   useFocusEffect(
@@ -75,6 +78,7 @@ export default function TelaPerfil({ navigation }) {
           rightIconSize={width * 0.06}
           rightIconComponent={FontAwesome5}
           onLeftPress={() => navigation.goBack()}
+          onRightPress={() => navigation.navigate("TelaNotificacoes")}
         />
 
         <Image
@@ -127,7 +131,10 @@ export default function TelaPerfil({ navigation }) {
               <Text style={styles.botaoText}>Metas</Text>
             </TouchableOpacity>
 
-            <TouchableOpacity style={styles.actionsGridExit} onPress={signOut}>
+            <TouchableOpacity
+              style={styles.actionsGridExit}
+              onPress={() => setModalVisible(true)}
+            >
               <View style={styles.botao}>
                 <FontAwesome5
                   name="sign-out-alt"
@@ -141,6 +148,122 @@ export default function TelaPerfil({ navigation }) {
         </View>
         <CustomBottomTab />
       </View>
+
+      <Modal
+        transparent
+        visible={modalVisible}
+        animationType="fade"
+        onRequestClose={() => setModalVisible(false)}
+      >
+        <View
+          style={{
+            flex: 1,
+            backgroundColor: "rgba(0,0,0,0.6)",
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+        >
+          <View
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              width: width * 0.8,
+              backgroundColor: "#2c2c2c",
+              padding: width * 0.05,
+              borderRadius: width * 0.02,
+            }}
+          >
+            <FontAwesome5
+              name="sign-out-alt"
+              size={getResponsiveFontSize(32)}
+              color="#f1c40f"
+            />
+            <Text
+              style={{
+                fontFamily: "Poppins-Bold",
+                fontSize: getResponsiveFontSize(18),
+                color: "#f1c40f",
+                marginTop: height * 0.02,
+              }}
+            >
+              Deseja Sair?
+            </Text>
+            <Text
+              style={{
+                fontFamily: "Poppins-Regular",
+                fontSize: getResponsiveFontSize(12),
+                color: "white",
+                textAlign: "center",
+                marginTop: height * 0.02,
+              }}
+            >
+              Você tem certeza que deseja sair de sua conta?
+            </Text>
+            <View
+              style={{
+                display: "flex",
+                flexDirection: "row",
+                gap: width * 0.02,
+                width: "100%",
+              }}
+            >
+              <TouchableOpacity
+                onPress={() => {
+                  setModalVisible(false);
+                }}
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  width: "50%",
+                  padding: width * 0.02,
+                  borderColor: "#f1c40f",
+                  borderWidth: 1,
+                  borderRadius: width * 0.02,
+                  marginTop: height * 0.02,
+                }}
+              >
+                <Text
+                  style={{
+                    fontFamily: "Poppins-Bold",
+                    color: "#f1c40f",
+                    fontSize: getResponsiveFontSize(14),
+                  }}
+                >
+                  Voltar
+                </Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                onPress={() => {
+                  signOut();
+                  setModalVisible(false);
+                }}
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  width: "50%",
+                  padding: width * 0.02,
+                  backgroundColor: "#dc3545",
+                  borderRadius: width * 0.02,
+                  marginTop: height * 0.02,
+                }}
+              >
+                <Text
+                  style={{
+                    fontFamily: "Poppins-Bold",
+                    color: "white",
+                    fontSize: getResponsiveFontSize(14),
+                  }}
+                >
+                  Sim, Tenho
+                </Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      </Modal>
     </SafeAreaView>
   );
 }
@@ -171,8 +294,8 @@ const styles = StyleSheet.create({
     height: height * 0.65,
   },
   scrollContent: {
-      padding: width * 0.05, 
-      paddingBottom: height * 0.1, 
+    padding: width * 0.05,
+    paddingBottom: height * 0.1,
   },
   infoHeader: {
     flexDirection: "row",
@@ -182,8 +305,8 @@ const styles = StyleSheet.create({
     marginBottom: height * 0.03,
   },
   nameContainer: {
-      flexShrink: 1,
-      marginRight: width * 0.03, 
+    flexShrink: 1,
+    marginRight: width * 0.03,
   },
   userName: {
     color: "#f1c40f",
@@ -194,7 +317,7 @@ const styles = StyleSheet.create({
     color: "#a3a3a3",
     fontFamily: "Poppins-Regular",
     fontSize: getResponsiveFontSize(14),
-    marginTop: 2, 
+    marginTop: 2,
   },
   botaoEditar: {
     backgroundColor: "#f1c40f",
@@ -203,7 +326,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: width * 0.06,
     alignItems: "center",
     justifyContent: "center",
-    alignSelf: 'flex-start', 
+    alignSelf: "flex-start",
   },
   botaoEditarText: {
     fontFamily: "Poppins-Bold",

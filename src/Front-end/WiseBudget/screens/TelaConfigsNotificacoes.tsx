@@ -128,9 +128,9 @@ export default function TelaConfigsNotificacoes({ navigation }) {
         leftIconSize={24}
         leftIconComponent={FontAwesome5}
         title="Configurações de Notificações"
-        rightIconName="bell"
-        rightIconColor="#f1c40f"
-        rightIconSize={24}
+        rightIconName=""
+        rightIconColor=""
+        rightIconSize={0}
         rightIconComponent={FontAwesome5}
         onLeftPress={() => navigation.goBack()}
       />

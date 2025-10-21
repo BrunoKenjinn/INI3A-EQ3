@@ -116,9 +116,9 @@ export default function TelaBusca({navigation}) {
                 leftIconSize={width * 0.06}
                 leftIconComponent={FontAwesome5}
                 title="Busca"
-                rightIconName="bell"
-                rightIconColor="#f1c40f"
-                rightIconSize={width * 0.06}
+                rightIconName=""
+                rightIconColor=""
+                rightIconSize={0}
                 rightIconComponent={FontAwesome5}
                 onLeftPress={() => navigation.goBack()}
             />

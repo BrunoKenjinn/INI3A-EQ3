@@ -1,11 +1,12 @@
 import { Image, SafeAreaView, StyleSheet, Text, TextInput, TouchableOpacity, View, Alert, Dimensions, ScrollView } from "react-native";
 import { useState } from "react";
+import { useAuth } from "../App";
+import { MaskedTextInput } from "react-native-mask-text";
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
-import { useAuth } from "../App";
-import { MaskedTextInput } from "react-native-mask-text";
 import useApi from "../hooks/useApi";
+import validate from 'react-native-email-validator';
 
 const { width, height } = Dimensions.get("window");
 

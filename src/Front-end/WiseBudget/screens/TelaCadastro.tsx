@@ -1,8 +1,10 @@
-import { useState } from 'react';
-import { View, Text, Image, StyleSheet, TextInput, TouchableOpacity, Alert, ScrollView, SafeAreaView, Dimensions } from "react-native";
-import axios from 'axios';
+import { useEffect, useState } from 'react';
+import { View, Text, Image, StyleSheet, TextInput, TouchableOpacity, Alert, ScrollView, SafeAreaView, Dimensions, Modal } from "react-native";
 import { MaskedTextInput } from "react-native-mask-text";
+import validate from 'react-native-email-validator';
+import axios from 'axios';
 import useApi from "../hooks/useApi";
+import FontAwesome5 from '@expo/vector-icons/FontAwesome5';
 
 const { width, height } = Dimensions.get("window");
 
@@ -20,6 +22,7 @@ export default function TelaCadastro({ navigation }) {
     const [dataNascimento, setDataNascimento] = useState('');
     const [password, setPassword] = useState('');
     const [passwordConfirmation, setPasswordConfirmation] = useState('');
+    const [modalVisible, setModalVisible] = useState(false);
 
     const handleRegister = async () => {
 
@@ -40,9 +43,7 @@ export default function TelaCadastro({ navigation }) {
                     Accept: 'application/json',
                 }
             });
-
-            Alert.alert("Sucesso", "Usuário cadastrado com sucesso.");
-            navigation.navigate('TelaLogin');
+            setModalVisible(true)
         } catch (error) {
             console.log('Erro no cadastro:', error.response?.data);
             const errors = error.response?.data?.errors;
@@ -85,6 +86,9 @@ export default function TelaCadastro({ navigation }) {
                             keyboardType="email-address"
                             autoCapitalize="none"
                         />
+                        {
+                            email.length > 0 ? (validate(email) ? null : <Text style={styles.validation}>Email Inválido</Text>) : null
+                        }
                     </View>
 
                     <View style={styles.inputGroup}>
@@ -98,6 +102,9 @@ export default function TelaCadastro({ navigation }) {
                             keyboardType="numeric"
                             mask='999.999.999-99'
                         />
+                        {
+                            cpf.length > 0 ? (cpf.length === 14 ? null : <Text style={styles.validation}>CPF Inválido</Text>) : null
+                        }
                     </View>
 
                     <View style={styles.inputGroup}>
@@ -111,6 +118,9 @@ export default function TelaCadastro({ navigation }) {
                             keyboardType="phone-pad"
                             mask="(99) 99999-9999"
                         />
+                        {
+                            celular.length > 0 ? (celular.length === 15 ? null : <Text style={styles.validation}>Celular Inválido</Text>) : null
+                        }
                     </View>
 
                     <View style={styles.inputGroup}>
@@ -148,10 +158,13 @@ export default function TelaCadastro({ navigation }) {
                             onChangeText={setPasswordConfirmation}
                             secureTextEntry
                         />
+                        {
+                            passwordConfirmation.length > 0 ? (passwordConfirmation === password ? null : <Text style={styles.validation}>Senhas diferentes</Text>) : null
+                        }
                     </View>
 
                     <View style={{ alignItems: 'center' }}>
-                        <TouchableOpacity style={styles.button} onPress={handleRegister}>
+                        <TouchableOpacity style={styles.button} onPress={handleRegister} disabled={nome.length === 0 || !validate(email) || cpf.length !== 14 || celular.length !== 15 || dataNascimento.length === 0 || passwordConfirmation !== password}>
                             <Text style={styles.textButton}>Cadastrar</Text>
                         </TouchableOpacity>
 
@@ -163,6 +176,29 @@ export default function TelaCadastro({ navigation }) {
                     </View>
                 </View>
             </ScrollView>
+            <Modal
+                transparent
+                visible={modalVisible}
+                animationType="fade"
+                onRequestClose={() => setModalVisible(false)}
+            >
+                <View style={{flex: 1, backgroundColor: "rgba(0,0,0,0.6)", justifyContent: "center", alignItems: "center",}}>
+                    <View style={{display: 'flex', flexDirection: 'column', alignItems: 'center', width: width * 0.8, backgroundColor: '#2c2c2c', padding: width * 0.05, borderRadius: width * 0.02}}>
+                        <FontAwesome5 
+                            name="user-check" 
+                            size={getResponsiveFontSize(32)} 
+                            color="#f1c40f" 
+                        />
+                        <Text style={{fontFamily: 'Poppins-Bold', fontSize: getResponsiveFontSize(18), color: '#f1c40f', marginTop: height * 0.02}}>Cadastro Concluído!</Text>
+                        <Text style={{fontFamily: 'Poppins-Regular', fontSize: getResponsiveFontSize(12), color: 'white', textAlign: 'center', marginTop: height * 0.02}}>
+                            Seu cadastro foi realizado com sucesso. Você já pode fazer login.
+                        </Text>
+                        <TouchableOpacity onPress={() => {navigation.navigate('TelaLogin'); setModalVisible(false)}} style={{display: 'flex', alignItems: 'center', justifyContent: 'center', width: '100%', padding: width * 0.02, backgroundColor: '#f1c40f', borderRadius: width * 0.02, marginTop: height * 0.02}}>
+                            <Text style={{fontFamily: 'Poppins-Bold', color: '#393939', fontSize: getResponsiveFontSize(14)}}>Voltar ao Login</Text>
+                        </TouchableOpacity>
+                    </View>
+                </View>
+            </Modal>
         </SafeAreaView>
     );
 }
@@ -236,5 +272,8 @@ const styles = StyleSheet.create({
         color: '#f1c40f',
         fontFamily: 'Poppins-Bold',
         textDecorationLine: 'underline'
+    },
+    validation: {
+        color: '#dc3545',
     }
 });
