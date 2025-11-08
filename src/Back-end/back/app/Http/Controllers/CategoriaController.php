@@ -1,26 +1,23 @@
 <?php
 
-namespace App\Http\Controllers; 
+namespace App\Http\Controllers;
 
 use App\Models\Categoria;
-use App\Models\User; 
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Validation\Rule; 
+use Illuminate\Validation\Rule;
 
-class CategoriaController extends Controller 
+class CategoriaController extends Controller
 {
 
     public function index(Request $request)
     {
         $user = $request->user();
 
-        $categorias = Categoria::where('user_id', $user->id)->get();
-
-        if ($categorias->isEmpty() && $user->categorias()->count() === 0) {
-            $this->copiarCategoriasModeloParaUsuario($user);
-            $categorias = Categoria::where('user_id', $user->id)->get();
-        }
+        $categorias = Categoria::where('user_id', $user->id)
+            ->where('visivel', true)
+            ->get();
 
         return response()->json($categorias);
     }
@@ -48,7 +45,7 @@ class CategoriaController extends Controller
         $categoria->nome = $validatedData['nome'];
         $categoria->icone = $validatedData['icone'];
         $categoria->cor = $validatedData['cor'];
-        $categoria->user_id = $user->id; 
+        $categoria->user_id = $user->id;
         $categoria->save();
 
         return response()->json($categoria, 201);
@@ -97,33 +94,4 @@ class CategoriaController extends Controller
     }
 
 
-    private function copiarCategoriasModeloParaUsuario(User $user)
-    {
-        $categoriasModelo = Categoria::whereNull('user_id')->get();
-
-        if ($categoriasModelo->isEmpty()) {
-            return;
-        }
-
-        $categoriasParaNovoUsuario = [];
-        $timestamp = now();
-
-        foreach ($categoriasModelo as $modelo) {
-            $existe = Categoria::where('user_id', $user->id)->where('nome', $modelo->nome)->exists();
-            if (!$existe) {
-                $categoriasParaNovoUsuario[] = [
-                    'nome' => $modelo->nome,
-                    'icone' => $modelo->icone,
-                    'cor' => $modelo->cor,
-                    'user_id' => $user->id,
-                    'created_at' => $timestamp,
-                    'updated_at' => $timestamp,
-                ];
-            }
-        }
-
-        if (!empty($categoriasParaNovoUsuario)) {
-            Categoria::insert($categoriasParaNovoUsuario);
-        }
-    }
 }

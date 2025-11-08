@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Models\User;
 
 class Transacao extends Model
 {
@@ -21,11 +22,14 @@ class Transacao extends Model
         'proxima_execucao',
         'user_id',
         'categoria_id',
+        'meta_id',
     ];
 
     protected $casts = [
         'valor' => 'float',
         'recorrente' => 'boolean',
+        'data' => 'date:Y-m-d',
+        'proxima_execucao' => 'date:Y-m-d',
     ];
 
     public function user()
@@ -36,5 +40,10 @@ class Transacao extends Model
     public function categoria()
     {
         return $this->belongsTo(Categoria::class);
+    }
+
+    public function meta()
+    {
+        return $this->belongsTo(Meta::class);
     }
 }

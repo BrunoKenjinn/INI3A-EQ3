@@ -7,6 +7,9 @@ use App\Http\Controllers\LoginController;
 use App\Http\Controllers\UsuarioController;
 use App\Http\Controllers\AtalhoController;
 use App\Http\Controllers\TransacaoController;
+use App\Http\Controllers\MetaController;
+use App\Http\Controllers\NotificacaoController;
+use App\Http\Controllers\ConfigNotificacaoController;
 
 /*
 |--------------------------------------------------------------------------
@@ -19,8 +22,10 @@ use App\Http\Controllers\TransacaoController;
 |
 */
 
-Route::post('/',['as'=>'login.entrar',
-'uses'=>'App\Http\Controllers\LoginController@entrar']);
+Route::post('/', [
+    'as' => 'login.entrar',
+    'uses' => 'App\Http\Controllers\LoginController@entrar'
+]);
 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
@@ -36,17 +41,17 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::put('/usuario', [UsuarioController::class, 'atualizar'])->name('usuario.atualizar');
     Route::delete('/usuario', [UsuarioController::class, 'excluir'])->name('usuario.excluir');
     Route::put('/definir-saldo-inicial', [UsuarioController::class, 'definirSaldoInicial']);
-    
+
     //home
     Route::get('/atalhos', [AtalhoController::class, 'index'])->name('atalhos.index');
     Route::post('/atalhos', [AtalhoController::class, 'salvar'])->name('atalhos.salvar');
-    Route::put('/atalhos/{atalho}', [AtalhoController::class, 'atualizar'])->name('atalhos.atualizar'); 
+    Route::put('/atalhos/{atalho}', [AtalhoController::class, 'atualizar'])->name('atalhos.atualizar');
     Route::delete('/atalhos/{atalho}', [AtalhoController::class, 'excluir'])->name('atalhos.excluir');
 
     //categorias
     Route::get('/categorias', [CategoriaController::class, 'index'])->name('categorias.index');
     Route::post('/categorias', [CategoriaController::class, 'salvar'])->name('categorias.salvar');
-    Route::put('/categorias/{categoria}', [CategoriaController::class, 'atualizar'])->name('categorias.atualizar'); 
+    Route::put('/categorias/{categoria}', [CategoriaController::class, 'atualizar'])->name('categorias.atualizar');
     Route::delete('/categorias/{categoria}', [CategoriaController::class, 'excluir'])->name('categorias.excluir');
 
     //transacoes
@@ -57,9 +62,30 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/gastos-por-categoria', [TransacaoController::class, 'getGastosPorCategoria']);
     Route::get('/entradas-hoje', [TransacaoController::class, 'getEntradasHoje']);
     Route::get('/balanco', [TransacaoController::class, 'getBalanco']);
+    Route::get('/principais-transacoes', [TransacaoController::class, 'getPrincipaisTransacoes']);
+    Route::get('/gastos-por-dia', [TransacaoController::class, 'getGastosPorDia']);
+    Route::get('/busca-transacoes', [TransacaoController::class, 'buscar']);
+    Route::get('/balanco-historico', [TransacaoController::class, 'getBalancoHistorico']);
+    Route::get('/transacoes/categoria-especifica', [TransacaoController::class, 'getDadosCategoriaEspecifica']);
+    Route::get('/transacoes/maiores-por-categoria', [TransacaoController::class, 'getMaioresTransacoesPorCategoria']);
 
+    //metas
+    Route::get('/metas', [MetaController::class, 'index']);
+    Route::post('/metas', [MetaController::class, 'store']);
+    Route::put('/metas/{meta}', [MetaController::class, 'update']);
+    Route::delete('/metas/{meta}', [MetaController::class, 'destroy']);
+    Route::get('/metas/sugestao-investimento', [MetaController::class, 'getSugestaoInvestimento']);
+    Route::post('/metas/depositar', [MetaController::class, 'depositarEmMetas']);
+
+    //notificacoes
+    Route::get('/notificacoes', [NotificacaoController::class, 'index']);
+    Route::patch('/notificacoes/{notificacao}/lida', [NotificacaoController::class, 'marcarComoLida']);
+
+    //configs notificacoes
+    Route::get('/config-notificacoes', [ConfigNotificacaoController::class, 'show']);
+    Route::put('/config-notificacoes', [ConfigNotificacaoController::class, 'update']);
 
     Route::post('/logout', [LoginController::class, 'sair']);
 
-    
+
 });

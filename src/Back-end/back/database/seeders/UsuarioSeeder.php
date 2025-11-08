@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Events\UserRegistered;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use App\Models\User;
@@ -13,15 +14,15 @@ class UsuarioSeeder extends Seeder
      */
     public function run(): void
     {
-            $dados=[
+            $user = User::create([
                 'nome'=>"Thomaz",
                 'email'=>"thomaz.bueno@unesp.br",
                 'cpf'=>"21211111111",
                 'celular'=>"99299",
                 'data_nascimento'=>'2012-12-12', // Formato YYYY-MM-DD
                 'password'=>bcrypt("123"),
-                'foto'=>"",
-            ];
-        User::create($dados);
+            ]);
+        event(new UserRegistered($user));
+        
     }
 }

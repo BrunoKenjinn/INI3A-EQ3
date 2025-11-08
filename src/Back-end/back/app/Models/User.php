@@ -24,8 +24,8 @@ class User extends Authenticatable
 
     public function getIdadeAttribute()
     {
-        return $this->data_nascimento 
-            ? Carbon::parse($this->data_nascimento)->age 
+        return $this->data_nascimento
+            ? Carbon::parse($this->data_nascimento)->age
             : null;
     }
 
@@ -68,5 +68,15 @@ class User extends Authenticatable
     public function transacoes()
     {
         return $this->hasMany(Transacao::class);
+    }
+
+    public function metas()
+    {
+        return $this->hasMany(Meta::class);
+    }
+
+    public function configNotificacao()
+    {
+        return $this->hasOne(ConfigNotificacao::class);
     }
 }

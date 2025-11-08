@@ -4,25 +4,19 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use App\Models\User;
 
-class Meta extends Model
+class ConfigNotificacao extends Model
 {
     use HasFactory;
-
+    protected $table = 'config_notificacoes';
     protected $fillable = [
-        'nome',
-        'valor_alvo',
-        'data_limite',
+        'user_id',
+        'todas_ativas',
+        'lembretes_ativos',
     ];
 
-    public function user()
+    public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
-    }
-
-    public function transacoes()
-    {
-        return $this->hasMany(Transacao::class);
     }
 }

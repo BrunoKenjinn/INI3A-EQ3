@@ -2,12 +2,18 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\UserRegistered;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rule;
 use App\Models\User;
 use Illuminate\Support\Facades\Validator;
 use Carbon\Carbon;
+use App\Models\Transacao;
+use Str;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Storage;
+use App\Models\Notificacao;
 
 class UsuarioController extends Controller
 {
@@ -15,12 +21,12 @@ class UsuarioController extends Controller
     {
         try {
             $validator = Validator::make($request->all(), [
-                'nome'              => 'required|string|max:255',
-                'email'             => 'required|string|email|max:255|unique:users',
-                'cpf'               => 'required|string|size:11|unique:users',
-                'celular'           => 'required|string|max:15',
-                'data_nascimento'   => 'required|date_format:d/m/Y|before:today',
-                'password'          => 'required|string|min:6|confirmed',
+                'nome' => 'required|string|max:255',
+                'email' => 'required|string|email|max:255|unique:users',
+                'cpf' => 'required|string|size:11|unique:users',
+                'celular' => 'required|string|max:15',
+                'data_nascimento' => 'required|date_format:d/m/Y|before:today',
+                'password' => 'required|string|min:6|confirmed',
             ]);
 
             if ($validator->fails()) {
@@ -28,12 +34,18 @@ class UsuarioController extends Controller
             }
 
             $user = User::create([
-                'nome'              => $request->nome,
-                'email'             => $request->email,
-                'cpf'               => $request->cpf,
-                'celular'           => $request->celular,
-                'data_nascimento'   => Carbon::createFromFormat('d/m/Y', $request->data_nascimento)->format('Y-m-d'),
-                'password'          => Hash::make($request->password),
+                'nome' => $request->nome,
+                'email' => $request->email,
+                'cpf' => $request->cpf,
+                'celular' => $request->celular,
+                'data_nascimento' => Carbon::createFromFormat('d/m/Y', $request->data_nascimento)->format('Y-m-d'),
+                'password' => Hash::make($request->password),
+            ]);
+            event(new UserRegistered($user));
+            Notificacao::create([
+                'user_id' => $user->id,
+                'titulo' => 'Seja bem-vindo(a) ao WiseBudget!',
+                'mensagem' => 'Sua conta foi criada com sucesso! Explore o app e comece a organizar suas finanças.',
             ]);
 
             return response()->json(['message' => 'Usuário cadastrado com sucesso.'], 201);
@@ -73,7 +85,12 @@ class UsuarioController extends Controller
             'celular' => 'sometimes|required|string|max:15',
             'data_nascimento' => 'sometimes|required|date_format:d/m/Y|before:today',
             'password' => 'sometimes|nullable|string|min:6|confirmed',
+            'foto' => 'sometimes|nullable|string',
         ]);
+
+        if (isset($validated['foto']) && $validated['foto']) {
+            $user->foto = $validated['foto'];
+        }
 
         if (isset($validated['data_nascimento'])) {
             $validated['data_nascimento'] = Carbon::createFromFormat('d/m/Y', $validated['data_nascimento'])->format('Y-m-d');
@@ -102,7 +119,7 @@ class UsuarioController extends Controller
         $user = $request->user();
 
         $validated = $request->validate([
-            'saldo_inicial' => 'required|numeric'
+            'saldo_inicial' => 'required|numeric|min:0'
         ]);
 
         if ($user->saldo_inicial !== null) {
@@ -112,6 +129,32 @@ class UsuarioController extends Controller
         $user->saldo_inicial = $validated['saldo_inicial'];
         $user->save();
 
-        return response()->json(['message' => 'Saldo inicial definido com sucesso!', 'user' => $user]);
+        $categoriaSaldoInicial = $user->categorias()->firstOrCreate(
+            ['nome' => 'Saldo Inicial'],
+            [
+                'icone' => 'usd',
+                'cor' => '#f1c40f',
+                'visivel' => false
+            ]
+        );
+
+        Transacao::create([
+            'user_id' => $user->id,
+            'valor' => $validated['saldo_inicial'],
+            'tipo' => 'entrada',
+            'fonte' => 'Saldo Inicial',
+            'data' => now(),
+            'categoria_id' => $categoriaSaldoInicial->id,
+        ]);
+        Notificacao::create([
+            'user_id' => $user->id,
+            'titulo' => 'Saldo Inicial Definido!',
+            'mensagem' => 'Ótimo! Seu saldo de R$ ' . number_format($validated['saldo_inicial'], 2, ',', '.') . ' foi registrado. Agora você pode começar a adicionar suas transações.',
+        ]);
+
+        return response()->json([
+            'message' => 'Saldo inicial definido com sucesso!',
+            'user' => $user
+        ]);
     }
 }
