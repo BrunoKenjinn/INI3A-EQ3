@@ -45,7 +45,7 @@ const styles = StyleSheet.create({
     text: {
         fontFamily: 'Poppins-Regular',
         textAlign: 'center',
-        fontSize: getResponsiveFontSize(14),
+        fontSize: getResponsiveFontSize(13),
         marginTop: width * 0.02,
     }
 });

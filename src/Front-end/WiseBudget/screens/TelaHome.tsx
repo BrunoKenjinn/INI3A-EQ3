@@ -387,7 +387,7 @@ export default function TelaHome({ navigation }) {
               <TransacaoCard
                 descricao={item.descricao}
                 valor={item.valor}
-                hora={new Date(item.created_at).toLocaleTimeString([], {
+                hora={new Date(item.created_at).toLocaleTimeString("pt-BR",{ 
                   hour: "2-digit",
                   minute: "2-digit",
                 })}

@@ -429,7 +429,7 @@ export default function TelaAnaliseRapida({ navigation }) {
           <View style={styles.chartContainer}>
             <PieChart
               data={chartData}
-              width={width * 0.5}
+              width={width * 0.4}
               height={height * 0.18}
               chartConfig={chartConfig}
               accessor={"population"}

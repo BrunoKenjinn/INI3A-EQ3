@@ -149,7 +149,7 @@ const styles = StyleSheet.create({
         backgroundColor: '#393939',
         padding: width * 0.03,
         borderRadius: 10,
-        height: height * 0.05,
+        height: height * 0.06,
         width: '100%',
         color: '#ffffff',
         fontSize: getResponsiveFontSize(14),
@@ -186,7 +186,7 @@ const styles = StyleSheet.create({
     pickerContainer: {
         backgroundColor: '#393939',
         borderRadius: 10,
-        height: height * 0.05,
+        height: height * 0.06,
         justifyContent: 'center',
         width: '100%',
         overflow: 'hidden',

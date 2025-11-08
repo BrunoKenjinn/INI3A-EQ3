@@ -42,7 +42,7 @@ export function Analise({ total, economia, maiorGasto, iconeMaiorGasto, corMaior
 
     return (
         <View style={styles.container}>
-            <Text style={styles.label}>Total</Text>
+            <Text style={styles.label}>Saldo Total</Text>
             <View style={styles.valorComOlho}>
                 <Text style={styles.total}>
                     {mostrarValores ? formatar(total) : valorMascarado(total)}

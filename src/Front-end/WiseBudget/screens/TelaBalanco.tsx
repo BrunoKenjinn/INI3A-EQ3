@@ -27,7 +27,6 @@ const getResponsiveFontSize = (size) => {
   return size;
 };
 
-// Corrige a formatação da legenda do eixo Y
 const formatYLabel = (yLabel) => {
   const value = Number(yLabel);
   if (isNaN(value)) {
@@ -37,7 +36,6 @@ const formatYLabel = (yLabel) => {
     return "0";
   }
   if (Math.abs(value) >= 1000) {
-    // Mostra sem casas decimais e sem '.0', ex: 1200 -> 1.2k
     return `${(value / 1000).toFixed(1).replace(/\.0$/, "")}k`;
   }
   return `${value}`;
@@ -79,7 +77,7 @@ export default function TelaBalanco({ navigation }) {
   const [hasData, setHasData] = useState(false);
 
   const calcularExtraMetrics = (monthlyValues: number[]) => {
-    const valuesWithData = monthlyValues.filter((v: number) => v !== 0); // considera negativos
+    const valuesWithData = monthlyValues.filter((v: number) => v !== 0);
     let mediaMensal = 0;
     let mesMaiorSaldo = "-";
     let mesMenorSaldo = "-";
@@ -130,7 +128,7 @@ export default function TelaBalanco({ navigation }) {
 
       calcularExtraMetrics(monthlyValues);
 
-      const valuesWithData = monthlyValues.filter((v: number) => v !== 0); // considera negativos
+      const valuesWithData = monthlyValues.filter((v: number) => v !== 0);
       if (valuesWithData.length > 0) {
         setHasData(true);
         setMetrics({
@@ -173,7 +171,7 @@ export default function TelaBalanco({ navigation }) {
     useShadowColorFromDataset: false,
     decimalPlaces: 2,
     propsForLabels: {
-      fontSize: getResponsiveFontSize(12), // Increased font size
+      fontSize: getResponsiveFontSize(12),
     },
   };
 
@@ -229,7 +227,6 @@ export default function TelaBalanco({ navigation }) {
           <ScrollView horizontal={true} showsHorizontalScrollIndicator={false}>
             <View
               style={{
-                borderRadius: width * 0.05,
                 overflow: "hidden",
                 marginTop: height * 0.02,
               }}
@@ -254,7 +251,6 @@ export default function TelaBalanco({ navigation }) {
         </View>
       )}
 
-      {/* Métricas abaixo do gráfico */}
       <View style={styles.metricsWrapper}>
         <View style={styles.metricsContainer}>
           <View style={styles.metricBox}>
@@ -302,7 +298,7 @@ export default function TelaBalanco({ navigation }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#1e1e1e",
+    backgroundColor: "#2c2c2c",
     alignItems: "center",
   },
   yearSelector: {
@@ -320,9 +316,8 @@ const styles = StyleSheet.create({
   chartContainer: {
     width: "90%",
     height: 420,
-    backgroundColor: "#2c2c2c",
     borderRadius: 16,
-    marginBottom: 10, // Reduced space
+    marginBottom: 10,
     justifyContent: "center",
   },
   noData: {
@@ -339,7 +334,7 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   metricBox: {
-    backgroundColor: "#2c2c2c",
+    backgroundColor: '#393939',
     padding: 10,
     borderRadius: 12,
     alignItems: "center",
