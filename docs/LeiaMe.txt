@@ -1,0 +1,130 @@
+======================================================
+Guia de instalacao e execucao do Software WiseBudget
+======================================================
+
+Este guia detalha os passos para a instalacao e execucao do software
+WiseBudget para futuras continuacoes no projeto. O sistema e dividido
+em Backend (Laravel/PHP) e Frontend (React Native/Expo).
+
+
+---------------------------------------------------
+PARTE 1: Instalacao dos Pre-Requisitos (Software)
+---------------------------------------------------
+
+Antes de baixar o projeto, e necessario ter todos os seguintes
+softwares instalados e configurados:
+
+1. Visual Studio Code (VSCode): Editor de codigo.
+   Link: https://code.visualstudio.com/download
+
+2. Node.js: Ambiente de execucao para o Frontend (React Native).
+   Link: https://nodejs.org/en/download
+
+3. PostgreSQL (PgSql): O sistema de banco de dados.
+   Link: https://www.postgresql.org/download/
+
+4. PgAdmin: Interface grafica para gerenciar o PostgreSQL.
+   Link: https://www.pgadmin.org/download/
+
+5. PHP (Versao 8.1): Linguagem do Backend.
+   Link: https://www.php.net/downloads.php
+
+   Instrucoes:
+   - Baixe a versao "Zip" (Thread Safe).
+   - Crie uma pasta C:\php e extraia o conteudo la.
+   - Na pasta C:\php, renomeie o arquivo php.ini-development para php.ini.
+   - Abra o php.ini e remova o ; (ponto e virgula) do inicio das
+     seguintes linhas:
+         extension=curl
+         extension=openssl
+         extension=pdo_pgsql (Essencial para o PostgreSQL)
+         extension=pgsql
+
+   Adicionar ao PATH do Windows:
+   - Procure por "editar as variaveis de ambiente do sistema".
+   - Clique em "Variaveis de Ambiente...".
+   - Em "Variaveis do sistema", selecione "Path" e clique em "Editar".
+   - Clique em "Novo" e adicione a entrada: C:\php
+   - Clique OK em todas as janelas.
+
+6. Composer: Gerenciador de dependencias do PHP.
+   Link: https://getcomposer.org/download/
+
+7. Git: Sistema de controle de versao (necessario para clonar).
+   Link: https://git-scm.com/downloads
+
+
+---------------------------------------------------
+PARTE 2: Configuracao do Backend (Servidor Laravel)
+---------------------------------------------------
+
+1. Clonar o Projeto:
+   - Abra um terminal (CMD ou PowerShell).
+   - Navegue ate a pasta onde deseja salvar o projeto
+     (Ex: cd C:\Users\SeuUsuario\Documents)
+   - Execute o comando:
+       git clone https://github.com/BrunoKenjinn/INI3A-EQ3.git
+
+2. Instalar Dependencias do Backend:
+   - Navegue ate a pasta do backend:
+       cd INI3A-EQ3
+       cd src
+       cd Back-end
+       cd back
+   - Execute o comando para instalar as dependencias do Laravel:
+       composer install
+
+3. Configurar Banco de Dados:
+   - Abra o PgAdmin.
+   - Crie um novo servidor (se necessario) e faca login.
+   - Clique com o botao direito em "Databases" -> "Create" -> "Database...".
+   - De um nome ao banco (Ex: wisebudget_db). Guarde este nome.
+   - (Opcional: Se voce tiver um arquivo .sql de backup, importe-o agora.)
+
+4. Configurar Arquivo de Ambiente (.env):
+   - Na pasta do backend (.../src/Back-end/back), execute o comando
+     abaixo para copiar o arquivo de exemplo (use 'copy' para Windows):
+       copy .env.example .env
+   - Execute o comando para gerar a chave do Laravel:
+       php artisan key:generate
+   - Abra o arquivo .env (que acabou de ser criado) no VSCode.
+   - Altere os campos DB_ para conectar ao seu banco PostgreSQL.
+     (NOTA: Esta e a correcao importante!):
+       DB_CONNECTION=pgsql
+       DB_HOST=127.0.0.1
+       DB_PORT=5432
+       DB_DATABASE=wisebudget_db (O nome que voce deu no passo 3)
+       DB_USERNAME=postgres (Usuario padrao do PgSql, mude se o seu for outro)
+       DB_PASSWORD=sua_senha_do_pg (A senha que voce definiu ao instalar o PgSql)
+
+5. Rodar o Servidor Backend:
+   - Ainda no terminal, na pasta do backend, execute:
+       php artisan serve
+   - O backend estara rodando em http://127.0.0.1:8000.
+   - Deixe este terminal aberto.
+
+
+---------------------------------------------------
+PARTE 3: Configuracao do Frontend (Aplicativo Expo)
+---------------------------------------------------
+
+1. Abrir um Novo Terminal:
+   - Nao feche o terminal do backend. Abra uma nova janela do terminal.
+
+2. Instalar Dependencias do Frontend:
+   - Navegue ate a pasta do frontend:
+       cd INI3A-EQ3
+       cd src
+       cd Front-end
+       cd WiseBudget
+   - Execute o comando para instalar as dependencias do Node:
+       npm install
+
+3. Rodar o Aplicativo:
+   - Na mesma pasta, execute:
+       npx expo start
+   - Isso abrira uma pagina no seu navegador com um QR Code.
+   - Para rodar no seu celular:
+       - Baixe o aplicativo "Expo Go" na sua loja (Android ou iOS).
+       - Abra o Expo Go e escaneie o QR Code que apareceu no navegador.
+       - O aplicativo WiseBudget ira carregar no seu celular.
